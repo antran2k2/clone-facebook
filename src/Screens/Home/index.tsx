@@ -1,13 +1,30 @@
 import React from 'react';
-import {View, Text} from 'react-native';
+import {View, Text, StyleSheet} from 'react-native';
 
-function HomeScreen() {
+const HomeScreen = () => {
   return (
-    <View>
-      <Text>Home Screen</Text>
-      {/* Các thành phần khác của màn hình */}
+    <View style={styles.container}>
+      <Text style={styles.title}>Hello!</Text>
+      <Text style={styles.subtitle}>Home screen</Text>
     </View>
   );
-}
+};
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginBottom: 10,
+  },
+  subtitle: {
+    fontSize: 16,
+    color: 'gray',
+  },
+});
 
 export default HomeScreen;

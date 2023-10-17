@@ -1,35 +1,85 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {
+  Alert,
+  Image,
+  Keyboard,
   StyleSheet,
   Text,
-  TextInput,
   TouchableOpacity,
+  TouchableWithoutFeedback,
   View,
 } from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import {ScreenNavigationProp} from '@/Routes/Stack';
+import {TextInput} from 'react-native-paper';
 
 const LoginScreen = () => {
   const navigation = useNavigation<ScreenNavigationProp>();
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+
+  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+
+  const togglePasswordVisibility = () => {
+    setIsPasswordVisible(!isPasswordVisible);
+  };
+
+  const handleLogin = () => {
+    if (email.trim() === '' || password.trim() === '') {
+      Alert.alert('Vui lòng nhập cả email và mật khẩu');
+      return;
+    }
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if (!emailRegex.test(email)) {
+      Alert.alert('Email không hợp lệ');
+      return;
+    }
+
+    if (password.length < 8) {
+      Alert.alert('Mật khẩu phải có ít nhất 8 ký tự');
+      return;
+    }
+    navigation.navigate('Home');
+  };
   return (
-    <View style={styles.container}>
-      <TextInput style={styles.input} placeholder="Email or Phone" />
-      <TextInput
-        style={styles.input}
-        placeholder="Password"
-        secureTextEntry={true}
-      />
-      <TouchableOpacity
-        style={styles.loginButton}
-        onPress={() => navigation.navigate('Home')}>
-        <Text style={styles.loginButtonText}>Log In</Text>
-      </TouchableOpacity>
-      <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
-      <View style={styles.separator} />
-      <TouchableOpacity style={styles.createAccountButton}>
-        <Text style={styles.createAccountButtonText}>Create New Account</Text>
-      </TouchableOpacity>
-    </View>
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
+      <View style={styles.container}>
+        <Image
+          source={require('@/Assets/Images/Logo.png')}
+          style={styles.logo}
+        />
+        <TextInput
+          style={styles.input}
+          label="Email"
+          value={email}
+          onChangeText={text => setEmail(text)}
+        />
+        <TextInput
+          style={styles.input}
+          label="Mật khẩu"
+          secureTextEntry={!isPasswordVisible}
+          value={password}
+          onChangeText={text => setPassword(text)}
+          right={
+            <TextInput.Icon
+              icon={isPasswordVisible ? 'eye-off' : 'eye'}
+              onPress={togglePasswordVisibility}
+            />
+          }
+        />
+        <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
+          <Text style={styles.loginButtonText}>Đăng nhập</Text>
+        </TouchableOpacity>
+        <Text style={styles.forgotPasswordText}>Quên mật khẩu?</Text>
+        <View style={styles.separator} />
+        <TouchableOpacity
+          style={styles.createAccountButton}
+          onPress={() => navigation.navigate('Signup')}>
+          <Text style={styles.createAccountButtonText}>Tạo tài khoản mới</Text>
+        </TouchableOpacity>
+      </View>
+    </TouchableWithoutFeedback>
   );
 };
 const styles = StyleSheet.create({
@@ -40,24 +90,23 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
   },
   logo: {
-    width: 200,
-    height: 200,
-    marginBottom: 20,
+    width: 100,
+    height: 100,
+    marginBottom: 150,
   },
   input: {
     width: '100%',
-    height: 40,
-    borderWidth: 1,
-    borderColor: '#ddd',
+    height: 60,
     borderRadius: 5,
     paddingHorizontal: 10,
     marginBottom: 10,
+    backgroundColor: '#fff',
   },
   loginButton: {
     width: '100%',
     height: 40,
     backgroundColor: '#1877f2',
-    borderRadius: 5,
+    borderRadius: 20,
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 10,
@@ -72,6 +121,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   separator: {
+    marginTop: 150,
     width: '100%',
     height: 1,
     backgroundColor: '#ddd',
@@ -81,7 +131,7 @@ const styles = StyleSheet.create({
     width: '100%',
     height: 40,
     backgroundColor: '#42b72a',
-    borderRadius: 5,
+    borderRadius: 20,
     justifyContent: 'center',
     alignItems: 'center',
   },
