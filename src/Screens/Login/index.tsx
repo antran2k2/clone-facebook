@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import {
   Alert,
   Image,
@@ -9,9 +9,9 @@ import {
   TouchableWithoutFeedback,
   View,
 } from 'react-native';
-import {useNavigation} from '@react-navigation/native';
-import {ScreenNavigationProp} from '@/Routes/Stack';
-import {TextInput} from 'react-native-paper';
+import { useNavigation } from '@react-navigation/native';
+import { ScreenNavigationProp } from '@/Routes/Stack';
+import { TextInput } from 'react-native-paper';
 
 const LoginScreen = () => {
   const navigation = useNavigation<ScreenNavigationProp>();
@@ -75,7 +75,7 @@ const LoginScreen = () => {
         <View style={styles.separator} />
         <TouchableOpacity
           style={styles.createAccountButton}
-          onPress={() => navigation.navigate('Signup')}>
+          onPress={() => navigation.navigate('Name')}>
           <Text style={styles.createAccountButtonText}>Tạo tài khoản mới</Text>
         </TouchableOpacity>
       </View>
