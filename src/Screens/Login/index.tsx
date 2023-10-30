@@ -12,12 +12,14 @@ import {
 import {useNavigation} from '@react-navigation/native';
 import {ScreenNavigationProp} from '@/Routes/Stack';
 import {TextInput} from 'react-native-paper';
+import {useAppDispatch} from '@/Redux/store';
+import {setToken} from '@/Redux/reducer/auth';
 
 const LoginScreen = () => {
   const navigation = useNavigation<ScreenNavigationProp>();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-
+  const dispatch = useAppDispatch();
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
 
   const togglePasswordVisibility = () => {
@@ -40,6 +42,7 @@ const LoginScreen = () => {
       Alert.alert('Mật khẩu phải có ít nhất 8 ký tự');
       return;
     }
+    dispatch(setToken(password));
     navigation.navigate('Home');
   };
   return (
