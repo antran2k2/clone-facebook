@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "858633572180",
+    "project_id": "fakebook2k02",
+    "storage_bucket": "fakebook2k02.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:858633572180:android:c78352145a3db4afa642c1",
+        "android_client_info": {
+          "package_name": "com.clonefacebook"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBSINLfpA0D9BZH-6cB29bw6zkFhXnVdZA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

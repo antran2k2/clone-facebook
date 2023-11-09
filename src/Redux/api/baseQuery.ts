@@ -2,11 +2,13 @@ import {Config} from '@/Config';
 import {BaseQueryFn} from '@reduxjs/toolkit/query/react';
 import type {AxiosError, AxiosRequestConfig, AxiosRequestHeaders} from 'axios';
 import axios from 'axios';
+import localStorage from 'redux-persist/es/storage';
 
 const baseUrl = Config.API_URL as string;
 axios.interceptors.request.use(config => {
   config.headers = {
     'Content-Type': 'application/json',
+    Authorization: 'Bearer ' + localStorage.getItem('token'),
   } as AxiosRequestHeaders;
   config.withCredentials = true;
   return config;
@@ -34,10 +36,8 @@ const baseQuery: BaseQueryFn<
   } catch (axiosError) {
     const err = axiosError as AxiosError;
     return {
-      error: {
-        code: err.response?.status,
-        data: err.response?.data || err.message,
-      },
+      // error: err.response?.data as TErrorResponse,
+      error: err,
     };
   }
 };

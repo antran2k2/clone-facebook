@@ -12,11 +12,13 @@ import {authApi} from './api/auth';
 import authReducer, {setToken} from './reducer/auth';
 import signUpInfoReducer from './reducer/signUpInfo';
 import {ErrorCode} from '@/types/response.type';
+import {postApi} from './api/post';
 
 const reducers = combineReducers({
   signUpInfo: signUpInfoReducer,
   auth: authReducer,
   [authApi.reducerPath]: authApi.reducer,
+  [postApi.reducerPath]: postApi.reducer,
 });
 
 const persistConfig = {
@@ -42,6 +44,7 @@ export const store = configureStore({
   middleware: gDM =>
     gDM({serializableCheck: false}).concat(
       authApi.middleware,
+      postApi.middleware,
       rtkQueryErrorLogger,
     ),
 });

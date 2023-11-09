@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   Alert,
   Image,
@@ -9,18 +9,22 @@ import {
   TouchableWithoutFeedback,
   View,
 } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
-import { ScreenNavigationProp } from '@/Routes/Stack';
-import { TextInput } from 'react-native-paper';
-import { useAppDispatch } from '@/Redux/store';
-import { setToken } from '@/Redux/reducer/auth';
+import {useNavigation} from '@react-navigation/native';
+import {ScreenNavigationProp} from '@/Routes/Stack';
+import {TextInput} from 'react-native-paper';
+import {useLoginMutation} from '@/Redux/api/auth';
+// import uuid from 'react-native-uuid';
+import messaging from '@react-native-firebase/messaging';
 
 const LoginScreen = () => {
   const navigation = useNavigation<ScreenNavigationProp>();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const dispatch = useAppDispatch();
+  const [tokenm, setTokenm] = useState('');
+
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+
+  const [loginMutate] = useLoginMutation();
 
   const togglePasswordVisibility = () => {
     setIsPasswordVisible(!isPasswordVisible);
@@ -42,9 +46,34 @@ const LoginScreen = () => {
       Alert.alert('Mật khẩu phải có ít nhất 8 ký tự');
       return;
     }
-    dispatch(setToken(password));
-    navigation.navigate('Home');
+    // loginMutate({email, password, uuid: uuid.v4().toString()})
+    loginMutate({email, password, uuid: tokenm})
+      .unwrap()
+      .then(data => {
+        navigation.navigate('Home');
+        console.log(data);
+      })
+      .catch(err => {
+        Alert.alert('Đăng nhập thất bại');
+        console.log(err);
+      });
   };
+
+  useEffect(() => {
+    // Get the device token
+    messaging()
+      .getToken()
+      .then(token => {
+        setTokenm(token);
+      });
+
+    console.log('Token message: ', tokenm);
+
+    // Listen to whether the token changes
+    return messaging().onTokenRefresh(token => {
+      setTokenm(token);
+    });
+  }, [tokenm]);
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
       <View style={styles.container}>

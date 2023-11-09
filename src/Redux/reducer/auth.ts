@@ -19,10 +19,13 @@ const authSlice = createSlice({
     builder.addMatcher(
       authApi.endpoints.login.matchFulfilled,
       (state, {payload}) => {
-        state.token = payload.data.refresh_token;
+        state.token = payload.data.token;
       },
     );
     builder.addMatcher(authApi.endpoints.logout.matchFulfilled, (state, _) => {
+      state.token = null;
+    });
+    builder.addMatcher(authApi.endpoints.logout.matchRejected, (state, _) => {
       state.token = null;
     });
   },

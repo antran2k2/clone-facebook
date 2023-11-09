@@ -24,8 +24,8 @@ export const ErrorCode = {
 };
 type TErrorCode = typeof ErrorCode;
 export type TErrorResponse = {
-  response_code: TErrorCode[keyof TErrorCode];
-  error: {message: string; field?: string}[];
+  code: TErrorCode[keyof TErrorCode];
+  message: string;
 };
 
 export type TResponse<TData = undefined> = {
