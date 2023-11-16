@@ -18,6 +18,7 @@ import RulesScreen from '@/Screens/Signup/Rules';
 import ConfirmScreen from '@/Screens/Signup/Confirm';
 import {useAppSelector} from '@/Redux/store';
 import {useNavigation} from '@react-navigation/native';
+import SettingTabScreen from '@/Screens/Setting/SettingTab';
 
 export type RootStackParamList = {
   Home: undefined;
@@ -32,6 +33,7 @@ export type RootStackParamList = {
   WebViewPolicy: {url: string};
   Rules: undefined;
   Profile: {userId: string};
+  SettingTab: undefined;
 };
 export type ScreenNavigationProp =
   NativeStackNavigationProp<RootStackParamList>;
@@ -46,7 +48,7 @@ function MyStack() {
     console.log(token);
 
     if (!token) {
-      nav.navigate('Login');
+      nav.navigate('Home');
     }
   }, [nav, token]);
   return (
@@ -58,6 +60,7 @@ function MyStack() {
       <Stack.Screen name="Home" component={HomeScreen} />
       <Stack.Screen name="Login" component={LoginScreen} />
       <Stack.Screen name="Signup" component={SignupScreen} />
+      <Stack.Screen name="SettingTab" component={SettingTabScreen} />
       <Stack.Group
         screenOptions={{
           headerShown: true,
