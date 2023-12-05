@@ -24,6 +24,8 @@ const reducers = combineReducers({
 const persistConfig = {
   key: 'root',
   storage: AsyncStorage,
+  whitelist: ['auth', 'signUpInfo'],
+  blacklist: [authApi.reducerPath, postApi.reducerPath],
 };
 
 const persistedReducer = persistReducer(persistConfig, reducers);

@@ -76,6 +76,17 @@ export const authApi = createApi({
       }),
       invalidatesTags: ['Auth'],
     }),
+    changePassword: builder.mutation<
+      TResponse<any>,
+      {password: string; newPassword: string}
+    >({
+      query: data => ({
+        url: '/change_password',
+        method: 'post',
+        data: data,
+      }),
+      invalidatesTags: ['Auth'],
+    }),
   }),
 });
 export const {

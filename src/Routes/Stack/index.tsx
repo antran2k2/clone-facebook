@@ -1,3 +1,5 @@
+/* eslint-disable react-native/no-inline-styles */
+/* eslint-disable react/no-unstable-nested-components */
 import React, {useEffect} from 'react';
 import type {RouteProp} from '@react-navigation/native';
 
@@ -5,7 +7,6 @@ import {
   NativeStackNavigationProp,
   createNativeStackNavigator,
 } from '@react-navigation/native-stack';
-import HomeScreen from '@/Screens/Home';
 import LoginScreen from '@/Screens/Login';
 import SignupScreen from '@/Screens/Signup';
 import JoinFbScreen from '@/Screens/Signup/JoinFB';
@@ -18,8 +19,10 @@ import RulesScreen from '@/Screens/Signup/Rules';
 import ConfirmScreen from '@/Screens/Signup/Confirm';
 import {useAppSelector} from '@/Redux/store';
 import {useNavigation} from '@react-navigation/native';
+import MainTab from './tab';
 
 export type RootStackParamList = {
+  Main: undefined;
   Home: undefined;
   Login: undefined;
   Signup: undefined;
@@ -41,21 +44,20 @@ export type ScreenPolicyProp = RouteProp<RootStackParamList, 'WebViewPolicy'>;
 
 function MyStack() {
   const token = useAppSelector(state => state.auth.token);
+
   const nav = useNavigation<ScreenNavigationProp>();
   useEffect(() => {
-    console.log(token);
-
     if (!token) {
       nav.navigate('Login');
     }
   }, [nav, token]);
   return (
     <Stack.Navigator
-      initialRouteName="Home"
+      initialRouteName="Main"
       screenOptions={{
         headerShown: false,
       }}>
-      <Stack.Screen name="Home" component={HomeScreen} />
+      <Stack.Screen name="Main" component={MainTab} />
       <Stack.Screen name="Login" component={LoginScreen} />
       <Stack.Screen name="Signup" component={SignupScreen} />
       <Stack.Group

@@ -1,6 +1,7 @@
 import {createSlice} from '@reduxjs/toolkit';
 import type {PayloadAction} from '@reduxjs/toolkit';
 import {authApi} from '@/Redux/api/auth';
+import {RootState} from '../store';
 type TState = {
   token: string | null;
 };
@@ -32,5 +33,5 @@ const authSlice = createSlice({
 });
 
 export const {setToken} = authSlice.actions;
-
+export const getToken = (state: RootState) => state.auth.token;
 export default authSlice.reducer;
