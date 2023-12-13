@@ -43,9 +43,11 @@ const FeedItem = React.memo(({item}: Props) => {
             <View style={styles.iconCount}>
               <AntDesign name="like1" size={12} color="#FFFFFF" />
             </View>
-            <Text style={styles.textCount}>88 likes</Text>
+            <Text style={styles.textCount}>{item.feel}</Text>
           </View>
-          <Text style={styles.textCount}>2k comments</Text>
+          {item.comment_mark !== '0' && (
+            <Text style={styles.textCount}>{item.comment_mark} comments</Text>
+          )}
         </View>
         <View style={styles.separator} />
         <View style={styles.footerMenu}>

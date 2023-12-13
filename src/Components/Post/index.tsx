@@ -11,7 +11,7 @@ import {
 import FontAwesome5Icon from 'react-native-vector-icons/FontAwesome5';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import {useNavigation} from '@react-navigation/native';
-import {TPost} from '@/Redux/api/post';
+import { TPost } from '@/types/post.type';
 // import {ScreenNavigationProp} from '@/Routes/Stack';
 
 type Props = {
