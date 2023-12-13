@@ -19,6 +19,8 @@ import ConfirmScreen from '@/Screens/Signup/Confirm';
 import {useAppSelector} from '@/Redux/store';
 import {useNavigation} from '@react-navigation/native';
 import SettingTabScreen from '@/Screens/Setting/SettingTab';
+import SettingAccountScreen from '@/Screens/Setting/SettingAccount';
+import SettingPersonalInfoScreen from '@/Screens/Setting/SettingPersonalInfo';
 
 export type RootStackParamList = {
   Home: undefined;
@@ -33,13 +35,16 @@ export type RootStackParamList = {
   WebViewPolicy: {url: string};
   Rules: undefined;
   Profile: {userId: string};
-  SettingTab: undefined;
+  SettingTab: undefined; /* Thực tế cần truyền userId để lấy ảnh và tên người dùng */
+  SettingAccount: undefined;
+  SettingPersonalInfo: {name: string}; /* Thực tế nên truyền userId để lấy tên người dùng */
 };
 export type ScreenNavigationProp =
   NativeStackNavigationProp<RootStackParamList>;
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 export type ScreenPolicyProp = RouteProp<RootStackParamList, 'WebViewPolicy'>;
+export type ScreenSettingPersonalInfoProp = RouteProp<RootStackParamList, 'SettingPersonalInfo'>;
 
 function MyStack() {
   const token = useAppSelector(state => state.auth.token);
@@ -48,12 +53,12 @@ function MyStack() {
     console.log(token);
 
     if (!token) {
-      nav.navigate('Home');
+      nav.navigate('SettingTab');
     }
   }, [nav, token]);
   return (
     <Stack.Navigator
-      initialRouteName="Home"
+      initialRouteName="SettingTab"
       screenOptions={{
         headerShown: false,
       }}>
@@ -104,6 +109,21 @@ function MyStack() {
           name="WebViewPolicy"
           component={WebViewPolicyScreen}
           options={{title: 'Điều khoản & quyền riêng tư'}}
+        />
+      </Stack.Group>
+      <Stack.Group
+        screenOptions={{
+          headerShown: true,
+        }}>
+        <Stack.Screen
+          name="SettingAccount"
+          component={SettingAccountScreen}
+          options={{title: 'Cài đặt'}}
+        />
+        <Stack.Screen
+          name="SettingPersonalInfo"
+          component={SettingPersonalInfoScreen}
+          options={{title: ''}}
         />
       </Stack.Group>
     </Stack.Navigator>

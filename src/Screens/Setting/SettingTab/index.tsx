@@ -1,7 +1,11 @@
 import React, { useRef, useState } from 'react';
 import { View, Text, Image, StyleSheet, TouchableOpacity, TouchableWithoutFeedback, Animated, Easing } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import { ScreenNavigationProp } from '@/Routes/Stack';
 
 const SettingTabScreen = () => {
+
+    const navigation = useNavigation<ScreenNavigationProp>();
 
     const [helpExpanded, setHelpExpanded] = useState(false);
     const [settingsExpanded, setSettingsExpanded] = useState(false);
@@ -22,7 +26,7 @@ const SettingTabScreen = () => {
     const animateArrowRotation = (arrowRotation: Animated.Value, isExpanded: boolean) => {
         Animated.timing(arrowRotation, {
           toValue: isExpanded ? 0 : 1,
-          duration: 200,
+          duration: 300,
           easing: Easing.linear,
           useNativeDriver: false,
         }).start();
@@ -106,7 +110,7 @@ const SettingTabScreen = () => {
                         </View>
                     </TouchableWithoutFeedback>
                     {settingsExpanded && (
-                        <TouchableOpacity style={styles.item_inside}>
+                        <TouchableOpacity onPress={() => navigation.navigate('SettingAccount')} style={styles.item_inside}>
                             <View><Image source={require('@/Assets/Images/UserIcon.png')} style={styles.icon_item_inside} /></View>
                             <View><Text style={styles.name_item_inside}>Cài đặt</Text></View>
                         </TouchableOpacity>
