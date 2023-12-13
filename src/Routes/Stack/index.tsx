@@ -16,6 +16,10 @@ import PasswordScreen from '@/Screens/Signup/Password';
 import WebViewPolicyScreen from '@/Screens/Signup/WebViewPolicy';
 import RulesScreen from '@/Screens/Signup/Rules';
 import ConfirmScreen from '@/Screens/Signup/Confirm';
+import ProfileTabScreen from '@/Screens/ProfileTab';
+import FullFriendScreen from '@/Screens/FriendTab/FullFriend';
+import { TUserFriend } from '@/types/user.type';
+import FriendRequestScreen from '@/Screens/FriendTab/FriendRequest';
 
 export type RootStackParamList = {
   Home: undefined;
@@ -29,6 +33,9 @@ export type RootStackParamList = {
   Confirm: undefined;
   WebViewPolicy: { url: string };
   Rules: undefined;
+  ProfileTab: undefined;
+  FullFriend: { user_id: string };
+  FriendRequest: undefined;
   Profile: { userId: string };
 };
 export type ScreenNavigationProp =
@@ -36,11 +43,12 @@ export type ScreenNavigationProp =
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 export type ScreenPolicyProp = RouteProp<RootStackParamList, 'WebViewPolicy'>;
+export type ScreenFullFriendProp = RouteProp<RootStackParamList, 'FullFriend'>;
 
 function MyStack() {
   return (
     <Stack.Navigator
-      initialRouteName="Login"
+      initialRouteName="FriendRequest"
       screenOptions={{
         headerShown: false,
       }}>
@@ -59,6 +67,9 @@ function MyStack() {
         <Stack.Screen name="Rules" component={RulesScreen} options={{ title: 'Điều khoản & quyền riêng tư' }} />
         <Stack.Screen name="WebViewPolicy" component={WebViewPolicyScreen} options={{ title: 'Điều khoản & quyền riêng tư' }} />
       </Stack.Group>
+      <Stack.Screen name="ProfileTab" component={ProfileTabScreen} />
+      <Stack.Screen name="FullFriend" component={FullFriendScreen} />
+      <Stack.Screen name="FriendRequest" component={FriendRequestScreen} />
     </Stack.Navigator>
   );
 }
