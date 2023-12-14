@@ -41,8 +41,9 @@ const ConfirmScreen = () => {
             <Text style={{
                 fontWeight: 'bold', fontFamily: "roboto-500",
                 color: "rgba(0,0,0,1)",
-                fontSize: 20,
+                fontSize: 24,
                 textAlign: "center",
+                marginTop: 20,
             }}>FB-
                 <TextInput
                     style={styles.input}
@@ -95,11 +96,10 @@ const styles = StyleSheet.create({
         marginBottom: 20
     },
     input: {
-        width: '100%',
-        height: 50,
+        width: 100,
+        height: 30,
+        marginBottom: 30,
         borderRadius: 5,
-        paddingHorizontal: 10,
-        marginBottom: 10,
         backgroundColor: '#fff',
     },
     ConfirmButton: {

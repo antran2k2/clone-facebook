@@ -24,6 +24,10 @@ import AddPostScreen from '@/Screens/Post/AddPost';
 import SettingTabScreen from '@/Screens/Setting/SettingTab';
 import SettingAccountScreen from '@/Screens/Setting/SettingAccount';
 import SettingPersonalInfoScreen from '@/Screens/Setting/SettingPersonalInfo';
+import ProfileTabScreen from '@/Screens/ProfileTab';
+import FullFriendScreen from '@/Screens/FriendTab/FullFriend';
+import {TUserFriend} from '@/types/user.type';
+import FriendRequestScreen from '@/Screens/FriendTab/FriendRequest';
 
 export type RootStackParamList = {
   Main: undefined;
@@ -38,18 +42,27 @@ export type RootStackParamList = {
   Confirm: undefined;
   WebViewPolicy: {url: string};
   Rules: undefined;
-  Profile: {userId: string};
   AddPost: undefined;
-  SettingTab: undefined; /* Thực tế cần truyền userId để lấy ảnh và tên người dùng */
+  SettingTab: undefined /* Thực tế cần truyền userId để lấy ảnh và tên người dùng */;
   SettingAccount: undefined;
-  SettingPersonalInfo: {name: string}; /* Thực tế nên truyền userId để lấy tên người dùng */
+  SettingPersonalInfo: {
+    name: string;
+  } /* Thực tế nên truyền userId để lấy tên người dùng */;
+  ProfileTab: undefined;
+  FullFriend: {user_id: string};
+  FriendRequest: undefined;
+  Profile: {userId: string};
 };
 export type ScreenNavigationProp =
   NativeStackNavigationProp<RootStackParamList>;
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 export type ScreenPolicyProp = RouteProp<RootStackParamList, 'WebViewPolicy'>;
-export type ScreenSettingPersonalInfoProp = RouteProp<RootStackParamList, 'SettingPersonalInfo'>;
+export type ScreenSettingPersonalInfoProp = RouteProp<
+  RootStackParamList,
+  'SettingPersonalInfo'
+>;
+export type ScreenFullFriendProp = RouteProp<RootStackParamList, 'FullFriend'>;
 
 function MyStack() {
   const token = useAppSelector(state => state.auth.token);
@@ -62,7 +75,7 @@ function MyStack() {
   }, [nav, token]);
   return (
     <Stack.Navigator
-      initialRouteName="Login"
+      initialRouteName="FriendRequest"
       screenOptions={{
         headerShown: false,
       }}>
@@ -131,6 +144,9 @@ function MyStack() {
           options={{title: ''}}
         />
       </Stack.Group>
+      <Stack.Screen name="ProfileTab" component={ProfileTabScreen} />
+      <Stack.Screen name="FullFriend" component={FullFriendScreen} />
+      <Stack.Screen name="FriendRequest" component={FriendRequestScreen} />
     </Stack.Navigator>
   );
 }

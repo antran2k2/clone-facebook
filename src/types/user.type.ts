@@ -13,3 +13,34 @@ export type TUser = {
   active: string;
   coins: string;
 };
+
+export type TUserInfo = {
+  id: string;
+  username: string;
+  created: Date;
+  description: string;
+  avatar: string;
+  cover_image: string;
+  link: string;
+  address: string;
+  city: string;
+  country: string;
+  listing: string;
+  is_friend: string;
+  online: string;
+  coins: string;
+
+}
+
+export type TFriend = {
+  id: string;
+  username: string;
+  avatar: string;
+  same_friends: string;
+  created: Date;
+}
+
+export type TUserFriend = {
+  friends: Array<TFriend>;
+  total: String;
+}
