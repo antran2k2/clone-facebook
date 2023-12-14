@@ -5,11 +5,27 @@ import Entypo from 'react-native-vector-icons/Entypo';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import {TPost} from '@/types/post.type';
-// import Avatar from './Avatar';
+import {useFeelMutation} from '@/Redux/api/comment';
 type Props = {
   item: TPost;
 };
-const FeedItem = React.memo(({item}: Props) => {
+const PostItem = React.memo(({item}: Props) => {
+  const [mutateFeel, {isLoading}] = useFeelMutation();
+  const [feel, setFeel] = React.useState<string>(item.feel);
+  const [isFelt, setIsFelt] = React.useState<string>(item.is_felt);
+  const handleFeel = () => {
+    mutateFeel({id: item.id, type: String(1)})
+      .unwrap()
+      .then(({message}) => {
+        console.log(message);
+        setFeel(feel => String(Number(feel) + 1));
+        setIsFelt('1');
+      })
+      .catch(err => {
+        console.log(err);
+      });
+  };
+
   const {author, described, image, created} = item;
   const time = new Date(created).toLocaleTimeString();
   const imgSrc =
@@ -38,26 +54,30 @@ const FeedItem = React.memo(({item}: Props) => {
           <Image key={index} style={styles.photo} source={{uri: img.url}} />
         ))}
       <View style={styles.footer}>
-        <View style={styles.footerCount}>
-          <View style={styles.row}>
-            <View style={styles.iconCount}>
-              <AntDesign name="like1" size={12} color="#FFFFFF" />
-            </View>
-            <Text style={styles.textCount}>{item.feel}</Text>
-          </View>
-          {item.comment_mark !== '0' && (
-            <Text style={styles.textCount}>{item.comment_mark} comments</Text>
-          )}
-        </View>
         <View style={styles.separator} />
         <View style={styles.footerMenu}>
-          <TouchableOpacity style={styles.button}>
-            <View style={styles.icon}>
-              <AntDesign name="like2" size={20} color="#424040" />
-            </View>
-            <Text style={styles.text}>Like</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.button}>
+          <View style={[styles.row, {flex: 2}]}>
+            <TouchableOpacity style={styles.button} onPress={handleFeel}>
+              <View style={styles.icon}>
+                <AntDesign
+                  name={isFelt === '1' ? 'like1' : 'like2'}
+                  size={20}
+                  color="#424040"
+                />
+              </View>
+            </TouchableOpacity>
+            <Text style={[styles.text]}>{feel}</Text>
+            <TouchableOpacity style={styles.button}>
+              <View style={styles.icon}>
+                <AntDesign
+                  name={isFelt === '0' ? 'dislike1' : 'dislike2'}
+                  size={20}
+                  color="#424040"
+                />
+              </View>
+            </TouchableOpacity>
+          </View>
+          <TouchableOpacity style={[styles.button, {flex: 1}]}>
             <View style={styles.icon}>
               <MaterialCommunityIcons
                 name="comment-outline"
@@ -65,7 +85,7 @@ const FeedItem = React.memo(({item}: Props) => {
                 color="#424040"
               />
             </View>
-            <Text style={styles.text}>Comment</Text>
+            <Text style={styles.text}>{item.comment_mark}</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.button}>
             <View style={styles.icon}>
@@ -84,7 +104,7 @@ const FeedItem = React.memo(({item}: Props) => {
   );
 });
 
-export default FeedItem;
+export default PostItem;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -164,7 +184,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
   icon: {
-    marginRight: 6,
+    marginRight: 10,
+    marginLeft: 10,
   },
   bottomDivider: {
     width: '100%',

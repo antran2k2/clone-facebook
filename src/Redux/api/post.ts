@@ -2,6 +2,7 @@ import {createApi} from '@reduxjs/toolkit/query/react';
 import baseQuery from './baseQuery';
 import {TResponse} from '@/types/response.type';
 import {
+  AddPostDTO,
   GetListPostsDTO,
   ReportPostDTO,
   TPost,
@@ -13,14 +14,23 @@ export const postApi = createApi({
   baseQuery: baseQuery,
   tagTypes: ['Post'],
   endpoints: builder => ({
-    addPost: builder.mutation<TResponse<any>, any>({
-      query: data => ({
-        url: '/add_post',
-        method: 'post',
-        data: data,
-        formData: true,
-      }),
+    addPost: builder.mutation<TResponse<any>, AddPostDTO>({
+      query: data => {
+        var bodyFormData = new FormData();
+        bodyFormData.append('file', data.image);
+        console.log({bodyFormData});
+        return {
+          url: '/add_post',
+          method: 'POST',
+          headers: {
+            'Content-Type': 'multipart/form-data;',
+          },
+          body: bodyFormData,
+          formData: true,
+        };
+      },
     }),
+
     getListPosts: builder.query<
       TResponse<{post: TPost[]; last_id: string; new_items: string}>,
       GetListPostsDTO
@@ -38,11 +48,11 @@ export const postApi = createApi({
         data: data,
       }),
     }),
-    editPost: builder.mutation<TResponse<any>, any>({
-      query: data => ({
+    editPost: builder.mutation<TResponse<any>, {payload: FormData}>({
+      query: ({payload}) => ({
         url: '/edit_post',
         method: 'post',
-        data: data,
+        body: payload,
         formData: true,
       }),
     }),

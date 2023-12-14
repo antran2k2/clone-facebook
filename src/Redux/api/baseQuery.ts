@@ -10,7 +10,8 @@ const baseUrl = Config.API_URL as string;
 axios.interceptors.request.use(config => {
   const token = getToken(store.getState());
   config.headers = {
-    'Content-Type': 'application/json',
+    // 'Content-Type': 'multipart/form-data; boundary=some-random-value',
+    Accept: '*/*',
     Authorization: 'Bearer ' + token,
   } as AxiosRequestHeaders;
   config.withCredentials = true;
@@ -23,10 +24,11 @@ const baseQuery: BaseQueryFn<
     data?: AxiosRequestConfig['data'];
     params?: AxiosRequestConfig['params'];
     headers?: AxiosRequestConfig['headers'];
+    formData?: boolean;
   },
   unknown,
   unknown
-> = async ({url, method, data, params, headers}) => {
+> = async ({url, method, data, params, headers, formData}) => {
   try {
     console.log(
       '=========================Vừa request đến url:===============================',
@@ -35,6 +37,7 @@ const baseQuery: BaseQueryFn<
       method,
       '\ndata:',
       data,
+      formData ? '\nformData:' : '',
     );
     const result = await axios({
       url: baseUrl + url,
@@ -45,17 +48,16 @@ const baseQuery: BaseQueryFn<
     });
 
     return {data: result.data};
-  } catch (axiosError) {
-    console.log(
-      '=========================Vừa request đến url',
+  } catch (error: any) {
+    console.error(
+      'FAIL===========Vừa request đến url',
       baseUrl + url,
-      'thất bại===============================',
+      '=========================FAIL\n',
+      // response,
+      error.request._response,
     );
-    const err = axiosError as AxiosError;
-    return {
-      // error: err.response?.data as TErrorResponse,
-      error: err,
-    };
+
+    return {error: 123};
   }
 };
 export default baseQuery;

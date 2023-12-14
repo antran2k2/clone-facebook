@@ -1,3 +1,11 @@
+export interface AddPostDTO {
+  image?: any[];
+  video?: any;
+  described: string;
+  status?: string;
+  auto_accept?: string;
+}
+
 export interface TAuthor {
   id: string;
   name: string;

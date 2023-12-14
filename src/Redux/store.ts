@@ -13,12 +13,14 @@ import authReducer, {setToken} from './reducer/auth';
 import signUpInfoReducer from './reducer/signUpInfo';
 import {ErrorCode} from '@/types/response.type';
 import {postApi} from './api/post';
+import {commentApi} from './api/comment';
 
 const reducers = combineReducers({
   signUpInfo: signUpInfoReducer,
   auth: authReducer,
   [authApi.reducerPath]: authApi.reducer,
   [postApi.reducerPath]: postApi.reducer,
+  [commentApi.reducerPath]: commentApi.reducer,
 });
 
 const persistConfig = {
@@ -47,6 +49,7 @@ export const store = configureStore({
     gDM({serializableCheck: false}).concat(
       authApi.middleware,
       postApi.middleware,
+      commentApi.middleware,
       rtkQueryErrorLogger,
     ),
 });

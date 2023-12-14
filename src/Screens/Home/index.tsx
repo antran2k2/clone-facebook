@@ -1,30 +1,19 @@
-import {useLogoutMutation} from '@/Redux/api/auth';
-import {useAppDispatch, useAppSelector} from '@/Redux/store';
 import React, {useEffect, useState} from 'react';
 import {
   Text,
   StyleSheet,
-  Alert,
   Animated,
   FlatList,
   ActivityIndicator,
 } from 'react-native';
-import messaging from '@react-native-firebase/messaging';
 import Header from '@/Components/Header';
-import {useNavigation} from '@react-navigation/native';
-import {ScreenNavigationProp} from '@/Routes/Stack';
 import PostTool from '@/Components/PostTool';
 import {useGetListPostsQuery} from '@/Redux/api/post';
 import useLogout from '@/Hooks/useLogout';
-import FeedItem from '@/Components/PostItem';
 import {GetListPostsDTO, TPost} from '@/types/post.type';
+import PostItem from '@/Components/PostItem';
 
 const HomeScreen = () => {
-  const navigation = useNavigation<ScreenNavigationProp>();
-  const token = useAppSelector(state => state.auth.token);
-  const dispatch = useAppDispatch();
-  const [mutateLogout, {isLoading}] = useLogoutMutation();
-
   const initParams: GetListPostsDTO = {
     user_id: '0',
     index: '1',
@@ -33,13 +22,13 @@ const HomeScreen = () => {
 
   const [listPosts, setListPosts] = useState<TPost[]>([]);
   const [param, setParam] = useState<GetListPostsDTO>(initParams);
-  const [latstId, setLatstId] = useState<string>('0');
+  const [lastId, setLastId] = useState<string>('0');
   const {
     data,
     isLoading: isLoadingPosts,
     isFetching: isFetchingPosts,
     isSuccess,
-    refetch,
+    // refetch,
   } = useGetListPostsQuery(param, {refetchOnMountOrArgChange: true});
 
   const {handleLogout} = useLogout();
@@ -72,7 +61,7 @@ const HomeScreen = () => {
   );
 
   const handleRefresh = () => {
-    setParam({...param, last_id: data?.data.last_id});
+    setParam({...param, last_id: lastId});
     if (isSuccess) {
       setListPosts(data?.data.post);
     }
@@ -81,12 +70,12 @@ const HomeScreen = () => {
   useEffect(() => {
     if (isSuccess) {
       setListPosts(prevListPosts => [...prevListPosts, ...data?.data.post]);
-      setLatstId(data?.data.last_id);
+      setLastId(data?.data.last_id);
     }
   }, [isSuccess, data?.data]);
 
   const loadMorePosts = () => {
-    setParam(prevParam => ({...prevParam, last_id: data?.data.last_id}));
+    setParam(prevParam => ({...prevParam, last_id: lastId}));
   };
 
   return (
@@ -97,7 +86,7 @@ const HomeScreen = () => {
         onScroll={onScroll}
         data={listPosts}
         keyExtractor={(item, index) => index.toString()}
-        renderItem={({item}) => <FeedItem item={item} />}
+        renderItem={({item}) => <PostItem item={item} />}
         onEndReached={loadMorePosts}
         onEndReachedThreshold={0.1}
         maxToRenderPerBatch={10}

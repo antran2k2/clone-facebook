@@ -20,6 +20,7 @@ import ConfirmScreen from '@/Screens/Signup/Confirm';
 import {useAppSelector} from '@/Redux/store';
 import {useNavigation} from '@react-navigation/native';
 import MainTab from './tab';
+import AddPostScreen from '@/Screens/Post/AddPost';
 
 export type RootStackParamList = {
   Main: undefined;
@@ -35,6 +36,7 @@ export type RootStackParamList = {
   WebViewPolicy: {url: string};
   Rules: undefined;
   Profile: {userId: string};
+  AddPost: undefined;
 };
 export type ScreenNavigationProp =
   NativeStackNavigationProp<RootStackParamList>;
@@ -47,19 +49,20 @@ function MyStack() {
 
   const nav = useNavigation<ScreenNavigationProp>();
   useEffect(() => {
-    if (!token) {
-      nav.navigate('Login');
+    if (token) {
+      nav.navigate('Main');
     }
   }, [nav, token]);
   return (
     <Stack.Navigator
-      initialRouteName="Main"
+      initialRouteName="Login"
       screenOptions={{
         headerShown: false,
       }}>
       <Stack.Screen name="Main" component={MainTab} />
       <Stack.Screen name="Login" component={LoginScreen} />
       <Stack.Screen name="Signup" component={SignupScreen} />
+      <Stack.Screen name="AddPost" component={AddPostScreen} />
       <Stack.Group
         screenOptions={{
           headerShown: true,

@@ -1,111 +1,39 @@
 import React from 'react';
 import {View, TouchableOpacity, Image, Text, StyleSheet} from 'react-native';
 import FontAweSome5 from 'react-native-vector-icons/FontAwesome5';
+import {useNavigation} from '@react-navigation/native';
+import {ScreenNavigationProp} from '@/Routes/Stack';
 
 const PostTool = () => {
-  //   const [post, setPost] = useState({
-  //     title: '',
-  //     body: '',
-  //   });
+  const navigation = useNavigation<ScreenNavigationProp>();
 
-  //   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-  //     setPost({
-  //       ...post,
-  //       [e.target.name]: e.target.value,
-  //     });
-  //   };
-
-  //   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-  //     e.preventDefault();
-  //     console.log(post);
-  //   };
-
+  const onPress = () => {
+    navigation.navigate('AddPost');
+  };
   return (
     <View style={styles.container}>
       <View style={styles.postToolWrapper}>
-        <TouchableOpacity activeOpacity={0.5} style={styles.userAvatarWrapper}>
+        <TouchableOpacity activeOpacity={0.5}>
           <Image
-            // source={{uri: user.avatar_url}}
             source={require('@/Assets/Images/Avatar.png')}
-            style={styles.userAvatar}
+            style={styles.avatarImg}
           />
         </TouchableOpacity>
-        <TouchableOpacity
-          //   onPress={
-          //     isWriteToAnyOne
-          //       ? this.onPressPostToAnyOneHandler.bind(this)
-          //       : this.onFullPostToolPressHandler
-          //   }
-          style={styles.postInputWrapper}>
+        <TouchableOpacity style={styles.postInputWrapper} onPress={onPress}>
           <View
             style={{
               ...styles.postInput,
-              //   backgroundColor: this.state.inputBgColor,
             }}>
-            <Text>What are you thinking?{'\n'}Muốn gì nữa không?</Text>
+            <Text>What are u thinking?</Text>
           </View>
         </TouchableOpacity>
-      </View>
-      <View style={styles.postOptionsWrapper}>
-        <TouchableOpacity
-          //   onPress={this.onLiveStreamPressHandler}
-          activeOpacity={0.5}
-          style={styles.postOptionItemWrapper}>
-          <View style={styles.postOptionItem}>
-            <FontAweSome5
-              style={styles.postOptionIcon}
-              name="video"
-              color="red"
-              size={16}
-            />
-            <Text>Live Stream</Text>
-          </View>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          //   onPress={
-          //     isWriteToAnyOne || isWriteToPage
-          //       ? this.onPressPostToAnyOneHandler.bind(this)
-          //       : this.onPhotoUploaderPressHandler
-          //   }
-          activeOpacity={0.5}
-          style={styles.postOptionItemWrapper}>
-          <View
-            style={{...styles.postOptionItem, ...styles.postOptionItemMiddle}}>
-            <FontAweSome5
-              style={styles.postOptionIcon}
-              name="image"
-              //   name={isWriteToAnyOne || isWriteToPage ? 'edit' : 'image'}
-              color="green"
-              size={16}
-            />
-            <Text>
-              {/* {isWriteToAnyOne || isWriteToPage ? 'Write a post' : 'Photo'} */}
-            </Text>
-          </View>
-        </TouchableOpacity>
-        <TouchableOpacity
-          //   onPress={
-          //     isWriteToAnyOne || isWriteToPage
-          //       ? this.onPressSharePhotoToAnyOne.bind(this)
-          //       : this.onCheckInPressHandler
-          //   }
-          activeOpacity={0.5}
-          style={styles.postOptionItemWrapper}>
-          <View style={styles.postOptionItem}>
-            <FontAweSome5
-              style={styles.postOptionIcon}
-              //   name={
-              //     isWriteToAnyOne || isWriteToPage ? 'image' : 'map-marker-alt'
-              //   }
-              name="image"
-              color="red"
-              size={16}
-            />
-            <Text>
-              {/* {isWriteToAnyOne || isWriteToPage ? 'Share Photos' : 'Check in'} */}
-            </Text>
-          </View>
+        <TouchableOpacity activeOpacity={0.5}>
+          <FontAweSome5
+            style={styles.postOptionIcon}
+            name="image"
+            color="green"
+            size={16}
+          />
         </TouchableOpacity>
       </View>
     </View>
@@ -125,24 +53,9 @@ const styles = StyleSheet.create({
   postToolWrapper: {
     padding: 10,
     flexDirection: 'row',
+    justifyContent: 'space-between',
   },
-  postOptionsWrapper: {
-    flexDirection: 'row',
-    height: 40,
-    borderTopColor: '#ddd',
-    borderTopWidth: 1,
-    alignItems: 'center',
-  },
-  postOptionItemWrapper: {
-    flex: 1,
-    height: 40,
-    justifyContent: 'center',
-  },
-  postOptionItem: {
-    width: '100%',
-    flexDirection: 'row',
-    justifyContent: 'center',
-  },
+
   postOptionItemMiddle: {
     borderRightColor: '#ddd',
     borderRightWidth: 1,
@@ -166,12 +79,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     borderWidth: 1,
   },
-  userAvatar: {
+  avatarImg: {
     width: 40,
     height: 40,
-    borderRadius: 50,
+    borderRadius: 20,
+    borderColor: '#1777f2',
   },
-  userAvatarWrapper: {},
 });
 
 export default PostTool;
