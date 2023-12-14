@@ -19,8 +19,14 @@ import RulesScreen from '@/Screens/Signup/Rules';
 import ConfirmScreen from '@/Screens/Signup/Confirm';
 import {useAppSelector} from '@/Redux/store';
 import {useNavigation} from '@react-navigation/native';
+<<<<<<< HEAD
 import MainTab from './tab';
 import AddPostScreen from '@/Screens/Post/AddPost';
+=======
+import SettingTabScreen from '@/Screens/Setting/SettingTab';
+import SettingAccountScreen from '@/Screens/Setting/SettingAccount';
+import SettingPersonalInfoScreen from '@/Screens/Setting/SettingPersonalInfo';
+>>>>>>> origin/tunglam
 
 export type RootStackParamList = {
   Main: undefined;
@@ -36,33 +42,55 @@ export type RootStackParamList = {
   WebViewPolicy: {url: string};
   Rules: undefined;
   Profile: {userId: string};
+<<<<<<< HEAD
   AddPost: undefined;
+=======
+  SettingTab: undefined; /* Thực tế cần truyền userId để lấy ảnh và tên người dùng */
+  SettingAccount: undefined;
+  SettingPersonalInfo: {name: string}; /* Thực tế nên truyền userId để lấy tên người dùng */
+>>>>>>> origin/tunglam
 };
 export type ScreenNavigationProp =
   NativeStackNavigationProp<RootStackParamList>;
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 export type ScreenPolicyProp = RouteProp<RootStackParamList, 'WebViewPolicy'>;
+export type ScreenSettingPersonalInfoProp = RouteProp<RootStackParamList, 'SettingPersonalInfo'>;
 
 function MyStack() {
   const token = useAppSelector(state => state.auth.token);
 
   const nav = useNavigation<ScreenNavigationProp>();
   useEffect(() => {
+<<<<<<< HEAD
     if (token) {
       nav.navigate('Main');
+=======
+    console.log(token);
+
+    if (!token) {
+      nav.navigate('SettingTab');
+>>>>>>> origin/tunglam
     }
   }, [nav, token]);
   return (
     <Stack.Navigator
+<<<<<<< HEAD
       initialRouteName="Login"
+=======
+      initialRouteName="SettingTab"
+>>>>>>> origin/tunglam
       screenOptions={{
         headerShown: false,
       }}>
       <Stack.Screen name="Main" component={MainTab} />
       <Stack.Screen name="Login" component={LoginScreen} />
       <Stack.Screen name="Signup" component={SignupScreen} />
+<<<<<<< HEAD
       <Stack.Screen name="AddPost" component={AddPostScreen} />
+=======
+      <Stack.Screen name="SettingTab" component={SettingTabScreen} />
+>>>>>>> origin/tunglam
       <Stack.Group
         screenOptions={{
           headerShown: true,
@@ -106,6 +134,21 @@ function MyStack() {
           name="WebViewPolicy"
           component={WebViewPolicyScreen}
           options={{title: 'Điều khoản & quyền riêng tư'}}
+        />
+      </Stack.Group>
+      <Stack.Group
+        screenOptions={{
+          headerShown: true,
+        }}>
+        <Stack.Screen
+          name="SettingAccount"
+          component={SettingAccountScreen}
+          options={{title: 'Cài đặt'}}
+        />
+        <Stack.Screen
+          name="SettingPersonalInfo"
+          component={SettingPersonalInfoScreen}
+          options={{title: ''}}
         />
       </Stack.Group>
     </Stack.Navigator>
