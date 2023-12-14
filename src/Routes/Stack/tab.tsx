@@ -7,6 +7,7 @@ import NotificationScreen from '@/Screens/Notification';
 import VideoScreen from '@/Screens/Video';
 import {Dimensions} from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome5';
+import SettingTabScreen from '@/Screens/Setting/SettingTab';
 
 const numberOfTabs = 6; // your number of tabs
 
@@ -112,7 +113,7 @@ function MainTab() {
         />
         <Tab.Screen
           name="Menu"
-          component={NotificationScreen}
+          component={SettingTabScreen}
           options={{
             tabBarIcon: ({focused}) => (
               <Icon
