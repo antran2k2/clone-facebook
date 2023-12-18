@@ -9,7 +9,7 @@ import {
 } from 'react-native';
 
 import * as ImagePicker from 'react-native-image-picker';
-import {DemoButton} from './DemoButton';
+import { DemoButton } from './DemoButton';
 
 /* toggle includeExtra */
 const includeExtra = true;
@@ -17,7 +17,7 @@ const includeExtra = true;
 export default function VideoScreen() {
   const [response, setResponse] = React.useState<any>(null);
 
-  const onButtonPress = React.useCallback((type, options) => {
+  const onButtonPress = React.useCallback((type: string, options: ImagePicker.CameraOptions | ImagePicker.ImageLibraryOptions) => {
     if (type === 'capture') {
       ImagePicker.launchCamera(options, setResponse);
     } else {
@@ -29,7 +29,7 @@ export default function VideoScreen() {
     <SafeAreaView style={styles.container}>
       <ScrollView>
         <View style={styles.buttonContainer}>
-          {actions.map(({title, type, options}) => {
+          {actions.map(({ title, type, options }) => {
             return (
               <DemoButton
                 key={title}
@@ -41,13 +41,13 @@ export default function VideoScreen() {
         </View>
 
         {response?.assets &&
-          response?.assets.map(({uri}: {uri: string}) => (
+          response?.assets.map(({ uri }: { uri: string }) => (
             <View key={uri} style={styles.imageContainer}>
               <Image
                 resizeMode="cover"
                 resizeMethod="scale"
                 style={styles.image}
-                source={{uri: uri}}
+                source={{ uri: uri }}
               />
             </View>
           ))}

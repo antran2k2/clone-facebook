@@ -11,6 +11,8 @@ import { SCREEN_WIDTH, SCREEN_HEIGHT, STATUSBAR_HEIGHT } from '@/Constants'
 import Modal from "react-native-modal";
 import FriendOption from "@/Components/FriendOption";
 import ArrangeWrapper from "@/Components/ArrangeWrapper";
+import BlockAlert from "@/Components/BlockAlert";
+import UnFriendAlert from "@/Components/UnFriendAlert";
 
 
 
@@ -24,7 +26,7 @@ const FullFriendScreen = () => {
 
     const user_id: string = route.params.user_id;
     //--------------------Call APi Get Friend dựa vào giá trị user_id---------------------
-    const data: TUserFriend = {
+    const data = {
         friends: [
             {
                 id: '2',
@@ -37,7 +39,7 @@ const FullFriendScreen = () => {
                 id: '3',
                 username: 'Thanh Huy',
                 avatar: 'https://thuthuatnhanh.com/wp-content/uploads/2020/10/anh-dai-dien-ca-tinh-dac-biet-ke-bi-an-trum-mu.jpg',
-                same_friends: '5',
+                same_friends: '0',
                 created: new Date(),
             },
             {
@@ -103,18 +105,24 @@ const FullFriendScreen = () => {
         setModalArrageVisible(!isModalArrageVisible);
     };
 
+    const [isModalVisible2, setModalVisible2] = useState(false);
 
-    const [userFriends, setUserFriends] = useState(data);
+    const toggleModal2 = () => {
+        setModalVisible2(!isModalVisible2);
+    };
+
+    const [isModalVisible3, setModalVisible3] = useState(false);
+
+    const toggleModal3 = () => {
+        setModalVisible3(!isModalVisible3);
+    };
+
+
+    const [userFriends, setUserFriends] = useState<Array<TFriend | undefined>>(data.friends);
+    const [total, setTotal] = useState(data.total);
     const [filterType, setFilterType] = useState(1);
     const [keyword, setKeyword] = useState('');
-    const initFriensProfile = {
-        id: '3',
-        username: 'Thanh Huy',
-        avatar: 'https://thuthuatnhanh.com/wp-content/uploads/2020/10/anh-dai-dien-ca-tinh-dac-biet-ke-bi-an-trum-mu.jpg',
-        same_friends: '5',
-        created: new Date(),
-    };
-    const [ProfileFriend, setProfileFriend] = useState(initFriensProfile);
+    const [ProfileFriend, setProfileFriend] = useState<TFriend>();
 
     const onPressGoBackHandler = () => {
         navigation.goBack()
@@ -125,12 +133,12 @@ const FullFriendScreen = () => {
         setKeyword(textValue);
     }
 
-    const onPressProfileHandler = (id: String) => {
+    const onPressProfileHandler = (id: String | undefined) => {
         console.log(id);
         //Handle to Profile của bạn bè
     }
 
-    const onPressFriendOptionsHandler = (friend: TFriend) => {
+    const onPressFriendOptionsHandler = (friend: TFriend | undefined) => {
         toggleModal();
         setProfileFriend(friend);
 
@@ -162,25 +170,71 @@ const FullFriendScreen = () => {
                     <FontAwesome5Icon name="search" color="#000" size={20} />
                 </TouchableOpacity>
             </View>
-            <View style={styles.searchToolWrapper}>
-                <View style={styles.searchTool}>
-                    <View style={styles.btnSearchIcon}>
-                        <FontAwesome5Icon name="search" color="gray" size={16} />
-                    </View>
-                    <TextInput
-                        onChangeText={text => onChangeSearchInputHandler({ text })}
-                        style={styles.searchInput} placeholder="Tìm kiếm bạn bè">
+            {total === '0' ? (<View></View>) :
+                (<View style={styles.searchToolWrapper}>
+                    <View style={styles.searchTool}>
+                        <View style={styles.btnSearchIcon}>
+                            <FontAwesome5Icon name="search" color="gray" size={16} />
+                        </View>
+                        <TextInput
+                            onChangeText={text => onChangeSearchInputHandler({ text })}
+                            style={styles.searchInput} placeholder="Tìm kiếm bạn bè">
 
-                    </TextInput>
+                        </TextInput>
+                    </View>
+                </View>)}
+            {total === '0' ? (<View style={{
+                paddingHorizontal: 40,
+                height: SCREEN_HEIGHT - (STATUSBAR_HEIGHT + 20),
+                backgroundColor: '#fff',
+                alignItems: 'center'
+            }}>
+                <Image
+                    source={require('@/Assets/Images/SignUpLogo.png')}
+                    resizeMode="contain"
+                    style={{
+                        width: 200,
+                        height: 200,
+                        marginTop: 100
+                    }}
+                />
+                <View style={{ marginVertical: 15 }}>
+                    <Text style={{
+                        fontSize: 18,
+                        fontWeight: '700',
+                        color: '#000'
+                    }}>Chưa có bạn bè</Text>
                 </View>
-            </View>
-            <ScrollView
+                <View>
+                    <Text style={{
+                        fontSize: 15,
+                        fontWeight: '400',
+                        color: '#000',
+                        textAlign: 'center'
+                    }}>Tất cả bạn bè sẽ xuất hiện ở đây</Text>
+                </View>
+                <TouchableOpacity
+                    style={{
+                        height: 40,
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        paddingHorizontal: 15,
+                        backgroundColor: '#318bfb',
+                        borderRadius: 8,
+                        marginHorizontal: 5,
+                        marginTop: 20
+                    }}
+                //onPress={onPressSuggestHandler}
+                >
+                    <Text style={{ fontSize: 16, fontWeight: "500", color: '#fff' }}>Xem gợi ý kết bạn</Text>
+                </TouchableOpacity>
+            </View>) : (<ScrollView
                 style={styles.friendsWrapper}
                 bounces={false}
                 showsVerticalScrollIndicator={false}
             >
                 <View style={styles.friendsWrapperHeader}>
-                    <Text style={styles.friendsCount}>{userFriends.total} người bạn</Text>
+                    <Text style={styles.friendsCount}>{total} người bạn</Text>
                     <TouchableOpacity
                         onPress={onPressArrangeHandler}
                         activeOpacity={0.5}>
@@ -190,18 +244,18 @@ const FullFriendScreen = () => {
                     </TouchableOpacity>
                 </View>
                 <View style={styles.friends}>
-                    {userFriends.friends.map((friend, index) => (
+                    {userFriends.map((friend, index) => (
                         <View key={index}>
                             {
-                                friend.username.toLowerCase().indexOf(keyword) > -1 ? (
+                                (friend?.username || '').toLowerCase().indexOf(keyword) > -1 ? (
                                     <TouchableOpacity
-                                        onPress={onPressProfileHandler.bind(this, friend.id)}
+                                        onPress={onPressProfileHandler.bind(this, friend?.id)}
                                         key={index}
                                         style={styles.friendItem}>
-                                        <Image source={{ uri: friend.avatar }} style={styles.friendAvatar} />
+                                        <Image source={{ uri: friend?.avatar }} style={styles.friendAvatar} />
                                         <View style={styles.friendInfoWrapper}>
-                                            <Text style={styles.friendName}>{friend.username}</Text>
-                                            <Text style={styles.friendMutualCount}>{friend.same_friends} bạn chung</Text>
+                                            <Text style={styles.friendName}>{friend?.username}</Text>
+                                            {friend?.same_friends === '0' ? (<View style={{ marginVertical: 5 }}></View>) : (<Text style={styles.friendMutualCount}>{friend?.same_friends} bạn chung</Text>)}
                                         </View>
                                         <TouchableOpacity
                                             onPress={onPressFriendOptionsHandler.bind(this, friend)}
@@ -214,7 +268,7 @@ const FullFriendScreen = () => {
                         </View>
                     ))}
                 </View>
-            </ScrollView>
+            </ScrollView>)}
             <Modal
                 isVisible={isModalVisible}
                 onBackdropPress={toggleModal}
@@ -223,9 +277,12 @@ const FullFriendScreen = () => {
                 onSwipeComplete={() => setModalVisible(false)}
                 useNativeDriverForBackdrop
                 swipeDirection={['down']}
-                style={{ margin: 5, borderRadius: 50 }}
+                style={{
+                    margin: 5, borderRadius: 50, flex: 1,
+                    justifyContent: 'flex-end',
+                }}
             >
-                <FriendOption friend={ProfileFriend} />
+                <FriendOption friend={ProfileFriend} toggleModal={toggleModal} toggleModalBlock={toggleModal2} toggleModalUnFriend={toggleModal3} />
             </Modal>
             <Modal
                 isVisible={isModalArrageVisible}
@@ -235,9 +292,42 @@ const FullFriendScreen = () => {
                 onSwipeComplete={() => setModalArrageVisible(false)}
                 useNativeDriverForBackdrop
                 swipeDirection={['down']}
-                style={{ margin: 5, borderRadius: 50 }}
+                style={{
+                    margin: 5, borderRadius: 50, flex: 1,
+                    justifyContent: 'flex-end',
+                }}
             >
                 <ArrangeWrapper />
+            </Modal>
+            {/* Model AlertBlock */}
+            <Modal
+                isVisible={isModalVisible2}
+                onBackdropPress={toggleModal2}
+                onBackButtonPress={toggleModal2}
+                backdropOpacity={0.3}
+                onSwipeComplete={() => setModalVisible2(false)}
+                useNativeDriverForBackdrop
+                swipeDirection={['down']}
+                style={{
+                    margin: 5, borderRadius: 50, alignItems: 'center'
+                }}
+            >
+                <BlockAlert friend={ProfileFriend} toggleModal={toggleModal2} />
+            </Modal>
+            {/* Model AlertUnFriend */}
+            <Modal
+                isVisible={isModalVisible3}
+                onBackdropPress={toggleModal3}
+                onBackButtonPress={toggleModal3}
+                backdropOpacity={0.3}
+                onSwipeComplete={() => setModalVisible3(false)}
+                useNativeDriverForBackdrop
+                swipeDirection={['down']}
+                style={{
+                    margin: 5, borderRadius: 50, alignItems: 'center'
+                }}
+            >
+                <UnFriendAlert friend={ProfileFriend} toggleModal={toggleModal3} />
             </Modal>
         </View>
     );

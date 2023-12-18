@@ -7,20 +7,25 @@ import FontAwesome5Icon from 'react-native-vector-icons/FontAwesome5';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 interface IMyProps {
-    friend: TFriend
+    friend: TFriend | undefined,
+    toggleModal: () => void,
+    toggleModalBlock: () => void,
+    toggleModalUnFriend: () => void
 }
 
 const FriendOption: React.FC<IMyProps> = (props) => {
 
     const friend = props.friend;
-    const lastNameFriend = friend.username.split(" ")[friend.username.split(" ").length - 1];
+    const lastNameFriend = friend?.username.split(" ")[friend.username.split(" ").length - 1];
 
     const onPressUnFriendHandler = () => {
-        // Chuyển sang Model "bạn có chắc ...."
+        props.toggleModal();
+        props.toggleModalUnFriend();
     }
 
     const onPressBlockHandler = () => {
-        // CHuyển sang Model "Bạn có chắc ........"
+        props.toggleModal();
+        props.toggleModalBlock();
     }
     const onPressProfileHandler = () => {
         //Handle sang trang cá nhân Friend
@@ -36,12 +41,12 @@ const FriendOption: React.FC<IMyProps> = (props) => {
         <View style={styles.postOptionsWrapper}>
             <TouchableOpacity onPress={onPressProfileHandler.bind(this)} style={styles.postOptionHeaderWrapper}>
                 <View style={styles.postOptionItem}>
-                    <Image source={{ uri: friend.avatar }} style={styles.friendAvatar} />
+                    <Image source={{ uri: friend?.avatar }} style={styles.friendAvatar} />
                     <View>
                         <Text style={{
                             fontSize: 20,
                             fontWeight: 'bold'
-                        }}>{friend.username}</Text>
+                        }}>{friend?.username}</Text>
                         <Text style={styles.postOptionTitle}>Là bạn bè từ tháng 1 năm 2020</Text>
                     </View>
                 </View>
@@ -69,7 +74,7 @@ const FriendOption: React.FC<IMyProps> = (props) => {
                     </View>
                 </View>
             </TouchableOpacity>
-            <TouchableOpacity onPress={onPressBlockHandler.bind(this)} style={styles.postOptionItemWrapper}>
+            <TouchableOpacity onPress={onPressBlockHandler} style={styles.postOptionItemWrapper}>
                 <View style={styles.postOptionItem}>
                     <View style={styles.optionIcon}><MaterialCommunityIcons name="account-cancel-outline" size={24}></MaterialCommunityIcons></View>
                     <View>

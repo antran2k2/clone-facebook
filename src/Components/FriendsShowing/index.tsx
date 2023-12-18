@@ -31,7 +31,7 @@ const FriendsShowing: React.FC<IMyProps> = (props) => {
         <View style={styles.friendsWrapper}>
             <View style={{ backgroundColor: "#000", borderRadius: 5, }}>
                 <TouchableOpacity
-                    // onPress={this.onPressViewAllFriendsHandler.bind(this)}
+                    onPress={onPressViewAllFriendsHandler}
                     activeOpacity={0.8} style={styles.friendsBar}>
                     <View>
                         <Text style={{ fontSize: 20, fontWeight: 'bold' }}>Bạn bè</Text>

@@ -44,3 +44,9 @@ export type TUserFriend = {
   friends: Array<TFriend>;
   total: String;
 }
+
+export type TRequestFriend = {
+  //requests: any;
+  request: Array<TFriend> | undefined;
+  total: String;
+}
