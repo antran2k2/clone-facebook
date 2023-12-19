@@ -44,3 +44,9 @@ export type TUserFriend = {
   friends: Array<TFriend>;
   total: String;
 }
+
+export type TBlockUser = {
+  id: string;
+  username: string;
+  avatar: string;
+}
