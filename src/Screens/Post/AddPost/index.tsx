@@ -14,6 +14,7 @@ import {useAddPostMutation} from '@/Redux/api/post';
 import {AddPostDTO} from '@/types/post.type';
 import {useAppSelector} from '@/Redux/store';
 import EntypoIcon from 'react-native-vector-icons/Entypo';
+import axios from 'axios';
 const screenWidth = Dimensions.get('window').width;
 
 const AddPostScreen = () => {
@@ -22,28 +23,38 @@ const AddPostScreen = () => {
   const [postText, setPostText] = useState('');
   const [response, setResponse] = React.useState<any>(null);
   const [addPost, {isLoading}] = useAddPostMutation();
-  const [formData, setFormData] = useState(new FormData());
   const [textValue, setTextValue] = useState('');
   const handlePost = () => {
-    // const formData = new FormData();
+    const formData = new FormData();
     // formData.append('image', response.assets);
-    // formData.append('described', 'ahaih');
 
-    console.log('form:', formData);
-    const fileUri = 'file://path/to/your/file.jpg';
+    // Duyệt qua mảng assets và gán thông tin vào mảng arr
+    response.assets.forEach(asset => {
+      const uri = asset.uri;
+      const name = asset.fileName;
+      const type = asset.type;
 
-    // Append the file to FormData
-    formData.append('file', {
-      uri: fileUri,
-      name: 'file.jpg',
-      type: 'image/jpeg',
+      // Thêm thông tin vào mảng arr
+      formData.append('video', {uri, name, type});
     });
+    // console.log('mảng ảnh', response);
 
-    // You can also append other data as key-value pairs
-    formData.append('textData', textValue);
+    formData.append('described', 'test123 image');
+    formData.append('status', 'happy');
+    formData.append('auto_accept', '1');
+    // addPost(formData)
+    //   .unwrap()
+    //   .then(res => console.log(res.data));
+    console.log('Post:', formData);
 
-    // addPost(formData);
-    console.log('Post:', postText);
+    axios
+      .post('https://it4788.catan.io.vn/add_post', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      })
+      .then(res => console.log(res.data))
+      .catch(err => console.log(err.request._response));
   };
   const onButtonPress = React.useCallback((type, options) => {
     if (type === 'capture') {
@@ -65,6 +76,7 @@ const AddPostScreen = () => {
         <View style={styles.group}>
           <TouchableOpacity
             // onPress={() => props.navigation.goBack()}
+            onPress={handlePost}
             style={styles.button}>
             <Text style={styles.dang}>Đăng</Text>
           </TouchableOpacity>
@@ -97,7 +109,7 @@ const AddPostScreen = () => {
             onPress={() =>
               onButtonPress('library', {
                 selectionLimit: 0,
-                // mediaType: 'photo',
+                mediaType: 'photo',
                 includeBase64: false,
                 includeExtra: true,
               })
@@ -109,7 +121,17 @@ const AddPostScreen = () => {
           </TouchableOpacity>
         </View>
         <View style={styles.group4}>
-          <TouchableOpacity style={styles.button3}>
+          <TouchableOpacity
+            style={styles.button3}
+            onPress={() =>
+              onButtonPress('capture', {
+                selectionLimit: 0,
+                mediaType: 'video',
+                formatAsMp4: true,
+                includeBase64: false,
+                includeExtra: true,
+              })
+            }>
             <View style={styles.icon2Row}>
               <EntypoIcon name="video" style={styles.icon2} />
               <Text style={styles.video}>Video</Text>

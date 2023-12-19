@@ -13,7 +13,7 @@ import {useNavigation} from '@react-navigation/native';
 import {ScreenNavigationProp} from '@/Routes/Stack';
 import {TextInput} from 'react-native-paper';
 import {useLoginMutation} from '@/Redux/api/auth';
-// import uuid from 'react-native-uuid';
+import uuid from 'react-native-uuid';
 import messaging from '@react-native-firebase/messaging';
 
 const LoginScreen = () => {
@@ -47,7 +47,7 @@ const LoginScreen = () => {
       return;
     }
     // loginMutate({email, password, uuid: uuid.v4().toString()})
-    loginMutate({email, password, uuid: tokenm})
+    loginMutate({email, password, uuid: uuid.v4().toString()})
       .unwrap()
       .then(data => {
         // navigation.navigate('Main');
@@ -59,7 +59,6 @@ const LoginScreen = () => {
       })
       .catch(err => {
         Alert.alert('Đăng nhập thất bại');
-        console.log(err);
       });
   };
 

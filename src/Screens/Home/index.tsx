@@ -23,9 +23,8 @@ const HomeScreen = () => {
   const {avatar, id: userId, username} = useAppSelector(state => state.info);
   const navigation = useNavigation<ScreenNavigationProp>();
   const [mutateFeel, {isLoading}] = useFeelMutation();
-
   const initParams: GetListPostsDTO = {
-    user_id: userId || '0',
+    user_id: userId || '12',
     index: '1',
     count: '10',
   };
@@ -90,7 +89,7 @@ const HomeScreen = () => {
     setParam(prevParam => ({...prevParam, last_id: lastId}));
   };
   const handleTouchHeader = (item: any) => {
-    navigation.navigate('PostDetail', {postId: item.id});
+    navigation.navigate('PostDetail', {postId: '908'});
   };
   const handleTouchThreeDot = (item: any) => {
     setModalVisible(!isModalVisible);
@@ -132,7 +131,7 @@ const HomeScreen = () => {
         <Text style={styles.subtitle}>
           {isLoadingPosts ? 'Loading...' : ''}
         </Text>
-        <Text style={styles.subtitle}>user: {username}</Text>
+        <Text style={styles.subtitle}>user: {userId}</Text>
         <Text onPress={handleLogout} style={styles.subtitle}>
           Logout
         </Text>

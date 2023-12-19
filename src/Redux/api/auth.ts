@@ -87,6 +87,33 @@ export const authApi = createApi({
       }),
       invalidatesTags: ['Auth'],
     }),
+    checkEmail: builder.mutation<TResponse<any>, {email: string}>({
+      query: data => ({
+        url: '/check_email',
+        method: 'post',
+        data: data,
+      }),
+      invalidatesTags: ['Auth'],
+    }),
+    deactiveUser: builder.mutation<TResponse<any>, void>({
+      query: () => ({
+        url: '/deactive_user',
+        method: 'post',
+      }),
+      invalidatesTags: ['Auth'],
+    }),
+    restoreUser: builder.mutation<
+      TResponse<any>,
+      {email: string; code_verify: string}
+    >({
+      query: data => ({
+        url: '/restore_user',
+        method: 'post',
+        data: data,
+      }),
+
+      invalidatesTags: ['Auth'],
+    }),
   }),
 });
 export const {

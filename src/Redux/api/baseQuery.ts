@@ -10,7 +10,7 @@ const baseUrl = Config.API_URL as string;
 axios.interceptors.request.use(config => {
   const token = getToken(store.getState());
   config.headers = {
-    // 'Content-Type': 'multipart/form-data; boundary=some-random-value',
+    'Content-Type': 'multipart/form-data',
     Accept: '*/*',
     Authorization: 'Bearer ' + token,
   } as AxiosRequestHeaders;

@@ -14,18 +14,15 @@ export const postApi = createApi({
   baseQuery: baseQuery,
   tagTypes: ['Post'],
   endpoints: builder => ({
-    addPost: builder.mutation<TResponse<any>, AddPostDTO>({
+    addPost: builder.mutation<TResponse<any>, FormData>({
       query: data => {
-        var bodyFormData = new FormData();
-        bodyFormData.append('file', data.image);
-        console.log({bodyFormData});
         return {
           url: '/add_post',
           method: 'POST',
           headers: {
             'Content-Type': 'multipart/form-data;',
           },
-          body: bodyFormData,
+          data: data,
           formData: true,
         };
       },
