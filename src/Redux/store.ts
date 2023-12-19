@@ -17,7 +17,9 @@ import {postApi} from './api/post';
 import {commentApi} from './api/comment';
 import {friendApi} from './api/friend';
 import {blockApi} from './api/block';
-
+import {searchApi} from './api/search';
+import {settingApi} from './api/setting';
+import {notificationApi} from './api/notification';
 const reducers = combineReducers({
   signUpInfo: signUpInfoReducer,
   auth: authReducer,
@@ -27,13 +29,25 @@ const reducers = combineReducers({
   [commentApi.reducerPath]: commentApi.reducer,
   [friendApi.reducerPath]: friendApi.reducer,
   [blockApi.reducerPath]: blockApi.reducer,
+  [searchApi.reducerPath]: searchApi.reducer,
+  [settingApi.reducerPath]: settingApi.reducer,
+  [notificationApi.reducerPath]: notificationApi.reducer,
 });
 
 const persistConfig = {
   key: 'root',
   storage: AsyncStorage,
   whitelist: ['auth', 'signUpInfo'],
-  blacklist: [authApi.reducerPath, postApi.reducerPath],
+  blacklist: [
+    authApi.reducerPath,
+    postApi.reducerPath,
+    commentApi.reducerPath,
+    friendApi.reducerPath,
+    blockApi.reducerPath,
+    searchApi.reducerPath,
+    settingApi.reducerPath,
+    notificationApi.reducerPath,
+  ],
 };
 
 const persistedReducer = persistReducer(persistConfig, reducers);
@@ -58,6 +72,9 @@ export const store = configureStore({
       commentApi.middleware,
       friendApi.middleware,
       blockApi.middleware,
+      searchApi.middleware,
+      settingApi.middleware,
+      notificationApi.middleware,
       rtkQueryErrorLogger,
     ),
 });

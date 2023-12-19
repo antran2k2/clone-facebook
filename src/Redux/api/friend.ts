@@ -18,15 +18,72 @@ export const friendApi = createApi({
       }),
       providesTags: ['Friend'],
     }),
-    setBlock: builder.mutation<TResponse, {user_id: string}>({
+    getRequestedFriends: builder.query<
+      TResponse,
+      {count: string; index: string}
+    >({
       query: data => ({
-        url: '/set_block',
+        url: '/get_requested_friends',
         method: 'POST',
-        body: data,
+        data: data,
+      }),
+      providesTags: ['Friend'],
+    }),
+    setRequestFriend: builder.mutation<TResponse, {user_id: string}>({
+      query: data => ({
+        url: '/set_request_friend',
+        method: 'POST',
+        data: data,
+      }),
+      invalidatesTags: ['Friend'],
+    }),
+    setAcceptFriend: builder.mutation<
+      TResponse,
+      {user_id: string; is_accept: string}
+    >({
+      query: data => ({
+        url: '/set_accept_friend',
+        method: 'POST',
+        data: data,
+      }),
+      invalidatesTags: ['Friend'],
+    }),
+    getSuggestedFriends: builder.query<
+      TResponse,
+      {count: string; index: string}
+    >({
+      query: data => ({
+        url: '/get_suggested_friends',
+        method: 'POST',
+        data: data,
+      }),
+      providesTags: ['Friend'],
+    }),
+    unFriend: builder.mutation<TResponse, {user_id: string}>({
+      query: data => ({
+        url: '/unfriend',
+        method: 'POST',
+        data: data,
+      }),
+      invalidatesTags: ['Friend'],
+    }),
+    delRequestFriend: builder.mutation<TResponse, {user_id: string}>({
+      query: data => ({
+        url: '/del_request_friend',
+        method: 'POST',
+        data: data,
       }),
       invalidatesTags: ['Friend'],
     }),
   }),
 });
 
-export const {useGetUserFriendsQuery} = friendApi;
+export const {
+  useGetUserFriendsQuery,
+  useGetRequestedFriendsQuery,
+  useSetRequestFriendMutation,
+  useSetAcceptFriendMutation,
+  useGetSuggestedFriendsQuery,
+  useUnFriendMutation,
+  useDelRequestFriendMutation,
+} = friendApi;

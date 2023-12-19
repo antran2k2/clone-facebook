@@ -2,7 +2,6 @@ import {createApi} from '@reduxjs/toolkit/query/react';
 import baseQuery from './baseQuery';
 import {TResponse} from '@/types/response.type';
 import {
-  AddPostDTO,
   GetListPostsDTO,
   ReportPostDTO,
   TPost,
@@ -45,11 +44,14 @@ export const postApi = createApi({
         data: data,
       }),
     }),
-    editPost: builder.mutation<TResponse<any>, {payload: FormData}>({
-      query: ({payload}) => ({
+    editPost: builder.mutation<TResponse<any>, FormData>({
+      query: payload => ({
         url: '/edit_post',
         method: 'post',
-        body: payload,
+        data: payload,
+        headers: {
+          'Content-Type': 'multipart/form-data;',
+        },
         formData: true,
       }),
     }),
@@ -67,6 +69,27 @@ export const postApi = createApi({
         data: data,
       }),
     }),
+    getNewPosts: builder.query<TResponse<{post: TPost[]}>, {count: string}>({
+      query: data => ({
+        url: '/get_new_posts',
+        method: 'post',
+        data: data,
+      }),
+    }),
+    setViewedPost: builder.mutation<TResponse<any>, {id: string}>({
+      query: data => ({
+        url: '/set_viewed_post',
+        method: 'post',
+        data: data,
+      }),
+    }),
+    getListVideos: builder.query<TResponse, any>({
+      query: data => ({
+        url: '/get_list_videos',
+        method: 'post',
+        data: data,
+      }),
+    }),
   }),
 });
 
@@ -78,4 +101,7 @@ export const {
   useReportPostMutation,
   useLazyGetListPostsQuery,
   useGetListPostsQuery,
+  useGetNewPostsQuery,
+  useSetViewedPostMutation,
+  useGetListVideosQuery,
 } = postApi;

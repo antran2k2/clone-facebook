@@ -123,4 +123,8 @@ export const {
   useGetVerifyCodeMutation,
   useResetPasswordMutation,
   useSignupMutation,
+  useChangePasswordMutation,
+  useCheckEmailMutation,
+  useDeactiveUserMutation,
+  useRestoreUserMutation,
 } = authApi;

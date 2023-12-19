@@ -7,16 +7,32 @@ export const commentApi = createApi({
   baseQuery: baseQuery,
   tagTypes: ['Comment'],
   endpoints: builder => ({
-    getMarkComment: builder.mutation<TResponse<any>, any>({
+    getMarkComment: builder.mutation<
+      TResponse<any>,
+      {
+        id: string;
+        index: string;
+        count: string;
+      }
+    >({
       query: data => ({
         url: '/get_mark_comment',
         method: 'post',
         data: data,
-        formData: true,
       }),
       invalidatesTags: ['Comment'],
     }),
-    setMarkComment: builder.mutation<TResponse<any>, any>({
+    setMarkComment: builder.mutation<
+      TResponse<any>,
+      {
+        id: string;
+        content: string;
+        index: string;
+        count: string;
+        mark_id: string;
+        type: string;
+      }
+    >({
       query: data => ({
         url: '/set_mark_comment',
         method: 'post',
@@ -33,6 +49,25 @@ export const commentApi = createApi({
       }),
       invalidatesTags: ['Comment'],
     }),
+    getListFeels: builder.mutation<
+      TResponse<any>,
+      {id: string; index: string; count: string}
+    >({
+      query: data => ({
+        url: '/get_list_feels',
+        method: 'post',
+        data: data,
+      }),
+      invalidatesTags: ['Comment'],
+    }),
+    deleteFeel: builder.mutation<TResponse<any>, {id: string}>({
+      query: data => ({
+        url: '/delete_feel',
+        method: 'post',
+        data: data,
+      }),
+      invalidatesTags: ['Comment'],
+    }),
   }),
 });
 
@@ -40,4 +75,6 @@ export const {
   useFeelMutation,
   useGetMarkCommentMutation,
   useSetMarkCommentMutation,
+  useGetListFeelsMutation,
+  useDeleteFeelMutation,
 } = commentApi;

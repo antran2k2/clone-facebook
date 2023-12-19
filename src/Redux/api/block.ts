@@ -23,7 +23,16 @@ export const blockApi = createApi({
       }),
       invalidatesTags: ['Block'],
     }),
+    unblock: builder.mutation<TResponse, {user_id: string}>({
+      query: data => ({
+        url: '/unblock',
+        method: 'POST',
+        data: data,
+      }),
+      invalidatesTags: ['Block'],
+    }),
   }),
 });
 
-export const {useGetListBlocksQuery, useSetBlockMutation} = blockApi;
+export const {useGetListBlocksQuery, useSetBlockMutation, useUnblockMutation} =
+  blockApi;

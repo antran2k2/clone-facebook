@@ -7,7 +7,7 @@ export type TProfile = {
   avatar: string;
 };
 
-type UserInfo = {
+export type UserInfo = {
   username: string;
   description: string;
   avatar: string;
@@ -23,11 +23,14 @@ export const profileApi = createApi({
   baseQuery: baseQuery,
   tagTypes: ['Profile'],
   endpoints: builder => ({
-    changeInfoAfterSignup: builder.mutation<TResponse<any>, TProfile>({
+    changeInfoAfterSignup: builder.mutation<TResponse<any>, FormData>({
       query: data => ({
         url: '/change_profile_after_signup',
         method: 'post',
         data: data,
+        headers: {
+          'Content-Type': 'multipart/form-data;',
+        },
         formData: true,
       }),
       invalidatesTags: ['Profile'],
@@ -40,11 +43,14 @@ export const profileApi = createApi({
       }),
       invalidatesTags: ['Profile'],
     }),
-    setUserInfo: builder.mutation<TResponse<any>, UserInfo>({
+    setUserInfo: builder.mutation<TResponse<any>, FormData>({
       query: data => ({
         url: '/set_user_info',
         method: 'post',
         data: data,
+        headers: {
+          'Content-Type': 'multipart/form-data;',
+        },
         formData: true,
       }),
       invalidatesTags: ['Profile'],
@@ -52,4 +58,8 @@ export const profileApi = createApi({
   }),
 });
 
-export const {useChangeInfoAfterSignupMutation} = profileApi;
+export const {
+  useChangeInfoAfterSignupMutation,
+  useGetUserInfoMutation,
+  useSetUserInfoMutation,
+} = profileApi;
