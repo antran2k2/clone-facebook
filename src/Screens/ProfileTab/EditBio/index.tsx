@@ -1,13 +1,8 @@
 import React, { MutableRefObject, useRef, useState } from "react";
 import { StyleSheet, View, Text, TouchableOpacity, ScrollView, TextInput, Dimensions, Image, Button, SafeAreaView, StatusBar, ImageBackground } from "react-native";
 import { useNavigation, useRoute } from '@react-navigation/native';
-import { ScreenNavigationProp, ScreenFullFriendProp, ScreenPreViewImageProp } from '@/Routes/Stack';
-import { TFriend, TUserFriend, TUserInfo } from '@/types/user.type';
+import { ScreenNavigationProp } from '@/Routes/Stack';
 import FontAwesome5Icon from "react-native-vector-icons/FontAwesome5";
-import { SCREEN_WIDTH, SCREEN_HEIGHT, STATUSBAR_HEIGHT } from '@/Constants'
-import Modal from "react-native-modal";
-import ArrangeWrapper from "@/Components/ArrangeWrapper";
-import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 
 //Giá trị User lấy trong Redux hoặc call API getUserInfo
 const user = {

@@ -6,18 +6,25 @@ import { useNavigation } from '@react-navigation/native';
 import FontAwesome5Icon from 'react-native-vector-icons/FontAwesome5';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
+interface IMyProps {
+    sortDataByCreateAt: () => void
+    toggleModal: () => void
+}
 
-const ArrangeWrapper = () => {
+const ArrangeWrapper: React.FC<IMyProps> = (props) => {
 
     const onPressDeafaulttHandler = () => {
-
+        props.toggleModal();
     }
 
     const onPressNewHandler = () => {
+        props.sortDataByCreateAt();
+        props.toggleModal();
+
 
     }
     const onPressOldHandler = () => {
-
+        props.toggleModal();
     }
 
     return (

@@ -4,9 +4,6 @@ import { useNavigation, useRoute } from '@react-navigation/native';
 import { ScreenNavigationProp, ScreenFullFriendProp } from '@/Routes/Stack';
 import { TFriend, TUserFriend, TUserInfo } from '@/types/user.type';
 import FontAwesome5Icon from "react-native-vector-icons/FontAwesome5";
-import { SCREEN_WIDTH, SCREEN_HEIGHT, STATUSBAR_HEIGHT } from '@/Constants'
-import Modal from "react-native-modal";
-import ArrangeWrapper from "@/Components/ArrangeWrapper";
 
 const EditPublicInfoScreen = () => {
     const navigation = useNavigation<ScreenNavigationProp>();

@@ -37,8 +37,9 @@ export type TFriend = {
   username: string;
   avatar: string;
   same_friends: string;
-  created: Date;
+  created: string;
 }
+
 
 export type TUserFriend = {
   friends: Array<TFriend>;

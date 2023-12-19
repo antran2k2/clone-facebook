@@ -38,6 +38,7 @@ import EditBioScreen from '@/Screens/ProfileTab/EditBio';
 import EditLinkScreen from '@/Screens/ProfileTab/EditLink';
 import EditDetailScreen from '@/Screens/ProfileTab/EditDetail';
 import SettingPersonalPageScreen from '@/Screens/ProfileTab/SettingPersonalPage';
+import SetAvatarScreen from '@/Screens/Signup/SetAvatar';
 
 export type RootStackParamList = {
   Main: undefined;
@@ -52,6 +53,7 @@ export type RootStackParamList = {
   Confirm: undefined;
   WebViewPolicy: { url: string };
   Rules: undefined;
+  SetAvatar: undefined;
   AddPost: undefined;
   SettingTab: undefined /* Thực tế cần truyền userId để lấy ảnh và tên người dùng */;
   SettingAccount: undefined;
@@ -97,7 +99,7 @@ function MyStack() {
   }, [nav, token]);
   return (
     <Stack.Navigator
-      initialRouteName="ProfileTab"
+      initialRouteName="FriendRequest"
       screenOptions={{
         headerShown: false,
       }}>
@@ -166,6 +168,7 @@ function MyStack() {
           options={{ title: '' }}
         />
       </Stack.Group>
+      <Stack.Screen name="SetAvatar" component={SetAvatarScreen} />
       <Stack.Screen name="ProfileTab" component={ProfileTabScreen} />
       <Stack.Screen name="EditPublicInfo" component={EditPublicInfoScreen} />
       <Stack.Screen name="EditBio" component={EditBioScreen} />

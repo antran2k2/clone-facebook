@@ -9,6 +9,13 @@ import Modal from "react-native-modal";
 import ArrangeWrapper from "@/Components/ArrangeWrapper";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import BlockAlert from "@/Components/BlockAlert";
+import dayjs from "dayjs";
+
+
+// const dayjs = require("dayjs");
+// var duration = require("dayjs/plugin/duration");
+// dayjs.extend(duration);
+
 
 const FriendRequestScreen = () => {
     const navigation = useNavigation<ScreenNavigationProp>();
@@ -20,63 +27,63 @@ const FriendRequestScreen = () => {
                 username: 'Vũ Đức Thịnh',
                 avatar: 'https://scontent.fhan15-2.fna.fbcdn.net/v/t1.6435-9/91187383_681877419287479_6192504020834189312_n.jpg?_nc_cat=110&ccb=1-7&_nc_sid=be3454&_nc_ohc=wFpXFhbBrBAAX9G0dGg&_nc_ht=scontent.fhan15-2.fna&oh=00_AfC-9okk9HyJUKVNQO_fFE8SIB4QH9L_FBBK0Wj8UX4S5Q&oe=658631E9',
                 same_friends: '5',
-                created: new Date(),
+                created: "2023-6-13T07:37:51.804Z",
             },
             {
                 id: '3',
                 username: 'Thanh Huy',
                 avatar: 'https://thuthuatnhanh.com/wp-content/uploads/2020/10/anh-dai-dien-ca-tinh-dac-biet-ke-bi-an-trum-mu.jpg',
                 same_friends: '0',
-                created: new Date(),
+                created: "2023-6-12T07:37:51.804Z",
             },
             {
                 id: '4',
                 username: 'Hương Giang',
                 avatar: 'https://thuthuatnhanh.com/wp-content/uploads/2021/02/Avatar-cho-con-gai-chat-lu.jpg',
                 same_friends: '5',
-                created: new Date(),
+                created: "2023-6-11T07:37:51.804Z",
             },
             {
                 id: '5',
                 username: 'Đinh Tuấn Hưng',
                 avatar: 'https://thuthuatnhanh.com/wp-content/uploads/2018/07/anh-avatar-dep.jpg',
                 same_friends: '5',
-                created: new Date(),
+                created: "2023-6-14T07:37:51.804Z",
             },
             {
                 id: '6',
                 username: 'Nguyễn An',
                 avatar: 'https://inkythuatso.com/uploads/thumbnails/800/2022/03/anh-dai-dien-facebook-dep-cho-nam-51-28-16-28-03.jpg',
                 same_friends: '5',
-                created: new Date(),
+                created: "2023-6-15T07:37:51.804Z",
             },
             {
                 id: '7',
                 username: 'Phạm Minh Quân',
                 avatar: 'https://dulich3mien.vn/wp-content/uploads/2023/04/Anh-Avatar-doi-13.jpg',
                 same_friends: '5',
-                created: new Date(),
+                created: "2023-6-17T07:39:51.804Z",
             },
             {
                 id: '8',
                 username: 'Phạm Minh Quân1',
                 avatar: 'https://dulich3mien.vn/wp-content/uploads/2023/04/Anh-Avatar-doi-13.jpg',
                 same_friends: '5',
-                created: new Date(),
+                created: "2023-6-18T07:37:51.804Z",
             },
             {
                 id: '9',
                 username: 'Phạm Minh Quân2',
                 avatar: 'https://dulich3mien.vn/wp-content/uploads/2023/04/Anh-Avatar-doi-13.jpg',
                 same_friends: '5',
-                created: new Date(),
+                created: "2023-6-20T07:37:51.804Z",
             },
             {
                 id: '10',
                 username: 'Phạm Minh Quân3',
                 avatar: 'https://dulich3mien.vn/wp-content/uploads/2023/04/Anh-Avatar-doi-13.jpg',
                 same_friends: '5',
-                created: new Date(),
+                created: "2023-6-22T07:37:51.804Z",
             }
         ],
         total: '9'
@@ -182,6 +189,18 @@ const FriendRequestScreen = () => {
     const onPressBlockHandler = () => {
         toggleModal4();
         toggleModal5();
+    }
+
+    const sortDataByCreateAt = () => {
+        if (friendRequests.length > 0) {
+            const new_data = friendRequests.sort((a, b) => {
+                const dateA = dayjs(a?.created);
+                const dateB = dayjs(b?.created);
+
+                return dateA.isAfter(dateB) ? -1 : 1;
+            });
+            setFriendRequests(new_data);
+        }
     }
 
     return (
@@ -323,7 +342,7 @@ const FriendRequestScreen = () => {
                     justifyContent: 'flex-end',
                 }}
             >
-                <ArrangeWrapper />
+                <ArrangeWrapper sortDataByCreateAt={sortDataByCreateAt} toggleModal={toggleModal1} />
             </Modal>
             {/* Model Chấp nhận */}
             <Modal
