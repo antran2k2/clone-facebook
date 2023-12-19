@@ -15,6 +15,8 @@ import infoReducer from './reducer/userInfo';
 import {ErrorCode} from '@/types/response.type';
 import {postApi} from './api/post';
 import {commentApi} from './api/comment';
+import {friendApi} from './api/friend';
+import {blockApi} from './api/block';
 
 const reducers = combineReducers({
   signUpInfo: signUpInfoReducer,
@@ -23,6 +25,8 @@ const reducers = combineReducers({
   [authApi.reducerPath]: authApi.reducer,
   [postApi.reducerPath]: postApi.reducer,
   [commentApi.reducerPath]: commentApi.reducer,
+  [friendApi.reducerPath]: friendApi.reducer,
+  [blockApi.reducerPath]: blockApi.reducer,
 });
 
 const persistConfig = {
@@ -52,6 +56,8 @@ export const store = configureStore({
       authApi.middleware,
       postApi.middleware,
       commentApi.middleware,
+      friendApi.middleware,
+      blockApi.middleware,
       rtkQueryErrorLogger,
     ),
 });

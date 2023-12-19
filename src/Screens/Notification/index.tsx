@@ -8,7 +8,6 @@ import {
 } from 'react-native';
 import FontAwesome5Icon from 'react-native-vector-icons/FontAwesome5';
 import NotificationList from '@/Components/NotificationList';
-import dayjs from 'dayjs';
 
 export interface Notification {
   id: string;

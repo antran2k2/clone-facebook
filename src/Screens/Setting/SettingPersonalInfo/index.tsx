@@ -1,22 +1,23 @@
-import { ScreenSettingPersonalInfoProp } from '@/Routes/Stack';
 import React from 'react';
-import { useRoute } from '@react-navigation/native';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import FontAwesome6 from 'react-native-vector-icons/FontAwesome6';
+import { useNavigation } from '@react-navigation/native';
+import { ScreenNavigationProp } from '@/Routes/Stack';
 
 const SettingPersonalInfoScreen = () => {
 
-    const route = useRoute<ScreenSettingPersonalInfoProp>();
+    const navigation = useNavigation<ScreenNavigationProp>();
+    const name = 'Nguyễn Văn A';
 
     return (
         <View style={styles.container}>
             <Text style={styles.title_screen}>Thông tin cá nhân</Text>
             <View style={styles.main_body}>
                 <Text style={styles.common}>Chung</Text>
-                <TouchableOpacity style={styles.setting_name_option}>
+                <TouchableOpacity onPress={() => {navigation.navigate('SettingName');}} style={styles.setting_name_option}>
                     <View>
                         <Text style={styles.key}>Tên</Text>
-                        <Text style={styles.value}>{route.params.name}</Text>
+                        <Text style={styles.value}>{name}</Text>
                     </View>
                     <View><FontAwesome6 name="chevron-right" size={26} /></View>
                 </TouchableOpacity>

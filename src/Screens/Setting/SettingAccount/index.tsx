@@ -15,18 +15,25 @@ const SettingAccountScreen = () => {
                 <Text style={styles.title}>Cài đặt tài khoản</Text>
                 <Text style={styles.description}>Quản lý thông tin về bạn, bảo mật cũng như tài khoản nói chung.</Text>
                 <View style={styles.setting_options_container}>
-                    <TouchableOpacity onPress={() => {navigation.navigate('SettingPersonalInfo', { name: 'Nguyễn Văn A' });}} style={styles.setting_item}>
+                    <TouchableOpacity onPress={() => {navigation.navigate('SettingPersonalInfo');}} style={styles.setting_item}>
                         <View><FontAwesome6 style={styles.icon} name="user-circle" size={32} color={'black'} /></View>
                         <View style={styles.title_description}>
                             <Text style={styles.title_option}>Thông tin cá nhân</Text>
                             <Text style={styles.description_option}>Cập nhật tên của bạn.</Text>
                         </View>
                     </TouchableOpacity>
-                    <TouchableOpacity style={styles.setting_item}>
+                    <TouchableOpacity onPress={() => navigation.navigate('SettingSecurity')} style={styles.setting_item}>
                         <View><FontAwesome6 style={styles.icon} name="user-shield" size={27} color={'black'} /></View>
                         <View style={styles.title_description}>
                             <Text style={styles.title_option}>Bảo mật</Text>
                             <Text style={styles.description_option}>Đổi mật khẩu để tăng cường bảo mật cho tài khoản của bạn.</Text>
+                        </View>
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={() => navigation.navigate('SettingNotification')} style={styles.setting_item}>
+                        <View><FontAwesome6 style={styles.icon} name="bell" size={27} color={'black'} /></View>
+                        <View style={styles.title_description}>
+                            <Text style={styles.title_option}>Thông báo</Text>
+                            <Text style={styles.description_option}>Lựa chọn chức năng nhận thông báo và thiết lập thông báo đẩy</Text>
                         </View>
                     </TouchableOpacity>
                 </View>
@@ -35,7 +42,7 @@ const SettingAccountScreen = () => {
                 <Text style={styles.title}>Quyền riêng tư</Text>
                 <Text style={styles.description}>Quản lý quyền riêng tư của bạn trên Facebook.</Text>
                 <View style={styles.setting_options_container}>
-                    <TouchableOpacity style={styles.setting_item}>
+                    <TouchableOpacity onPress={() => navigation.navigate('Blocking')} style={styles.setting_item}>
                         <View><MaterialIcons style={styles.icon} name="block" size={32} color={'black'} /></View>
                         <View style={styles.title_description}>
                             <Text style={styles.title_option}>Chặn</Text>
@@ -97,7 +104,7 @@ const styles = StyleSheet.create({
         fontSize: 18,
     },
     description_option: {
-        fontSize: 14,
+        fontSize: 15,
         fontWeight: '400',
         width: 315,
     },

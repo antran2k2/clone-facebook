@@ -29,6 +29,13 @@ import FullFriendScreen from '@/Screens/FriendTab/FullFriend';
 import {TUserFriend} from '@/types/user.type';
 import FriendRequestScreen from '@/Screens/FriendTab/FriendRequest';
 import PostDetailScreen from '@/Screens/Post/PostDetail';
+import SettingNameScreen from '@/Screens/Setting/SettingName';
+import SettingSecurityScreen from '@/Screens/Setting/SettingSecurity';
+import ChangePasswordScreen from '@/Screens/Setting/ChangePassword';
+import SettingNotificationScreen from '@/Screens/Setting/SettingNotification';
+import SettingPushScreen from '@/Screens/Setting/SettingPush';
+import BlockingScreen from '@/Screens/Setting/Blocking';
+import AddUserToBlockListScreen from '@/Screens/Setting/AddUserToBlockList';
 
 export type RootStackParamList = {
   Main: undefined;
@@ -46,9 +53,14 @@ export type RootStackParamList = {
   AddPost: undefined;
   SettingTab: undefined /* Thực tế cần truyền userId để lấy ảnh và tên người dùng */;
   SettingAccount: undefined;
-  SettingPersonalInfo: {
-    name: string;
-  } /* Thực tế nên truyền userId để lấy tên người dùng */;
+  SettingPersonalInfo: undefined;
+  SettingName: undefined;
+  SettingSecurity: undefined;
+  ChangePassword: undefined;
+  SettingNotification: undefined;
+  SettingPush: undefined;
+  Blocking: undefined;
+  AddUserToBlockList: undefined;
   ProfileTab: undefined;
   FullFriend: {user_id: string};
   FriendRequest: undefined;
@@ -60,10 +72,6 @@ export type ScreenNavigationProp =
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 export type ScreenPolicyProp = RouteProp<RootStackParamList, 'WebViewPolicy'>;
-export type ScreenSettingPersonalInfoProp = RouteProp<
-  RootStackParamList,
-  'SettingPersonalInfo'
->;
 export type ScreenFullFriendProp = RouteProp<RootStackParamList, 'FullFriend'>;
 
 function MyStack() {
@@ -93,6 +101,7 @@ function MyStack() {
         }}
       />
       <Stack.Screen name="SettingTab" component={SettingTabScreen} />
+      <Stack.Screen name="AddUserToBlockList" component={AddUserToBlockListScreen} />
       <Stack.Group
         screenOptions={{
           headerShown: true,
@@ -151,6 +160,36 @@ function MyStack() {
           name="SettingPersonalInfo"
           component={SettingPersonalInfoScreen}
           options={{title: ''}}
+        />
+        <Stack.Screen
+          name="SettingName"
+          component={SettingNameScreen}
+          options={{title: 'Tên'}}
+        />
+        <Stack.Screen
+          name="SettingSecurity"
+          component={SettingSecurityScreen}
+          options={{title: ''}}
+        />
+        <Stack.Screen
+          name="ChangePassword"
+          component={ChangePasswordScreen}
+          options={{title: 'Đổi mật khẩu'}}
+        />
+        <Stack.Screen
+          name="SettingNotification"
+          component={SettingNotificationScreen}
+          options={{title: 'Cài đặt thông báo'}}
+        />
+        <Stack.Screen
+          name="SettingPush"
+          component={SettingPushScreen}
+          options={{title: 'Đẩy'}}
+        />
+        <Stack.Screen
+          name="Blocking"
+          component={BlockingScreen}
+          options={{title: 'Chặn'}}
         />
       </Stack.Group>
       <Stack.Screen name="ProfileTab" component={ProfileTabScreen} />
