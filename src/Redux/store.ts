@@ -11,6 +11,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import {authApi} from './api/auth';
 import authReducer, {setToken} from './reducer/auth';
 import signUpInfoReducer from './reducer/signUpInfo';
+import infoReducer from './reducer/userInfo';
 import {ErrorCode} from '@/types/response.type';
 import {postApi} from './api/post';
 import {commentApi} from './api/comment';
@@ -18,6 +19,7 @@ import {commentApi} from './api/comment';
 const reducers = combineReducers({
   signUpInfo: signUpInfoReducer,
   auth: authReducer,
+  info: infoReducer,
   [authApi.reducerPath]: authApi.reducer,
   [postApi.reducerPath]: postApi.reducer,
   [commentApi.reducerPath]: commentApi.reducer,

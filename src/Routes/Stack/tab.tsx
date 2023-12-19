@@ -1,3 +1,4 @@
+/* eslint-disable react/no-unstable-nested-components */
 import React from 'react';
 
 import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs';
@@ -8,6 +9,9 @@ import VideoScreen from '@/Screens/Video';
 import {Dimensions} from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import SettingTabScreen from '@/Screens/Setting/SettingTab';
+import ProfileTabScreen from '@/Screens/ProfileTab';
+import FullFriendScreen from '@/Screens/FriendTab/FullFriend';
+import FriendRequestScreen from '@/Screens/FriendTab/FriendRequest';
 
 const numberOfTabs = 6; // your number of tabs
 
@@ -44,12 +48,7 @@ function MainTab() {
         />
         <Tab.Screen
           name="Friend"
-          component={FriendScreen}
-          listeners={({}) => ({
-            focus: () => {
-              console.log('focus friend');
-            },
-          })}
+          component={FriendRequestScreen}
           options={{
             tabBarIcon: ({focused}) => (
               <Icon
@@ -100,7 +99,7 @@ function MainTab() {
         />
         <Tab.Screen
           name="Profile"
-          component={NotificationScreen}
+          component={ProfileTabScreen}
           options={{
             tabBarIcon: ({focused}) => (
               <Icon

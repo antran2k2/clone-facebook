@@ -3,8 +3,11 @@ import {View, TouchableOpacity, Image, Text, StyleSheet} from 'react-native';
 import FontAweSome5 from 'react-native-vector-icons/FontAwesome5';
 import {useNavigation} from '@react-navigation/native';
 import {ScreenNavigationProp} from '@/Routes/Stack';
+import {useAppSelector} from '@/Redux/store';
 
 const PostTool = () => {
+  const {avatar, id: userId, username} = useAppSelector(state => state.info);
+
   const navigation = useNavigation<ScreenNavigationProp>();
 
   const onPress = () => {
@@ -15,7 +18,9 @@ const PostTool = () => {
       <View style={styles.postToolWrapper}>
         <TouchableOpacity activeOpacity={0.5}>
           <Image
-            source={require('@/Assets/Images/Avatar.png')}
+            // source={require('@/Assets/Images/Avatar.png')}
+            source={{uri: avatar || 'https://i.imgur.com/An9lt4E.png'}}
+            defaultSource={require('@/Assets/Images/Avatar.png')}
             style={styles.avatarImg}
           />
         </TouchableOpacity>

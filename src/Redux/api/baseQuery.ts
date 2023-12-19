@@ -1,6 +1,6 @@
 import {Config} from '@/Config';
 import {BaseQueryFn} from '@reduxjs/toolkit/query/react';
-import type {AxiosError, AxiosRequestConfig, AxiosRequestHeaders} from 'axios';
+import type {AxiosRequestConfig, AxiosRequestHeaders} from 'axios';
 import axios from 'axios';
 import {getToken} from '../reducer/auth';
 import {store} from '../store';
@@ -48,16 +48,21 @@ const baseQuery: BaseQueryFn<
     });
 
     return {data: result.data};
-  } catch (error: any) {
+  } catch (err: any) {
     console.error(
       'FAIL===========Vừa request đến url',
       baseUrl + url,
-      '=========================FAIL\n',
+      '=====================FAIL\n',
       // response,
-      error.request._response,
+      err.request._response,
     );
 
-    return {error: 123};
+    return {
+      error: {
+        code: err.request._response.code,
+        message: err.request._response.message,
+      },
+    };
   }
 };
 export default baseQuery;

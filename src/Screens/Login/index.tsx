@@ -50,7 +50,11 @@ const LoginScreen = () => {
     loginMutate({email, password, uuid: tokenm})
       .unwrap()
       .then(data => {
-        navigation.navigate('Home');
+        // navigation.navigate('Main');
+        navigation.reset({
+          index: 0,
+          routes: [{name: 'Main'}],
+        });
         console.log(data);
       })
       .catch(err => {

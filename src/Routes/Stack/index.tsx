@@ -28,6 +28,7 @@ import ProfileTabScreen from '@/Screens/ProfileTab';
 import FullFriendScreen from '@/Screens/FriendTab/FullFriend';
 import {TUserFriend} from '@/types/user.type';
 import FriendRequestScreen from '@/Screens/FriendTab/FriendRequest';
+import PostDetailScreen from '@/Screens/Post/PostDetail';
 
 export type RootStackParamList = {
   Main: undefined;
@@ -52,6 +53,7 @@ export type RootStackParamList = {
   FullFriend: {user_id: string};
   FriendRequest: undefined;
   Profile: {userId: string};
+  PostDetail: {postId: string};
 };
 export type ScreenNavigationProp =
   NativeStackNavigationProp<RootStackParamList>;
@@ -69,20 +71,27 @@ function MyStack() {
 
   const nav = useNavigation<ScreenNavigationProp>();
   useEffect(() => {
-    if (token) {
-      nav.navigate('Main');
+    if (!token) {
+      nav.navigate('Login');
     }
   }, [nav, token]);
   return (
     <Stack.Navigator
-      initialRouteName="FriendRequest"
+      initialRouteName="Main"
       screenOptions={{
         headerShown: false,
       }}>
       <Stack.Screen name="Main" component={MainTab} />
       <Stack.Screen name="Login" component={LoginScreen} />
       <Stack.Screen name="Signup" component={SignupScreen} />
-      <Stack.Screen name="AddPost" component={AddPostScreen} />
+      <Stack.Screen
+        name="AddPost"
+        component={AddPostScreen}
+        options={{
+          headerShown: true,
+          title: 'Tạo bài viết',
+        }}
+      />
       <Stack.Screen name="SettingTab" component={SettingTabScreen} />
       <Stack.Group
         screenOptions={{
@@ -147,6 +156,7 @@ function MyStack() {
       <Stack.Screen name="ProfileTab" component={ProfileTabScreen} />
       <Stack.Screen name="FullFriend" component={FullFriendScreen} />
       <Stack.Screen name="FriendRequest" component={FriendRequestScreen} />
+      <Stack.Screen name="PostDetail" component={PostDetailScreen} />
     </Stack.Navigator>
   );
 }

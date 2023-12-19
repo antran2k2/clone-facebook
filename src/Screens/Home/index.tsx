@@ -5,6 +5,7 @@ import {
   Animated,
   FlatList,
   ActivityIndicator,
+  SafeAreaView,
 } from 'react-native';
 import Header from '@/Components/Header';
 import PostTool from '@/Components/PostTool';
@@ -12,10 +13,19 @@ import {useGetListPostsQuery} from '@/Redux/api/post';
 import useLogout from '@/Hooks/useLogout';
 import {GetListPostsDTO, TPost} from '@/types/post.type';
 import PostItem from '@/Components/PostItem';
-
+import {useAppSelector} from '@/Redux/store';
+import {useNavigation} from '@react-navigation/native';
+import {ScreenNavigationProp} from '@/Routes/Stack';
+import {useFeelMutation} from '@/Redux/api/comment';
+import Modal from 'react-native-modal';
 const HomeScreen = () => {
+  const token = useAppSelector(state => state.auth.token);
+  const {avatar, id: userId, username} = useAppSelector(state => state.info);
+  const navigation = useNavigation<ScreenNavigationProp>();
+  const [mutateFeel, {isLoading}] = useFeelMutation();
+
   const initParams: GetListPostsDTO = {
-    user_id: '0',
+    user_id: userId || '0',
     index: '1',
     count: '10',
   };
@@ -32,7 +42,9 @@ const HomeScreen = () => {
   } = useGetListPostsQuery(param, {refetchOnMountOrArgChange: true});
 
   const {handleLogout} = useLogout();
+  const [isModalVisible, setModalVisible] = useState(false);
 
+  const toggleArrageModal = () => {};
   // useEffect(() => {
   //   const unsubscribe = messaging().onMessage(async (remoteMessage: any) => {
   //     Alert.alert(
@@ -70,41 +82,72 @@ const HomeScreen = () => {
   useEffect(() => {
     if (isSuccess) {
       setListPosts(prevListPosts => [...prevListPosts, ...data?.data.post]);
-      setLastId(data?.data.last_id);
+      setLastId(data?.data.last_id || '0');
     }
   }, [isSuccess, data?.data]);
 
   const loadMorePosts = () => {
     setParam(prevParam => ({...prevParam, last_id: lastId}));
   };
-
+  const handleTouchHeader = (item: any) => {
+    navigation.navigate('PostDetail', {postId: item.id});
+  };
+  const handleTouchThreeDot = (item: any) => {
+    setModalVisible(!isModalVisible);
+    console.log('touch 3 dot');
+  };
   return (
     <>
-      <Header translateY={translateY} />
+      <SafeAreaView style={styles.container}>
+        <Header translateY={translateY} />
 
-      <FlatList
-        onScroll={onScroll}
-        data={listPosts}
-        keyExtractor={(item, index) => index.toString()}
-        renderItem={({item}) => <PostItem item={item} />}
-        onEndReached={loadMorePosts}
-        onEndReachedThreshold={0.1}
-        maxToRenderPerBatch={10}
-        updateCellsBatchingPeriod={100}
-        initialNumToRender={5}
-        ListHeaderComponent={PostTool}
-        ListFooterComponent={
-          isLoadingPosts || isFetchingPosts ? (
-            <ActivityIndicator size="large" />
-          ) : null
-        }
-        onRefresh={handleRefresh}
-        refreshing={isLoadingPosts || isFetchingPosts}
-      />
-      <Text style={styles.subtitle}>{isLoadingPosts ? 'Loading...' : ''}</Text>
-      <Text onPress={handleLogout} style={styles.subtitle}>
-        Logout
-      </Text>
+        <FlatList
+          onScroll={onScroll}
+          data={listPosts}
+          keyExtractor={(item, index) => index.toString()}
+          renderItem={({item}) => (
+            <PostItem
+              item={item}
+              handleTouchHeader={handleTouchHeader}
+              handleTouchThreeDot={handleTouchThreeDot}
+              handleShowComment={function (): void {
+                throw new Error('Function not implemented.');
+              }}
+            />
+          )}
+          onEndReached={loadMorePosts}
+          onEndReachedThreshold={0.1}
+          maxToRenderPerBatch={10}
+          updateCellsBatchingPeriod={100}
+          initialNumToRender={5}
+          ListHeaderComponent={PostTool}
+          ListFooterComponent={
+            isLoadingPosts || isFetchingPosts ? (
+              <ActivityIndicator size="large" />
+            ) : null
+          }
+          onRefresh={handleRefresh}
+          refreshing={isLoadingPosts || isFetchingPosts}
+        />
+        <Text style={styles.subtitle}>
+          {isLoadingPosts ? 'Loading...' : ''}
+        </Text>
+        <Text style={styles.subtitle}>user: {username}</Text>
+        <Text onPress={handleLogout} style={styles.subtitle}>
+          Logout
+        </Text>
+      </SafeAreaView>
+      <Modal
+        isVisible={isModalVisible}
+        onBackdropPress={toggleArrageModal}
+        onBackButtonPress={toggleArrageModal}
+        backdropOpacity={0.3}
+        // onSwipeComplete={() => setModalArrageVisible(false)}
+        useNativeDriverForBackdrop
+        swipeDirection={['down']}
+        style={{margin: 5, borderRadius: 50}}>
+        <Text>123</Text>
+      </Modal>
     </>
   );
 };
@@ -112,6 +155,9 @@ const HomeScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    justifyContent: 'center',
+    // alignItems: 'center',
+    marginTop: 22,
   },
   title: {
     fontSize: 24,

@@ -6,108 +6,139 @@ import AntDesign from 'react-native-vector-icons/AntDesign';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import {TPost} from '@/types/post.type';
 import {useFeelMutation} from '@/Redux/api/comment';
+import {useNavigation} from '@react-navigation/native';
+import {ScreenNavigationProp} from '@/Routes/Stack';
+import {calculateTimeDifference} from '@/Utils';
+import ListImageZoomable from '../ListImageZoomable';
+import ImageViewer from 'react-native-image-zoom-viewer';
+
 type Props = {
   item: TPost;
-};
-const PostItem = React.memo(({item}: Props) => {
-  const [mutateFeel, {isLoading}] = useFeelMutation();
-  const [feel, setFeel] = React.useState<string>(item.feel);
-  const [isFelt, setIsFelt] = React.useState<string>(item.is_felt);
-  const handleFeel = () => {
-    mutateFeel({id: item.id, type: String(1)})
-      .unwrap()
-      .then(({message}) => {
-        console.log(message);
-        setFeel(feel => String(Number(feel) + 1));
-        setIsFelt('1');
-      })
-      .catch(err => {
-        console.log(err);
-      });
-  };
+  handleTouchHeader: (post: any) => void;
+  handleTouchThreeDot: (post: any) => void;
 
-  const {author, described, image, created} = item;
-  const time = new Date(created).toLocaleTimeString();
-  const imgSrc =
-    author.avatar.length > 0
-      ? {uri: author.avatar}
-      : require('@/Assets/Images/Avatar.png');
-  return (
-    <View style={styles.container}>
-      <View style={styles.header}>
-        <View style={styles.row}>
-          <Image style={styles.avatarImg} source={imgSrc} />
-          <View style={{paddingLeft: 10}}>
-            <Text style={styles.user}>{author.name}</Text>
-            <View style={styles.row}>
-              <Text style={styles.time}>{time}</Text>
-              <Entypo name="dot-single" size={12} color="#747476" />
-              <Entypo name="globe" size={10} color="#747476" />
+  handleShowComment: () => void;
+};
+const PostItem = React.memo(
+  ({item, handleTouchHeader, handleTouchThreeDot}: Props) => {
+    const [mutateFeel, {isLoading}] = useFeelMutation();
+    const [feel, setFeel] = React.useState<string>(item.feel);
+    const [isFelt, setIsFelt] = React.useState<string>(item.is_felt);
+
+    const {author, described, image, created} = item;
+    const imgSrc =
+      author.avatar.length > 0
+        ? {uri: author.avatar}
+        : require('@/Assets/Images/Avatar.png');
+
+    const handleFeelLike = () => {
+      mutateFeel({id: item.id, type: String(1)})
+        .unwrap()
+        .then(({message}) => {
+          setFeel(feel => String(Number(feel) + 1));
+          setIsFelt('1');
+        })
+        .catch(err => {
+          console.log(err);
+        });
+    };
+    const handleFeelDislike = () => {
+      mutateFeel({id: item.id, type: String(0)})
+        .unwrap()
+        .then(({message}) => {
+          setFeel(feel => String(Number(feel) + 1));
+          setIsFelt('0');
+        })
+        .catch(err => {
+          console.log(err);
+        });
+    };
+    return (
+      <View style={styles.container}>
+        <TouchableOpacity
+          style={styles.header}
+          onPress={() => handleTouchHeader(item)}>
+          <View style={styles.row}>
+            <Image style={styles.avatarImg} source={imgSrc} />
+            <View style={{paddingLeft: 10}}>
+              <Text style={styles.user}>{author.name}</Text>
+              <View style={styles.row}>
+                <Text style={styles.time}>
+                  {calculateTimeDifference(created)}
+                </Text>
+                <Entypo name="dot-single" size={12} color="#747476" />
+                <Entypo name="globe" size={10} color="#747476" />
+              </View>
             </View>
           </View>
-        </View>
-        <Entypo name="dots-three-horizontal" size={15} color="#222121" />
-      </View>
-      <Text style={styles.post}>{described}</Text>
-      {image.length > 0 &&
-        image.map((img, index) => (
-          <Image key={index} style={styles.photo} source={{uri: img.url}} />
-        ))}
-      <View style={styles.footer}>
-        <View style={styles.separator} />
-        <View style={styles.footerMenu}>
-          <View style={[styles.row, {flex: 2}]}>
-            <TouchableOpacity style={styles.button} onPress={handleFeel}>
+          <TouchableOpacity onPress={() => handleTouchThreeDot(item)}>
+            <Entypo name="dots-three-horizontal" size={25} color="#222121" />
+          </TouchableOpacity>
+        </TouchableOpacity>
+        <Text style={styles.post}>{described}</Text>
+        {image.length > 0 && <ListImageZoomable images={image.slice(0, 4)} />}
+        <View style={styles.footer}>
+          <View style={styles.separator} />
+          <View style={styles.footerMenu}>
+            <View style={[styles.row, {flex: 2}]}>
+              <TouchableOpacity
+                style={styles.button}
+                onPress={() => handleFeelLike()}>
+                <View style={styles.icon}>
+                  <AntDesign
+                    name={isFelt === '1' ? 'like1' : 'like2'}
+                    size={20}
+                    color="#424040"
+                  />
+                </View>
+              </TouchableOpacity>
+              <Text style={[styles.text]}>{feel}</Text>
+              <TouchableOpacity
+                style={styles.button}
+                onPress={() => handleFeelDislike()}>
+                <View style={styles.icon}>
+                  <AntDesign
+                    name={isFelt === '0' ? 'dislike1' : 'dislike2'}
+                    size={20}
+                    color="#424040"
+                  />
+                </View>
+              </TouchableOpacity>
+            </View>
+            <TouchableOpacity style={[styles.button, {flex: 1}]}>
               <View style={styles.icon}>
-                <AntDesign
-                  name={isFelt === '1' ? 'like1' : 'like2'}
+                <MaterialCommunityIcons
+                  name="comment-outline"
                   size={20}
                   color="#424040"
                 />
               </View>
+              <Text style={styles.text}>{item.comment_mark}</Text>
             </TouchableOpacity>
-            <Text style={[styles.text]}>{feel}</Text>
             <TouchableOpacity style={styles.button}>
               <View style={styles.icon}>
-                <AntDesign
-                  name={isFelt === '0' ? 'dislike1' : 'dislike2'}
+                <MaterialCommunityIcons
+                  name="share-outline"
                   size={20}
                   color="#424040"
                 />
               </View>
+              <Text style={styles.text}>Share</Text>
             </TouchableOpacity>
           </View>
-          <TouchableOpacity style={[styles.button, {flex: 1}]}>
-            <View style={styles.icon}>
-              <MaterialCommunityIcons
-                name="comment-outline"
-                size={20}
-                color="#424040"
-              />
-            </View>
-            <Text style={styles.text}>{item.comment_mark}</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.button}>
-            <View style={styles.icon}>
-              <MaterialCommunityIcons
-                name="share-outline"
-                size={20}
-                color="#424040"
-              />
-            </View>
-            <Text style={styles.text}>Share</Text>
-          </TouchableOpacity>
         </View>
+        <View style={styles.bottomDivider} />
       </View>
-      <View style={styles.bottomDivider} />
-    </View>
-  );
-});
+    );
+  },
+);
 
 export default PostItem;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    // flexDirection: 'row',
+    // flexWrap: 'wrap',
   },
   header: {
     height: 50,

@@ -9,7 +9,7 @@ export interface AddPostDTO {
 export interface TAuthor {
   id: string;
   name: string;
-  avatar: string;
+  avatar?: string;
 }
 
 export interface TPost {
@@ -53,7 +53,9 @@ export interface TPostDetail {
   disappointed: string;
   is_felt: string;
   is_marked: string;
-  image: string[];
+  your_mark: string;
+  image: {id: string; url: string}[];
+  video: string;
   author: TAuthor;
   category: TCategory;
   state: string;
@@ -64,6 +66,7 @@ export interface TPostDetail {
   can_rate: string;
   url: string;
   messages: string;
+  deleted: string;
 }
 export type GetListPostsDTO = {
   user_id: string;
