@@ -36,6 +36,7 @@ import SettingNotificationScreen from '@/Screens/Setting/SettingNotification';
 import SettingPushScreen from '@/Screens/Setting/SettingPush';
 import BlockingScreen from '@/Screens/Setting/Blocking';
 import AddUserToBlockListScreen from '@/Screens/Setting/AddUserToBlockList';
+import ActivityLogScreen from '@/Screens/ActivityLog';
 
 export type RootStackParamList = {
   Main: undefined;
@@ -61,6 +62,7 @@ export type RootStackParamList = {
   SettingPush: undefined;
   Blocking: undefined;
   AddUserToBlockList: undefined;
+  ActivityLog: undefined;
   ProfileTab: undefined;
   FullFriend: {user_id: string};
   FriendRequest: undefined;
@@ -80,12 +82,12 @@ function MyStack() {
   const nav = useNavigation<ScreenNavigationProp>();
   useEffect(() => {
     if (!token) {
-      nav.navigate('Login');
+      nav.navigate('SettingTab');
     }
   }, [nav, token]);
   return (
     <Stack.Navigator
-      initialRouteName="Main"
+      initialRouteName="SettingTab"
       screenOptions={{
         headerShown: false,
       }}>
@@ -190,6 +192,11 @@ function MyStack() {
           name="Blocking"
           component={BlockingScreen}
           options={{title: 'Chặn'}}
+        />
+        <Stack.Screen
+          name="ActivityLog"
+          component={ActivityLogScreen}
+          options={{title: 'Nhật ký hoạt động'}}
         />
       </Stack.Group>
       <Stack.Screen name="ProfileTab" component={ProfileTabScreen} />

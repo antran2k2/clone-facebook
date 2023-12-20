@@ -50,3 +50,9 @@ export type TBlockUser = {
   username: string;
   avatar: string;
 }
+
+export type TSearch = {
+  id: string;
+  keyword: string;
+  created: string;
+}
