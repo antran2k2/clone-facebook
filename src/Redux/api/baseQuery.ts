@@ -2,7 +2,7 @@ import {Config} from '@/Config';
 import {BaseQueryFn} from '@reduxjs/toolkit/query/react';
 import type {AxiosRequestConfig, AxiosRequestHeaders} from 'axios';
 import axios from 'axios';
-import {getToken} from '../reducer/auth';
+import {getToken, setToken} from '../reducer/auth';
 import {store} from '../store';
 
 const baseUrl = Config.API_URL as string;
@@ -53,15 +53,14 @@ const baseQuery: BaseQueryFn<
       'FAIL===========Vừa request đến url',
       baseUrl + url,
       '=====================FAIL\n',
-      // response,
       err.request._response,
     );
+    if (JSON.parse(err.request._response).code === '9998') {
+      store.dispatch(setToken(null));
+    }
 
     return {
-      error: {
-        code: err.request._response.code,
-        message: err.request._response.message,
-      },
+      error: err.request._response,
     };
   }
 };

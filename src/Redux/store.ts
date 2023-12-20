@@ -20,6 +20,7 @@ import {blockApi} from './api/block';
 import {searchApi} from './api/search';
 import {settingApi} from './api/setting';
 import {notificationApi} from './api/notification';
+import {profileApi} from './api/profile';
 const reducers = combineReducers({
   signUpInfo: signUpInfoReducer,
   auth: authReducer,
@@ -32,12 +33,13 @@ const reducers = combineReducers({
   [searchApi.reducerPath]: searchApi.reducer,
   [settingApi.reducerPath]: settingApi.reducer,
   [notificationApi.reducerPath]: notificationApi.reducer,
+  [profileApi.reducerPath]: profileApi.reducer,
 });
 
 const persistConfig = {
   key: 'root',
   storage: AsyncStorage,
-  whitelist: ['auth', 'signUpInfo'],
+  whitelist: ['auth', 'signUpInfo', 'info'],
   blacklist: [
     authApi.reducerPath,
     postApi.reducerPath,
@@ -75,6 +77,7 @@ export const store = configureStore({
       searchApi.middleware,
       settingApi.middleware,
       notificationApi.middleware,
+      profileApi.middleware,
       rtkQueryErrorLogger,
     ),
 });

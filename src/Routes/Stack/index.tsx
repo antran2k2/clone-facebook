@@ -58,7 +58,7 @@ export type RootStackParamList = {
   SettingSecurity: undefined;
   ChangePassword: undefined;
   SettingNotification: undefined;
-  SettingPush: undefined;
+  SettingPush: any;
   Blocking: undefined;
   AddUserToBlockList: undefined;
   ProfileTab: undefined;
@@ -101,7 +101,10 @@ function MyStack() {
         }}
       />
       <Stack.Screen name="SettingTab" component={SettingTabScreen} />
-      <Stack.Screen name="AddUserToBlockList" component={AddUserToBlockListScreen} />
+      <Stack.Screen
+        name="AddUserToBlockList"
+        component={AddUserToBlockListScreen}
+      />
       <Stack.Group
         screenOptions={{
           headerShown: true,
@@ -192,7 +195,7 @@ function MyStack() {
           options={{title: 'Chặn'}}
         />
       </Stack.Group>
-      <Stack.Screen name="ProfileTab" component={ProfileTabScreen} />
+      {/* <Stack.Screen name="ProfileTab" component={ProfileTabScreen} /> */}
       <Stack.Screen name="FullFriend" component={FullFriendScreen} />
       <Stack.Screen name="FriendRequest" component={FriendRequestScreen} />
       <Stack.Screen name="PostDetail" component={PostDetailScreen} />

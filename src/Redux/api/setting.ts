@@ -28,7 +28,7 @@ export const settingApi = createApi({
     }),
     getPushSetting: builder.query<TResponse, void>({
       query: () => ({
-        url: '/get_push_setting',
+        url: '/get_push_settings',
         method: 'POST',
       }),
       providesTags: ['Setting'],
@@ -50,7 +50,7 @@ export const settingApi = createApi({
       }
     >({
       query: data => ({
-        url: '/set_push_setting',
+        url: '/set_push_settings',
         method: 'POST',
         data: data,
       }),

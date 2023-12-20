@@ -21,18 +21,20 @@ import {useFocusEffect} from '@react-navigation/native';
 import {useAppSelector} from '@/Redux/store';
 const AddUserToBlockListScreen = () => {
   const navigation = useNavigation<ScreenNavigationProp>();
+
   const [allFriend, setAllFriend] = useState<TBlockUser[]>([]);
   const userId = useAppSelector(state => state.info.id);
   const initParams = {
-    user_id: '1',
-    index: '1',
+    user_id: userId,
+    index: '0',
     count: '10',
   };
   const {data, isLoading, isSuccess} = useGetUserFriendsQuery(initParams);
   const [setBlock] = useSetBlockMutation();
   useEffect(() => {
-    console.log('1231232e');
     if (isSuccess) {
+      console.log(data?.data?.friends);
+
       setAllFriend(data?.data?.friends);
     }
   }, [data]);

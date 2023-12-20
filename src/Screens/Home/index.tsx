@@ -24,7 +24,7 @@ const HomeScreen = () => {
   const navigation = useNavigation<ScreenNavigationProp>();
   const [mutateFeel, {isLoading}] = useFeelMutation();
   const initParams: GetListPostsDTO = {
-    user_id: userId || '12',
+    // user_id: userId || '12',
     index: '1',
     count: '10',
   };
@@ -128,13 +128,8 @@ const HomeScreen = () => {
           onRefresh={handleRefresh}
           refreshing={isLoadingPosts || isFetchingPosts}
         />
-        <Text style={styles.subtitle}>
-          {isLoadingPosts ? 'Loading...' : ''}
-        </Text>
+
         <Text style={styles.subtitle}>user: {userId}</Text>
-        <Text onPress={handleLogout} style={styles.subtitle}>
-          Logout
-        </Text>
       </SafeAreaView>
       <Modal
         isVisible={isModalVisible}

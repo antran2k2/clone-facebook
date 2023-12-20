@@ -25,3 +25,21 @@ export const calculateTimeDifference = (createdTime: string) => {
     return `${Math.floor(timeDifference.asYears())} năm trước`;
   }
 };
+export function convertStringToBoolean(obj) {
+  const result = {};
+  for (const key in obj) {
+    if (obj.hasOwnProperty(key)) {
+      result[key] = obj[key] === '1' ? true : false;
+    }
+  }
+  return result;
+}
+export function convertBooleanToString(obj) {
+  const result = {};
+  for (const key in obj) {
+    if (obj.hasOwnProperty(key)) {
+      result[key] = obj[key] ? '1' : '0';
+    }
+  }
+  return result;
+}

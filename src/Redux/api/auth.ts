@@ -78,7 +78,7 @@ export const authApi = createApi({
     }),
     changePassword: builder.mutation<
       TResponse<any>,
-      {password: string; newPassword: string}
+      {password: string; new_password: string}
     >({
       query: data => ({
         url: '/change_password',

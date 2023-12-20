@@ -8,62 +8,23 @@ import {
   TouchableOpacity,
   ScrollView,
   Image,
+  Alert,
 } from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import FontAwesome6 from 'react-native-vector-icons/FontAwesome6';
 import {TBlockUser} from '@/types/user.type';
-import {useGetListBlocksQuery} from '@/Redux/api/block';
-
+import {useGetListBlocksQuery, useUnblockMutation} from '@/Redux/api/block';
+import Spinner from 'react-native-loading-spinner-overlay';
 const BlockingScreen = () => {
   const navigation = useNavigation<ScreenNavigationProp>();
 
-  const data1: TBlockUser[] = [
-    {
-      id: '5',
-      username: 'Đinh Duy Anh',
-      avatar:
-        'https://ichef.bbci.co.uk/news/976/cpsprodpb/16620/production/_91408619_55df76d5-2245-41c1-8031-07a4da3f313f.jpg',
-    },
-    {
-      id: '7',
-      username: 'Bích Diệp',
-      avatar:
-        'https://antimatter.vn/wp-content/uploads/2022/04/hinh-meo-khoc-tha-like.jpg',
-    },
-    {
-      id: '15',
-      username: 'Tran Viet An',
-      avatar:
-        'https://catscanman.net/wp-content/uploads/2023/02/meme-cheems-18.jpg',
-    },
-    {
-      id: '16',
-      username: 'Đinh Duy Anh',
-      avatar:
-        'https://ichef.bbci.co.uk/news/976/cpsprodpb/16620/production/_91408619_55df76d5-2245-41c1-8031-07a4da3f313f.jpg',
-    },
-    {
-      id: '17',
-      username: 'Bích Diệp',
-      avatar:
-        'https://antimatter.vn/wp-content/uploads/2022/04/hinh-meo-khoc-tha-like.jpg',
-    },
-    {
-      id: '18',
-      username: 'Tran Viet An',
-      avatar:
-        'https://catscanman.net/wp-content/uploads/2023/02/meme-cheems-18.jpg',
-    },
-    {
-      id: '19',
-      username: 'Đinh Duy Anh',
-      avatar:
-        'https://ichef.bbci.co.uk/news/976/cpsprodpb/16620/production/_91408619_55df76d5-2245-41c1-8031-07a4da3f313f.jpg',
-    },
-  ];
-
   const [listBlockedUser, setListBlockUser] = useState([]);
-  const {data, isSuccess} = useGetListBlocksQuery({index: '0', count: '10'});
+  const {
+    data,
+    isSuccess,
+    isLoading: isLoadingQuery,
+  } = useGetListBlocksQuery({index: '0', count: '10'});
+  const [mutateUnblock, {isLoading: isLoadingMutate}] = useUnblockMutation();
   //   useFocusEffect(
   //     React.useCallback(() => {
   //       // Do something when the screen is focused
@@ -80,12 +41,21 @@ const BlockingScreen = () => {
     }
   }, [data, isSuccess]);
   const unBlockUser = (id: string) => {
-    // Xử lý gọi API bỏ chặn ở đây
+    mutateUnblock({user_id: id})
+      .unwrap()
+      .then(res => {
+        setListBlockUser(prevList => prevList.filter(user => user.id !== id));
+      })
+      .catch(err => {
+        Alert.alert('Thông báo', 'Có lỗi xảy ra, vui lòng thử lại sau');
+        console.log('err:', err);
+      });
     console.log(id);
   };
 
   return (
     <View style={styles.container}>
+      <Spinner visible={isLoadingQuery || isLoadingMutate} />
       <View style={styles.main}>
         <Text style={styles.header}>Người bị chặn</Text>
         <Text style={styles.description}>

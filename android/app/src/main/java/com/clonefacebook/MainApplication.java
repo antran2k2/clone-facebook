@@ -10,6 +10,7 @@ import com.facebook.react.defaults.DefaultReactNativeHost;
 import com.facebook.soloader.SoLoader;
 import java.util.List;
 import org.devio.rn.splashscreen.SplashScreenReactPackage;
+import com.github.wumke.RNExitApp.RNExitAppPackage;
 
 
 public class MainApplication extends Application implements ReactApplication {
@@ -28,6 +29,8 @@ public class MainApplication extends Application implements ReactApplication {
           // Packages that cannot be autolinked yet can be added manually here, for example:
           // packages.add(new MyReactNativePackage());
           new SplashScreenReactPackage();
+          new RNExitAppPackage();
+
           return packages;
         }
 

@@ -98,7 +98,7 @@ function MainTab() {
           }}
         />
         <Tab.Screen
-          name="Profile"
+          name="ProfileTab"
           component={ProfileTabScreen}
           options={{
             tabBarIcon: ({focused}) => (
