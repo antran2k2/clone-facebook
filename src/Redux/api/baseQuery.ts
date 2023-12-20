@@ -33,18 +33,19 @@ const baseQuery: BaseQueryFn<
     console.log(
       '=========================Vừa request đến url:===============================',
       baseUrl + url,
-      '\nvới method:',
-      method,
+      '\nvới header:',
+      headers,
       '\ndata:',
       data,
-      formData ? '\nformData:' : '',
     );
     const result = await axios({
       url: baseUrl + url,
       method,
       data,
       params,
-      headers,
+      headers: {
+        ...headers,
+      },
     });
 
     return {data: result.data};

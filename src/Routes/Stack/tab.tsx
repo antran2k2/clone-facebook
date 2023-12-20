@@ -1,5 +1,5 @@
 /* eslint-disable react/no-unstable-nested-components */
-import React from 'react';
+import React, {useEffect} from 'react';
 
 import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs';
 import FriendScreen from '@/Screens/Friend';
@@ -12,6 +12,9 @@ import SettingTabScreen from '@/Screens/Setting/SettingTab';
 import ProfileTabScreen from '@/Screens/ProfileTab';
 import FullFriendScreen from '@/Screens/FriendTab/FullFriend';
 import FriendRequestScreen from '@/Screens/FriendTab/FriendRequest';
+import {useSetDevtokenMutation} from '@/Redux/api/setting';
+import messaging from '@react-native-firebase/messaging';
+import {Alert} from 'react-native';
 
 const numberOfTabs = 6; // your number of tabs
 
@@ -20,6 +23,37 @@ let tabWidth = windowWidth / numberOfTabs;
 const Tab = createMaterialTopTabNavigator();
 
 function MainTab() {
+  const [setDevtokenMutation] = useSetDevtokenMutation();
+  useEffect(() => {
+    const registerDeviceForRemoteMessages = async () => {
+      try {
+        await messaging().registerDeviceForRemoteMessages();
+        const token = await messaging().getToken();
+        // const token = '1';
+        setDevtokenMutation({devtoken: token, devtype: '1'});
+      } catch (error) {
+        console.error('Error registering device for remote messages:', error);
+      }
+    };
+
+    // Initial registration
+    registerDeviceForRemoteMessages();
+
+    // Listen to token changes
+    const unsubscribeTokenRefresh = messaging().onTokenRefresh(token => {
+      setDevtokenMutation({devtoken: token, devtype: '1'});
+    });
+
+    // Clean up the subscription when the component unmounts
+    return () => unsubscribeTokenRefresh();
+  }, [setDevtokenMutation]);
+  useEffect(() => {
+    const unsubscribe = messaging().onMessage(async (remoteMessage: any) => {
+      Alert.alert(remoteMessage.notification.body, 'New Notification');
+    });
+
+    return unsubscribe;
+  }, []);
   return (
     <>
       <Tab.Navigator

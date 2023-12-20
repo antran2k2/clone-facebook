@@ -101,6 +101,7 @@ export const {
   useReportPostMutation,
   useLazyGetListPostsQuery,
   useGetListPostsQuery,
+  useLazyGetNewPostsQuery,
   useGetNewPostsQuery,
   useSetViewedPostMutation,
   useGetListVideosQuery,

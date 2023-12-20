@@ -29,24 +29,28 @@ export type TUserInfo = {
   is_friend: string;
   online: string;
   coins: string;
-
-}
+};
 
 export type TFriend = {
   id: string;
   username: string;
   avatar: string;
   same_friends: string;
-  created: Date;
-}
+  created: string;
+};
 
 export type TUserFriend = {
   friends: Array<TFriend>;
   total: String;
-}
+};
 
 export type TBlockUser = {
   id: string;
   username: string;
   avatar: string;
-}
+};
+export type TRequestFriend = {
+  //requests: any;
+  request: Array<TFriend> | undefined;
+  total: String;
+};

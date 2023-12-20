@@ -27,7 +27,6 @@ export const friendApi = createApi({
         method: 'POST',
         data: data,
       }),
-      providesTags: ['Friend'],
     }),
     setRequestFriend: builder.mutation<TResponse, {user_id: string}>({
       query: data => ({
@@ -57,7 +56,6 @@ export const friendApi = createApi({
         method: 'POST',
         data: data,
       }),
-      providesTags: ['Friend'],
     }),
     unFriend: builder.mutation<TResponse, {user_id: string}>({
       query: data => ({

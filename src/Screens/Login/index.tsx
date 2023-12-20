@@ -15,9 +15,11 @@ import {TextInput} from 'react-native-paper';
 import {useLoginMutation} from '@/Redux/api/auth';
 import uuid from 'react-native-uuid';
 import messaging from '@react-native-firebase/messaging';
+import {useSetDevtokenMutation} from '@/Redux/api/setting';
 
 const LoginScreen = () => {
   const navigation = useNavigation<ScreenNavigationProp>();
+  const [setDevtokenMutation] = useSetDevtokenMutation();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [tokenm, setTokenm] = useState('');
@@ -62,21 +64,6 @@ const LoginScreen = () => {
       });
   };
 
-  useEffect(() => {
-    // Get the device token
-    messaging()
-      .getToken()
-      .then(token => {
-        setTokenm(token);
-      });
-
-    console.log('Token message: ', tokenm);
-
-    // Listen to whether the token changes
-    return messaging().onTokenRefresh(token => {
-      setTokenm(token);
-    });
-  }, [tokenm]);
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
       <View style={styles.container}>

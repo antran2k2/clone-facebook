@@ -38,7 +38,10 @@ export const authApi = createApi({
       }),
       invalidatesTags: ['Auth'],
     }),
-    signup: builder.mutation<TResponse<any>, SignUpInfo>({
+    signup: builder.mutation<
+      TResponse<any>,
+      {email: string; password: string; uuid: string}
+    >({
       query: data => ({
         url: '/signup',
         method: 'post',
@@ -46,11 +49,11 @@ export const authApi = createApi({
       }),
       invalidatesTags: ['Auth'],
     }),
-    getVerifyCode: builder.mutation<TResponse<any>, string>({
+    getVerifyCode: builder.mutation<TResponse<any>, {email: string}>({
       query: email => ({
         url: '/get_verify_code',
         method: 'post',
-        data: {email},
+        data: email,
       }),
       invalidatesTags: ['Auth'],
     }),

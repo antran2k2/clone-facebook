@@ -1,8 +1,8 @@
 {
   "project_info": {
-    "project_number": "858633572180",
-    "project_id": "fakebook2k02",
-    "storage_bucket": "fakebook2k02.appspot.com"
+    "project_number": "368299366684",
+    "project_id": "sns-api-a968a",
+    "storage_bucket": "sns-api-a968a.appspot.com"
   },
   "client": [
     {
@@ -15,7 +15,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyBSINLfpA0D9BZH-6cB29bw6zkFhXnVdZA"
+          "current_key": "AIzaSyA-UMFmnqg1p1sW9pA_nxz0EE547opVg2E"
         }
       ],
       "services": {

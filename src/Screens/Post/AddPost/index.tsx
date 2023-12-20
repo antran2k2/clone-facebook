@@ -35,7 +35,7 @@ const AddPostScreen = () => {
       const type = asset.type;
 
       // Thêm thông tin vào mảng arr
-      formData.append('video', {uri, name, type});
+      formData.append('image', {uri, name, type});
     });
     // console.log('mảng ảnh', response);
 

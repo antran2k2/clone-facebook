@@ -35,10 +35,10 @@ export const profileApi = createApi({
       }),
       invalidatesTags: ['Profile'],
     }),
-    getUserInfo: builder.mutation<TResponse<any>, {user_id: string}>({
+    getUserInfo: builder.query<TResponse<any>, {user_id: string}>({
       query: data => ({
         url: '/get_user_info',
-        method: 'get',
+        method: 'post',
         data: data,
       }),
       invalidatesTags: ['Profile'],
@@ -60,6 +60,6 @@ export const profileApi = createApi({
 
 export const {
   useChangeInfoAfterSignupMutation,
-  useGetUserInfoMutation,
+  useGetUserInfoQuery,
   useSetUserInfoMutation,
 } = profileApi;

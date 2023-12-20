@@ -6,10 +6,11 @@ import {
   FlatList,
   ActivityIndicator,
   SafeAreaView,
+  Alert,
 } from 'react-native';
 import Header from '@/Components/Header';
 import PostTool from '@/Components/PostTool';
-import {useGetListPostsQuery} from '@/Redux/api/post';
+import {useGetListPostsQuery, useLazyGetListPostsQuery} from '@/Redux/api/post';
 import useLogout from '@/Hooks/useLogout';
 import {GetListPostsDTO, TPost} from '@/types/post.type';
 import PostItem from '@/Components/PostItem';
@@ -18,6 +19,7 @@ import {useNavigation} from '@react-navigation/native';
 import {ScreenNavigationProp} from '@/Routes/Stack';
 import {useFeelMutation} from '@/Redux/api/comment';
 import Modal from 'react-native-modal';
+import messaging from '@react-native-firebase/messaging';
 const HomeScreen = () => {
   const token = useAppSelector(state => state.auth.token);
   const {avatar, id: userId, username} = useAppSelector(state => state.info);
@@ -25,37 +27,38 @@ const HomeScreen = () => {
   const [mutateFeel, {isLoading}] = useFeelMutation();
   const initParams: GetListPostsDTO = {
     // user_id: userId || '12',
-    index: '1',
-    count: '10',
+    index: '0',
+    count: '100',
   };
 
   const [listPosts, setListPosts] = useState<TPost[]>([]);
   const [param, setParam] = useState<GetListPostsDTO>(initParams);
   const [lastId, setLastId] = useState<string>('0');
-  const {
-    data,
-    isLoading: isLoadingPosts,
-    isFetching: isFetchingPosts,
-    isSuccess,
-    // refetch,
-  } = useGetListPostsQuery(param, {refetchOnMountOrArgChange: true});
 
-  const {handleLogout} = useLogout();
+  const [getPosts, {isLoading: isLoadingPosts, isFetching}] =
+    useLazyGetListPostsQuery();
+
+  useEffect(() => {
+    getPosts(param)
+      .unwrap()
+      .then(res => {
+        // setListPosts(res.data.post);
+        setListPosts(prev => {
+          // Lọc ra những bài viết có ID khác với bài viết hiện tại
+          const newPosts = res.data.post.filter(newPost => {
+            return !prev.some(prevPost => prevPost.id === newPost.id);
+          });
+
+          // Thêm những bài viết mới vào danh sách prev
+          return [...prev, ...newPosts];
+        });
+        setLastId(res.data.last_id);
+      });
+  }, [param, getPosts]);
+
   const [isModalVisible, setModalVisible] = useState(false);
 
   const toggleArrageModal = () => {};
-  // useEffect(() => {
-  //   const unsubscribe = messaging().onMessage(async (remoteMessage: any) => {
-  //     Alert.alert(
-  //       remoteMessage.notification.title,
-  //       remoteMessage.notification.body,
-  //       [{text: 'OK', onPress: handleLogout}],
-  //       {cancelable: false},
-  //     );
-  //   });
-
-  //   return unsubscribe;
-  // }, [handleLogout]);
 
   const scrollY = new Animated.Value(0);
   const diffClamp = Animated.diffClamp(scrollY, 0, 64);
@@ -72,24 +75,25 @@ const HomeScreen = () => {
   );
 
   const handleRefresh = () => {
-    setParam({...param, last_id: lastId});
-    if (isSuccess) {
-      setListPosts(data?.data.post);
-    }
+    getPosts(param)
+      .unwrap()
+      .then(res => {
+        // setListPosts(res.data.post);
+        setListPosts(res.data.post);
+        setLastId(res.data.last_id);
+      });
   };
-
-  useEffect(() => {
-    if (isSuccess) {
-      setListPosts(prevListPosts => [...prevListPosts, ...data?.data.post]);
-      setLastId(data?.data.last_id || '0');
-    }
-  }, [isSuccess, data?.data]);
 
   const loadMorePosts = () => {
-    setParam(prevParam => ({...prevParam, last_id: lastId}));
+    // setParam(({index, count}) => ({
+    //   index: (Number(index) + Number(count)).toString(),
+    //   count,
+    // }));
+    console.log('load more');
+    setParam({...param, last_id: lastId});
   };
   const handleTouchHeader = (item: any) => {
-    navigation.navigate('PostDetail', {postId: '908'});
+    navigation.navigate('PostDetail', {postId: item.id});
   };
   const handleTouchThreeDot = (item: any) => {
     setModalVisible(!isModalVisible);
@@ -115,18 +119,18 @@ const HomeScreen = () => {
             />
           )}
           onEndReached={loadMorePosts}
-          onEndReachedThreshold={0.1}
+          onEndReachedThreshold={10}
           maxToRenderPerBatch={10}
           updateCellsBatchingPeriod={100}
           initialNumToRender={5}
           ListHeaderComponent={PostTool}
           ListFooterComponent={
-            isLoadingPosts || isFetchingPosts ? (
+            isLoadingPosts || isFetching ? (
               <ActivityIndicator size="large" />
             ) : null
           }
           onRefresh={handleRefresh}
-          refreshing={isLoadingPosts || isFetchingPosts}
+          refreshing={isLoadingPosts}
         />
 
         <Text style={styles.subtitle}>user: {userId}</Text>
@@ -151,7 +155,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     // alignItems: 'center',
-    marginTop: 22,
+    // marginTop: 22,
   },
   title: {
     fontSize: 24,
