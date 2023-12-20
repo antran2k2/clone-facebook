@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Text,
   StyleSheet,
@@ -9,22 +9,24 @@ import {
 } from 'react-native';
 import Header from '@/Components/Header';
 import PostTool from '@/Components/PostTool';
-import {useGetListPostsQuery} from '@/Redux/api/post';
+import { useGetListPostsQuery } from '@/Redux/api/post';
 import useLogout from '@/Hooks/useLogout';
-import {GetListPostsDTO, TPost} from '@/types/post.type';
+import { GetListPostsDTO, TPost } from '@/types/post.type';
 import PostItem from '@/Components/PostItem';
-import {useAppSelector} from '@/Redux/store';
-import {useNavigation} from '@react-navigation/native';
-import {ScreenNavigationProp} from '@/Routes/Stack';
-import {useFeelMutation} from '@/Redux/api/comment';
+import { useAppSelector } from '@/Redux/store';
+import { useNavigation } from '@react-navigation/native';
+import { ScreenNavigationProp } from '@/Routes/Stack';
+import { useFeelMutation } from '@/Redux/api/comment';
 import Modal from 'react-native-modal';
+import CommentListScreen from '@/Components/ListComment';
 const HomeScreen = () => {
   const token = useAppSelector(state => state.auth.token);
-  const {avatar, id: userId, username} = useAppSelector(state => state.info);
+  const { avatar, id: userId, username } = useAppSelector(state => state.info);
   const navigation = useNavigation<ScreenNavigationProp>();
-  const [mutateFeel, {isLoading}] = useFeelMutation();
+  const [mutateFeel, { isLoading }] = useFeelMutation();
   const initParams: GetListPostsDTO = {
-    user_id: userId || '12',
+    // user_id: userId || '12',
+    user_id: '',
     index: '1',
     count: '10',
   };
@@ -38,12 +40,15 @@ const HomeScreen = () => {
     isFetching: isFetchingPosts,
     isSuccess,
     // refetch,
-  } = useGetListPostsQuery(param, {refetchOnMountOrArgChange: true});
+  } = useGetListPostsQuery(param, { refetchOnMountOrArgChange: true });
 
-  const {handleLogout} = useLogout();
+  const { handleLogout } = useLogout();
   const [isModalVisible, setModalVisible] = useState(false);
+  const toggleModal = () => {
+    setModalVisible(!isModalVisible);
+  };
 
-  const toggleArrageModal = () => {};
+  const toggleArrageModal = () => { };
   // useEffect(() => {
   //   const unsubscribe = messaging().onMessage(async (remoteMessage: any) => {
   //     Alert.alert(
@@ -67,12 +72,12 @@ const HomeScreen = () => {
   });
 
   const onScroll = Animated.event(
-    [{nativeEvent: {contentOffset: {y: scrollY}}}],
-    {useNativeDriver: false},
+    [{ nativeEvent: { contentOffset: { y: scrollY } } }],
+    { useNativeDriver: false },
   );
 
   const handleRefresh = () => {
-    setParam({...param, last_id: lastId});
+    setParam({ ...param, last_id: lastId });
     if (isSuccess) {
       setListPosts(data?.data.post);
     }
@@ -86,11 +91,11 @@ const HomeScreen = () => {
   }, [isSuccess, data?.data]);
 
   const loadMorePosts = () => {
-    setParam(prevParam => ({...prevParam, last_id: lastId}));
+    setParam(prevParam => ({ ...prevParam, last_id: lastId }));
   };
-  const handleTouchHeader = (item: any) => {
-    navigation.navigate('PostDetail', {postId: '908'});
-  };
+  // const handleTouchHeader = (item: any) => {
+  //   navigation.navigate('PostDetail', { postId: '908' });
+  // };
   const handleTouchThreeDot = (item: any) => {
     setModalVisible(!isModalVisible);
     console.log('touch 3 dot');
@@ -104,14 +109,11 @@ const HomeScreen = () => {
           onScroll={onScroll}
           data={listPosts}
           keyExtractor={(item, index) => index.toString()}
-          renderItem={({item}) => (
+          renderItem={({ item }) => (
             <PostItem
               item={item}
-              handleTouchHeader={handleTouchHeader}
               handleTouchThreeDot={handleTouchThreeDot}
-              handleShowComment={function (): void {
-                throw new Error('Function not implemented.');
-              }}
+              handleShowComment={toggleModal}
             />
           )}
           onEndReached={loadMorePosts}
@@ -136,16 +138,22 @@ const HomeScreen = () => {
           Logout
         </Text>
       </SafeAreaView>
+
+      {/* Model Comment */}
       <Modal
         isVisible={isModalVisible}
-        onBackdropPress={toggleArrageModal}
-        onBackButtonPress={toggleArrageModal}
+        onBackdropPress={toggleModal}
+        onBackButtonPress={toggleModal}
         backdropOpacity={0.3}
-        // onSwipeComplete={() => setModalArrageVisible(false)}
+        //onSwipeComplete={() => setModalVisible(false)}
         useNativeDriverForBackdrop
-        swipeDirection={['down']}
-        style={{margin: 5, borderRadius: 50}}>
-        <Text>123</Text>
+        //swipeDirection={['down']}
+        style={{
+          margin: 5, borderRadius: 50, flex: 1,
+          justifyContent: 'flex-end', marginBottom: -90
+        }}
+      >
+        <CommentListScreen />
       </Modal>
     </>
   );

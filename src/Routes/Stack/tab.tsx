@@ -1,17 +1,19 @@
 /* eslint-disable react/no-unstable-nested-components */
 import React from 'react';
 
-import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs';
-import FriendScreen from '@/Screens/Friend';
+import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import HomeScreen from '@/Screens/Home';
 import NotificationScreen from '@/Screens/Notification';
 import VideoScreen from '@/Screens/Video';
-import {Dimensions} from 'react-native';
+import { Dimensions } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import SettingTabScreen from '@/Screens/Setting/SettingTab';
 import ProfileTabScreen from '@/Screens/ProfileTab';
 import FullFriendScreen from '@/Screens/FriendTab/FullFriend';
 import FriendRequestScreen from '@/Screens/FriendTab/FriendRequest';
+import CommentListScreen from '@/Components/ListComment';
+import Comment from '@/Components/Comment';
+import ReportScreen from '@/Screens/Post/Report';
 
 const numberOfTabs = 6; // your number of tabs
 
@@ -37,7 +39,7 @@ function MainTab() {
           name="Home"
           component={HomeScreen}
           options={{
-            tabBarIcon: ({focused}) => (
+            tabBarIcon: ({ focused }) => (
               <Icon
                 name="home"
                 size={20}
@@ -50,7 +52,7 @@ function MainTab() {
           name="Friend"
           component={FriendRequestScreen}
           options={{
-            tabBarIcon: ({focused}) => (
+            tabBarIcon: ({ focused }) => (
               <Icon
                 name="users"
                 size={20}
@@ -61,9 +63,9 @@ function MainTab() {
         />
         <Tab.Screen
           name="Video"
-          component={VideoScreen}
+          component={ReportScreen}
           options={{
-            tabBarIcon: ({focused}) => (
+            tabBarIcon: ({ focused }) => (
               <Icon
                 name="video"
                 size={20}
@@ -76,7 +78,7 @@ function MainTab() {
           name="Notification"
           component={NotificationScreen}
           options={{
-            tabBarIcon: ({focused}) => (
+            tabBarIcon: ({ focused }) => (
               <Icon
                 name="bell"
                 solid
@@ -87,7 +89,7 @@ function MainTab() {
             tabBarBadge() {
               return (
                 <Icon
-                  style={{right: tabWidth / 3, top: 10}}
+                  style={{ right: tabWidth / 3, top: 10 }}
                   name="circle"
                   solid
                   size={7}
@@ -101,7 +103,7 @@ function MainTab() {
           name="Profile"
           component={ProfileTabScreen}
           options={{
-            tabBarIcon: ({focused}) => (
+            tabBarIcon: ({ focused }) => (
               <Icon
                 name="user-circle"
                 size={20}
@@ -114,7 +116,7 @@ function MainTab() {
           name="Menu"
           component={SettingTabScreen}
           options={{
-            tabBarIcon: ({focused}) => (
+            tabBarIcon: ({ focused }) => (
               <Icon
                 name="bars"
                 size={20}

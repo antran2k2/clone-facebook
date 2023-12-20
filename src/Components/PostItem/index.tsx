@@ -1,40 +1,45 @@
 import React from 'react';
-import {View, Text, TouchableOpacity, Image, StyleSheet} from 'react-native';
+import { View, Text, TouchableOpacity, Image, StyleSheet } from 'react-native';
 
 import Entypo from 'react-native-vector-icons/Entypo';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import {TPost} from '@/types/post.type';
-import {useFeelMutation} from '@/Redux/api/comment';
-import {useNavigation} from '@react-navigation/native';
-import {ScreenNavigationProp} from '@/Routes/Stack';
-import {calculateTimeDifference} from '@/Utils';
+import { TPost } from '@/types/post.type';
+import { useFeelMutation } from '@/Redux/api/comment';
+import { useNavigation } from '@react-navigation/native';
+import { ScreenNavigationProp } from '@/Routes/Stack';
+import { calculateTimeDifference } from '@/Utils';
 import ListImageZoomable from '../ListImageZoomable';
 import ImageViewer from 'react-native-image-zoom-viewer';
 
 type Props = {
   item: TPost;
-  handleTouchHeader: (post: any) => void;
   handleTouchThreeDot: (post: any) => void;
 
   handleShowComment: () => void;
 };
 const PostItem = React.memo(
-  ({item, handleTouchHeader, handleTouchThreeDot}: Props) => {
-    const [mutateFeel, {isLoading}] = useFeelMutation();
+  ({ item, handleTouchThreeDot, handleShowComment }: Props) => {
+    const [mutateFeel, { isLoading }] = useFeelMutation();
     const [feel, setFeel] = React.useState<string>(item.feel);
     const [isFelt, setIsFelt] = React.useState<string>(item.is_felt);
 
-    const {author, described, image, created} = item;
+    const navigation = useNavigation<ScreenNavigationProp>();
+
+    const handleTouchHeader = (item: any) => {
+      navigation.navigate('PostDetail', { postId: item.id });
+    };
+
+    const { author, described, image, created } = item;
     const imgSrc =
-      author.avatar.length > 0
-        ? {uri: author.avatar}
+      author.avatar
+        ? { uri: author.avatar }
         : require('@/Assets/Images/Avatar.png');
 
     const handleFeelLike = () => {
-      mutateFeel({id: item.id, type: String(1)})
+      mutateFeel({ id: item.id, type: String(1) })
         .unwrap()
-        .then(({message}) => {
+        .then(({ message }) => {
           setFeel(feel => String(Number(feel) + 1));
           setIsFelt('1');
         })
@@ -43,9 +48,9 @@ const PostItem = React.memo(
         });
     };
     const handleFeelDislike = () => {
-      mutateFeel({id: item.id, type: String(0)})
+      mutateFeel({ id: item.id, type: String(0) })
         .unwrap()
-        .then(({message}) => {
+        .then(({ message }) => {
           setFeel(feel => String(Number(feel) + 1));
           setIsFelt('0');
         })
@@ -60,7 +65,7 @@ const PostItem = React.memo(
           onPress={() => handleTouchHeader(item)}>
           <View style={styles.row}>
             <Image style={styles.avatarImg} source={imgSrc} />
-            <View style={{paddingLeft: 10}}>
+            <View style={{ paddingLeft: 10 }}>
               <Text style={styles.user}>{author.name}</Text>
               <View style={styles.row}>
                 <Text style={styles.time}>
@@ -80,9 +85,9 @@ const PostItem = React.memo(
         <View style={styles.footer}>
           <View style={styles.separator} />
           <View style={styles.footerMenu}>
-            <View style={[styles.row, {flex: 2}]}>
+            <View style={[styles.row, { flex: 2 }]}>
               <TouchableOpacity
-                style={styles.button}
+                style={{ ...styles.button, marginRight: -14 }}
                 onPress={() => handleFeelLike()}>
                 <View style={styles.icon}>
                   <AntDesign
@@ -92,7 +97,6 @@ const PostItem = React.memo(
                   />
                 </View>
               </TouchableOpacity>
-              <Text style={[styles.text]}>{feel}</Text>
               <TouchableOpacity
                 style={styles.button}
                 onPress={() => handleFeelDislike()}>
@@ -104,8 +108,11 @@ const PostItem = React.memo(
                   />
                 </View>
               </TouchableOpacity>
+              <Text style={{ ...styles.text, marginLeft: 8 }}>{feel}</Text>
             </View>
-            <TouchableOpacity style={[styles.button, {flex: 1}]}>
+            <TouchableOpacity
+              style={[styles.button, { flex: 1 }]}
+              onPress={() => handleShowComment()}>
               <View style={styles.icon}>
                 <MaterialCommunityIcons
                   name="comment-outline"
@@ -224,7 +231,8 @@ const styles = StyleSheet.create({
     backgroundColor: '#f0f2f5',
   },
   text: {
-    fontSize: 12,
-    color: '#424040',
+    fontSize: 14,
+    color: '#000',
+    fontWeight: '600'
   },
 });
