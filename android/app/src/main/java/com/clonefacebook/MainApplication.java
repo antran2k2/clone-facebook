@@ -1,4 +1,5 @@
 package com.clonefacebook;
+import com.brentvatne.react.ReactVideoPackage;
 
 import android.app.Application;
 import com.facebook.react.PackageList;
@@ -30,6 +31,8 @@ public class MainApplication extends Application implements ReactApplication {
           // packages.add(new MyReactNativePackage());
           new SplashScreenReactPackage();
           new RNExitAppPackage();
+          new ReactVideoPackage();
+
 
           return packages;
         }

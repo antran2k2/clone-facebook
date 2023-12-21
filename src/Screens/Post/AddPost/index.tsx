@@ -57,37 +57,22 @@ const AddPostScreen = () => {
   const navigation = useNavigation<ScreenNavigationProp>();
   const handlePost = () => {
     const formData = new FormData();
-    // formData.append('image', response.assets);
 
-    // Duyệt qua mảng assets và gán thông tin vào mảng arr
-
-    //if image:
     response.assets.forEach(asset => {
       const uri = asset.uri;
       const name = asset.fileName;
       const type = asset.type;
-
       // Thêm thông tin vào mảng arr
-      formData.append('image', {uri, name, type});
+      if (type == 'video/mp4') {
+        formData.append('video', {uri, name, type});
+      } else {
+        formData.append('image', {uri, name, type});
+      }
     });
-
-    // if video:
-    // response.assets.forEach(asset => {
-    //   const uri = asset.uri;
-    //   const name = asset.fileName;
-    //   const type = asset.type;
-
-    //   // Thêm thông tin vào mảng arr
-    //   formData.append('image', {uri, name, type});
-    // });
-    console.log(postText);
 
     formData.append('described', postText);
     formData.append('status', 'happy');
     formData.append('auto_accept', '1');
-    // addPost(formData)
-    //   .unwrap()
-    //   .then(res => console.log(res.data));
 
     addPost(formData)
       .unwrap()
@@ -276,7 +261,7 @@ const AddPostScreen = () => {
                   fontWeight: '600',
                   color: '#000',
                 }}>
-                Ảnh/Video
+                Ảnh
               </Text>
             </View>
           </View>
@@ -335,7 +320,7 @@ const AddPostScreen = () => {
                   fontWeight: '600',
                   color: '#000',
                 }}>
-                Video trực tiếp
+                Video
               </Text>
             </View>
           </View>

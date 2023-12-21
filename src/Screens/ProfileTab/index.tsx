@@ -166,189 +166,187 @@ const ProfileTabScreen = () => {
     });
   };
 
-  return (
-    <ScrollView bounces={false} style={styles.container}>
-      <View style={styles.infoWrapper}>
-        <View style={styles.avatarCoverWrapper}>
+  const renderHead = () => {
+    <View style={styles.infoWrapper}>
+      <View style={styles.avatarCoverWrapper}>
+        <TouchableOpacity
+          activeOpacity={0.8}
+          onPress={() => {
+            navigation.navigate('ShowImage', {
+              link: data.cover_image,
+            });
+          }}>
+          <Image
+            style={styles.cover}
+            source={
+              data?.cover_image
+                ? {uri: data.cover_image}
+                : require('@/Assets/Images/cover.png')
+            }
+          />
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.btnChangeCover}
+          onPress={onPressCoverImageOptionsHandler}>
+          <FontAwesome5Icon size={18} name="camera" />
+        </TouchableOpacity>
+        <View style={styles.avatarWrapper}>
           <TouchableOpacity
-            activeOpacity={0.8}
+            activeOpacity={0.9}
             onPress={() => {
               navigation.navigate('ShowImage', {
-                link: data.cover_image,
+                link: data.avatar,
               });
             }}>
             <Image
-              style={styles.cover}
+              style={styles.avatar}
               source={
-                data?.cover_image
-                  ? {uri: data.cover_image}
-                  : require('@/Assets/Images/cover.png')
+                data?.avatar
+                  ? {uri: data.avatar}
+                  : require('@/Assets/Images/Avatar.png')
               }
             />
           </TouchableOpacity>
           <TouchableOpacity
-            style={styles.btnChangeCover}
-            onPress={onPressCoverImageOptionsHandler}>
+            onPress={onPressAvatarOptionsHandler}
+            style={styles.btnChangeAvatar}>
             <FontAwesome5Icon size={18} name="camera" />
           </TouchableOpacity>
-          <View style={styles.avatarWrapper}>
-            <TouchableOpacity
-              activeOpacity={0.9}
-              onPress={() => {
-                navigation.navigate('ShowImage', {
-                  link: data.avatar,
-                });
-              }}>
-              <Image
-                style={styles.avatar}
-                source={
-                  data?.avatar
-                    ? {uri: data.avatar}
-                    : require('@/Assets/Images/Avatar.png')
-                }
-              />
-            </TouchableOpacity>
-            <TouchableOpacity
-              onPress={onPressAvatarOptionsHandler}
-              style={styles.btnChangeAvatar}>
-              <FontAwesome5Icon size={18} name="camera" />
-            </TouchableOpacity>
-          </View>
         </View>
-        <View style={styles.introWrapper}>
-          <Text style={styles.name}>{data?.username}</Text>
-          <Text style={styles.introTxt}>{data?.description}</Text>
-          <View style={styles.introButtonWrapper}>
-            <TouchableOpacity activeOpacity={0.8} style={styles.btnCoin}>
+      </View>
+      <View style={styles.introWrapper}>
+        <Text style={styles.name}>{data?.username}</Text>
+        <Text style={styles.introTxt}>{data?.description}</Text>
+        <View style={styles.introButtonWrapper}>
+          <TouchableOpacity activeOpacity={0.8} style={styles.btnCoin}>
+            <Text
+              style={{
+                fontSize: 16,
+                fontWeight: '500',
+                color: '#fff',
+                marginRight: 5,
+              }}>
+              {data?.coins || 0}
+            </Text>
+            <FontAwesome5Icon size={16} color="#fff" name="bitcoin" />
+          </TouchableOpacity>
+          <View style={styles.introOptionsWrapper}>
+            <TouchableOpacity
+              onPress={onPressCoinHandler}
+              activeOpacity={0.8}
+              style={styles.btnAddStory}>
+              <FontAwesome5Icon size={16} color="#fff" name="plus-circle" />
               <Text
                 style={{
                   fontSize: 16,
                   fontWeight: '500',
                   color: '#fff',
-                  marginRight: 5,
+                  marginLeft: 5,
                 }}>
-                {data?.coins || 0}
+                Nạp thêm Coin
               </Text>
-              <FontAwesome5Icon size={16} color="#fff" name="bitcoin" />
             </TouchableOpacity>
-            <View style={styles.introOptionsWrapper}>
-              <TouchableOpacity
-                onPress={onPressCoinHandler}
-                activeOpacity={0.8}
-                style={styles.btnAddStory}>
-                <FontAwesome5Icon size={16} color="#fff" name="plus-circle" />
-                <Text
-                  style={{
-                    fontSize: 16,
-                    fontWeight: '500',
-                    color: '#fff',
-                    marginLeft: 5,
-                  }}>
-                  Nạp thêm Coin
-                </Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                onPress={onPressProfileSettingHandler}
-                activeOpacity={0.8}
-                style={styles.btnOption}>
-                <FontAwesome5Icon size={20} color="#000" name="ellipsis-h" />
-              </TouchableOpacity>
-            </View>
+            <TouchableOpacity
+              onPress={onPressProfileSettingHandler}
+              activeOpacity={0.8}
+              style={styles.btnOption}>
+              <FontAwesome5Icon size={20} color="#000" name="ellipsis-h" />
+            </TouchableOpacity>
           </View>
         </View>
-        <View style={styles.introListWrapper}>
-          {data?.city && (
-            <View style={styles.introLine}>
-              <FontAwesome5Icon
-                size={20}
-                color="#333"
-                style={styles.introIcon}
-                name="home"
-              />
-              <Text style={styles.introLineText}>
-                Sống tại{' '}
-                <Text style={styles.introHightLight}>{data?.city}</Text>
-              </Text>
-            </View>
-          )}
-          {data?.address && (
-            <View style={styles.introLine}>
-              <FontAwesome5Icon
-                size={20}
-                color="#333"
-                style={styles.introIcon}
-                name="map-marker-alt"
-              />
-              <Text style={styles.introLineText}>
-                Đến từ{' '}
-                <Text style={styles.introHightLight}>
-                  {data?.address}, {data?.city}, {data?.country}
-                </Text>
-              </Text>
-            </View>
-          )}
-          {data?.listing && (
-            <View style={styles.introLine}>
-              <FontAwesome5Icon
-                size={20}
-                color="#333"
-                style={styles.introIcon}
-                name="rss"
-              />
-              <Text style={styles.introLineText}>
-                Có <Text style={styles.introHightLight}>{data?.listing} </Text>
-                người theo dõi
-              </Text>
-            </View>
-          )}
-          {data?.link && (
-            <View style={styles.introLine}>
-              <FontAwesome5Icon
-                size={20}
-                color="#333"
-                style={styles.introIcon}
-                name="link"
-              />
-              <TouchableOpacity>
-                <Text style={styles.introLineText}>{data?.link}</Text>
-              </TouchableOpacity>
-            </View>
-          )}
+      </View>
+      <View style={styles.introListWrapper}>
+        {data?.city && (
           <View style={styles.introLine}>
             <FontAwesome5Icon
               size={20}
               color="#333"
               style={styles.introIcon}
-              name="ellipsis-h"
+              name="home"
+            />
+            <Text style={styles.introLineText}>
+              Sống tại <Text style={styles.introHightLight}>{data?.city}</Text>
+            </Text>
+          </View>
+        )}
+        {data?.address && (
+          <View style={styles.introLine}>
+            <FontAwesome5Icon
+              size={20}
+              color="#333"
+              style={styles.introIcon}
+              name="map-marker-alt"
+            />
+            <Text style={styles.introLineText}>
+              Đến từ{' '}
+              <Text style={styles.introHightLight}>
+                {data?.address}, {data?.city}, {data?.country}
+              </Text>
+            </Text>
+          </View>
+        )}
+        {data?.listing && (
+          <View style={styles.introLine}>
+            <FontAwesome5Icon
+              size={20}
+              color="#333"
+              style={styles.introIcon}
+              name="rss"
+            />
+            <Text style={styles.introLineText}>
+              Có <Text style={styles.introHightLight}>{data?.listing} </Text>
+              người theo dõi
+            </Text>
+          </View>
+        )}
+        {data?.link && (
+          <View style={styles.introLine}>
+            <FontAwesome5Icon
+              size={20}
+              color="#333"
+              style={styles.introIcon}
+              name="link"
             />
             <TouchableOpacity>
-              <Text style={styles.introLineText}>
-                Xem thông tin giới thiệu của bạn
-              </Text>
+              <Text style={styles.introLineText}>{data?.link}</Text>
             </TouchableOpacity>
           </View>
-        </View>
-        <View
-          style={{
-            paddingVertical: 20,
-            borderBottomWidth: 0.5,
-            borderBottomColor: '#ddd',
-          }}>
-          <TouchableOpacity
-            onPress={onPressEditPublicInfoHandler}
-            activeOpacity={0.8}
-            style={styles.btnEditPublicDetail}>
-            <Text style={{color: '#276fc8', fontSize: 16, fontWeight: '500'}}>
-              Chỉnh sửa chi tiết công khai
+        )}
+        <View style={styles.introLine}>
+          <FontAwesome5Icon
+            size={20}
+            color="#333"
+            style={styles.introIcon}
+            name="ellipsis-h"
+          />
+          <TouchableOpacity>
+            <Text style={styles.introLineText}>
+              Xem thông tin giới thiệu của bạn
             </Text>
           </TouchableOpacity>
         </View>
-        <FriendsShowing
-          userFriends={userFriendsState}
-          user_id={data?.id || id}
-        />
       </View>
+      <View
+        style={{
+          paddingVertical: 20,
+          borderBottomWidth: 0.5,
+          borderBottomColor: '#ddd',
+        }}>
+        <TouchableOpacity
+          onPress={onPressEditPublicInfoHandler}
+          activeOpacity={0.8}
+          style={styles.btnEditPublicDetail}>
+          <Text style={{color: '#276fc8', fontSize: 16, fontWeight: '500'}}>
+            Chỉnh sửa chi tiết công khai
+          </Text>
+        </TouchableOpacity>
+      </View>
+      <FriendsShowing userFriends={userFriendsState} user_id={data?.id || id} />
+    </View>;
+  };
 
+  return (
+    <>
       <FlatList
         data={listPosts}
         keyExtractor={(item, index) => index.toString()}
@@ -363,6 +361,198 @@ const ProfileTabScreen = () => {
         maxToRenderPerBatch={10}
         updateCellsBatchingPeriod={100}
         initialNumToRender={5}
+        ListHeaderComponent={
+          <View style={styles.infoWrapper}>
+            <View style={styles.avatarCoverWrapper}>
+              <TouchableOpacity
+                activeOpacity={0.8}
+                onPress={() => {
+                  navigation.navigate('ShowImage', {
+                    link: data.cover_image,
+                  });
+                }}>
+                <Image
+                  style={styles.cover}
+                  source={
+                    data?.cover_image
+                      ? {uri: data.cover_image}
+                      : require('@/Assets/Images/cover.png')
+                  }
+                />
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.btnChangeCover}
+                onPress={onPressCoverImageOptionsHandler}>
+                <FontAwesome5Icon size={18} name="camera" />
+              </TouchableOpacity>
+              <View style={styles.avatarWrapper}>
+                <TouchableOpacity
+                  activeOpacity={0.9}
+                  onPress={() => {
+                    navigation.navigate('ShowImage', {
+                      link: data.avatar,
+                    });
+                  }}>
+                  <Image
+                    style={styles.avatar}
+                    source={
+                      data?.avatar
+                        ? {uri: data.avatar}
+                        : require('@/Assets/Images/Avatar.png')
+                    }
+                  />
+                </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={onPressAvatarOptionsHandler}
+                  style={styles.btnChangeAvatar}>
+                  <FontAwesome5Icon size={18} name="camera" />
+                </TouchableOpacity>
+              </View>
+            </View>
+            <View style={styles.introWrapper}>
+              <Text style={styles.name}>{data?.username}</Text>
+              <Text style={styles.introTxt}>{data?.description}</Text>
+              <View style={styles.introButtonWrapper}>
+                <TouchableOpacity activeOpacity={0.8} style={styles.btnCoin}>
+                  <Text
+                    style={{
+                      fontSize: 16,
+                      fontWeight: '500',
+                      color: '#fff',
+                      marginRight: 5,
+                    }}>
+                    {data?.coins || 0}
+                  </Text>
+                  <FontAwesome5Icon size={16} color="#fff" name="bitcoin" />
+                </TouchableOpacity>
+                <View style={styles.introOptionsWrapper}>
+                  <TouchableOpacity
+                    onPress={onPressCoinHandler}
+                    activeOpacity={0.8}
+                    style={styles.btnAddStory}>
+                    <FontAwesome5Icon
+                      size={16}
+                      color="#fff"
+                      name="plus-circle"
+                    />
+                    <Text
+                      style={{
+                        fontSize: 16,
+                        fontWeight: '500',
+                        color: '#fff',
+                        marginLeft: 5,
+                      }}>
+                      Nạp thêm Coin
+                    </Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    onPress={onPressProfileSettingHandler}
+                    activeOpacity={0.8}
+                    style={styles.btnOption}>
+                    <FontAwesome5Icon
+                      size={20}
+                      color="#000"
+                      name="ellipsis-h"
+                    />
+                  </TouchableOpacity>
+                </View>
+              </View>
+            </View>
+            <View style={styles.introListWrapper}>
+              {data?.city && (
+                <View style={styles.introLine}>
+                  <FontAwesome5Icon
+                    size={20}
+                    color="#333"
+                    style={styles.introIcon}
+                    name="home"
+                  />
+                  <Text style={styles.introLineText}>
+                    Sống tại{' '}
+                    <Text style={styles.introHightLight}>{data?.city}</Text>
+                  </Text>
+                </View>
+              )}
+              {data?.address && (
+                <View style={styles.introLine}>
+                  <FontAwesome5Icon
+                    size={20}
+                    color="#333"
+                    style={styles.introIcon}
+                    name="map-marker-alt"
+                  />
+                  <Text style={styles.introLineText}>
+                    Đến từ{' '}
+                    <Text style={styles.introHightLight}>
+                      {data?.address}, {data?.city}, {data?.country}
+                    </Text>
+                  </Text>
+                </View>
+              )}
+              {data?.listing && (
+                <View style={styles.introLine}>
+                  <FontAwesome5Icon
+                    size={20}
+                    color="#333"
+                    style={styles.introIcon}
+                    name="rss"
+                  />
+                  <Text style={styles.introLineText}>
+                    Có{' '}
+                    <Text style={styles.introHightLight}>{data?.listing} </Text>
+                    người theo dõi
+                  </Text>
+                </View>
+              )}
+              {data?.link && (
+                <View style={styles.introLine}>
+                  <FontAwesome5Icon
+                    size={20}
+                    color="#333"
+                    style={styles.introIcon}
+                    name="link"
+                  />
+                  <TouchableOpacity>
+                    <Text style={styles.introLineText}>{data?.link}</Text>
+                  </TouchableOpacity>
+                </View>
+              )}
+              <View style={styles.introLine}>
+                <FontAwesome5Icon
+                  size={20}
+                  color="#333"
+                  style={styles.introIcon}
+                  name="ellipsis-h"
+                />
+                <TouchableOpacity>
+                  <Text style={styles.introLineText}>
+                    Xem thông tin giới thiệu của bạn
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+            <View
+              style={{
+                paddingVertical: 20,
+                borderBottomWidth: 0.5,
+                borderBottomColor: '#ddd',
+              }}>
+              <TouchableOpacity
+                onPress={onPressEditPublicInfoHandler}
+                activeOpacity={0.8}
+                style={styles.btnEditPublicDetail}>
+                <Text
+                  style={{color: '#276fc8', fontSize: 16, fontWeight: '500'}}>
+                  Chỉnh sửa chi tiết công khai
+                </Text>
+              </TouchableOpacity>
+            </View>
+            <FriendsShowing
+              userFriends={userFriendsState}
+              user_id={data?.id || id}
+            />
+          </View>
+        }
       />
 
       {/* Model when Click Avatar*/}
@@ -509,7 +699,7 @@ const ProfileTabScreen = () => {
         }}>
         <CommentListScreen postItem={selectPost} />
       </Modal>
-    </ScrollView>
+    </>
   );
 };
 

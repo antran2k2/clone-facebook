@@ -15,15 +15,66 @@ import FriendRequestScreen from '@/Screens/FriendTab/FriendRequest';
 import {useSetDevtokenMutation} from '@/Redux/api/setting';
 import messaging from '@react-native-firebase/messaging';
 import {Alert} from 'react-native';
-
+import notifee from '@notifee/react-native';
 const numberOfTabs = 6; // your number of tabs
 
 const windowWidth = Dimensions.get('window').width;
 let tabWidth = windowWidth / numberOfTabs;
 const Tab = createMaterialTopTabNavigator();
+async function onMessageReceived(data: any) {
+  // Request permissions (required for iOS)
+  await notifee.requestPermission();
+
+  // Create a channel (required for Android)
+  const channelId = await notifee.createChannel({
+    id: 'default',
+    name: 'Default Channel',
+  });
+
+  // Display a notification
+  await notifee.displayNotification({
+    title: data.notification.title || 'Notification Title',
+    body: data.notification.body || 'Main body content of the notification',
+    android: {
+      channelId,
+      smallIcon: 'ic_launcher', // optional, defaults to 'ic_launcher'.
+      // pressAction is needed if you want the notification to open the app when pressed
+      pressAction: {
+        id: 'default',
+      },
+    },
+  });
+}
 
 function MainTab() {
   const [isHasNoti, setIsHasNoti] = React.useState(false);
+
+  async function onMessageReceived(data: any) {
+    setIsHasNoti(true);
+    // Request permissions (required for iOS)
+    // await notifee.requestPermission();
+
+    // // Create a channel (required for Android)
+    // const channelId = await notifee.createChannel({
+    //   id: 'default',
+    //   name: 'Default Channel',
+    // });
+
+    // // Display a notification
+    // await notifee.displayNotification({
+    //   title: data.notification.title || 'Notification Title',
+    //   body: data.notification.body || 'Main body content of the notification',
+    //   android: {
+    //     channelId,
+    //     smallIcon: 'ic_launcher', // optional, defaults to 'ic_launcher'.
+    //     // pressAction is needed if you want the notification to open the app when pressed
+    //     pressAction: {
+    //       id: 'default',
+    //     },
+    //   },
+    // });
+  }
+
   const [setDevtokenMutation] = useSetDevtokenMutation();
   useEffect(() => {
     const registerDeviceForRemoteMessages = async () => {
@@ -49,10 +100,7 @@ function MainTab() {
     return () => unsubscribeTokenRefresh();
   }, [setDevtokenMutation]);
   useEffect(() => {
-    const unsubscribe = messaging().onMessage(async (remoteMessage: any) => {
-      // Alert.alert(remoteMessage.notification.body, 'New Notification');
-      setIsHasNoti(true);
-    });
+    const unsubscribe = messaging().onMessage(onMessageReceived);
 
     return unsubscribe;
   }, []);

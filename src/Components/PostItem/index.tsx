@@ -1,5 +1,12 @@
 import React from 'react';
-import {View, Text, TouchableOpacity, Image, StyleSheet} from 'react-native';
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  Image,
+  StyleSheet,
+  Dimensions,
+} from 'react-native';
 
 import Entypo from 'react-native-vector-icons/Entypo';
 import AntDesign from 'react-native-vector-icons/AntDesign';
@@ -11,6 +18,8 @@ import {ScreenNavigationProp} from '@/Routes/Stack';
 import {calculateTimeDifference} from '@/Utils';
 import ListImageZoomable from '../ListImageZoomable';
 import ImageViewer from 'react-native-image-zoom-viewer';
+import VideoPlayer from 'react-native-video-player';
+const width = Dimensions.get('window').width;
 
 type Props = {
   item: TPost;
@@ -26,7 +35,7 @@ const PostItem = React.memo(
       navigation.navigate('PostDetail', {postId: item.id});
     };
 
-    const {author, described, image, created} = item;
+    const {author, described, image, created, video, state} = item;
     const imgSrc = author.avatar
       ? {uri: author.avatar}
       : require('@/Assets/Images/Avatar.png');
@@ -100,14 +109,31 @@ const PostItem = React.memo(
           style={styles.header}
           onPress={() => handleTouchHeader(item)}>
           <View style={styles.row}>
-            <TouchableOpacity
-              onPress={() =>
-                navigation.navigate('ProfileFriend', {id: author.id})
-              }>
-              <Image style={styles.avatarImg} source={imgSrc} />
-            </TouchableOpacity>
-            <View style={{paddingLeft: 10}}>
-              <Text style={styles.user}>{author.name}</Text>
+            <View style={{flex: 1}}>
+              <TouchableOpacity
+                onPress={() =>
+                  navigation.navigate('ProfileFriend', {id: author.id})
+                }>
+                <Image style={styles.avatarImg} source={imgSrc} />
+              </TouchableOpacity>
+            </View>
+            <View style={{flex: 7}}>
+              <View style={{flexDirection: 'row'}}>
+                <Text style={styles.user}>
+                  {author.name}
+                  {state && (
+                    <Text
+                      style={{
+                        color: '#999',
+                        fontSize: 14,
+                        fontWeight: 'normal',
+                      }}>
+                      {' '}
+                      đang cảm thấy {state}
+                    </Text>
+                  )}
+                </Text>
+              </View>
               <View style={styles.row}>
                 <Text style={styles.time}>
                   {calculateTimeDifference(created)}
@@ -117,18 +143,30 @@ const PostItem = React.memo(
               </View>
             </View>
           </View>
-          <TouchableOpacity onPress={() => handleTouchThreeDot(item)}>
-            <Entypo name="dots-three-horizontal" size={25} color="#222121" />
-          </TouchableOpacity>
+          <View style={{flex: 0}}>
+            <TouchableOpacity onPress={() => handleTouchThreeDot(item)}>
+              <Entypo name="dots-three-horizontal" size={25} color="#222121" />
+            </TouchableOpacity>
+          </View>
         </TouchableOpacity>
         <Text style={styles.post}>{described}</Text>
-        {image.length > 0 && <ListImageZoomable images={image.slice(0, 4)} />}
+        {image?.length > 0 && <ListImageZoomable images={image.slice(0, 4)} />}
+        {video && (
+          <VideoPlayer
+            style={{width: width, height: width * 1.5}}
+            video={{
+              uri: video?.url,
+            }}
+            showDuration={true}
+            pauseOnPress={true}
+          />
+        )}
         <View style={styles.footer}>
           <View style={styles.separator} />
           <View style={styles.footerMenu}>
             <View style={[styles.row, {flex: 2}]}>
               <TouchableOpacity
-                style={{...styles.button, marginRight: -14}}
+                style={{...styles.button, marginRight: 0}}
                 onPress={() => handleFeelLike()}>
                 <View style={styles.icon}>
                   <AntDesign
@@ -194,6 +232,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     marginTop: 6,
+    marginRight: 20,
     paddingHorizontal: 11,
   },
   row: {
@@ -207,7 +246,7 @@ const styles = StyleSheet.create({
     borderColor: '#1777f2',
   },
   user: {
-    fontSize: 12,
+    fontSize: 16,
     fontWeight: 'bold',
     color: '#222121',
   },
@@ -216,7 +255,7 @@ const styles = StyleSheet.create({
     color: '#747476',
   },
   post: {
-    fontSize: 12,
+    fontSize: 14,
     color: '#222121',
     lineHeight: 16,
     padding: 0,
@@ -229,7 +268,8 @@ const styles = StyleSheet.create({
   },
   footer: {
     padding: 0,
-    paddingHorizontal: 11,
+    paddingHorizontal: 5,
+    height: 60,
   },
   footerCount: {
     flexDirection: 'row',
@@ -258,6 +298,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     paddingVertical: 9,
+    borderColor: '#ddd',
+    borderWidth: 1,
   },
   button: {
     flexDirection: 'row',

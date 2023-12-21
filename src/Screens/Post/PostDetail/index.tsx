@@ -33,6 +33,9 @@ import {
   useGetMarkCommentQuery,
   useSetMarkCommentMutation,
 } from '@/Redux/api/comment';
+import VideoPlayer from 'react-native-video-player';
+
+const width = Dimensions.get('window').width;
 
 const PostDetailScreen = () => {
   const navigation = useNavigation<ScreenNavigationProp>();
@@ -258,6 +261,14 @@ const PostDetailScreen = () => {
             .map((img, index) => (
               <Image key={index} style={styles.photo} source={{uri: img.url}} />
             ))}
+        {post?.video && (
+          <VideoPlayer
+            style={{width: width, height: width}}
+            video={{
+              uri: post?.video?.url,
+            }}
+          />
+        )}
         <View style={styles.footer}>
           <View style={styles.separator} />
           <View style={styles.footerMenu}>

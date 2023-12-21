@@ -25,10 +25,15 @@ import {useGetUserFriendsQuery} from '@/Redux/api/friend';
 import {useRoute} from '@react-navigation/native';
 import {useLazyGetListPostsQuery} from '@/Redux/api/post';
 import PostItem from '@/Components/PostItem';
+import {useAppSelector} from '@/Redux/store';
 const ProfileFriendScreen = () => {
   const navigation = useNavigation<ScreenNavigationProp>();
+  const {id: myId, username} = useAppSelector(state => state.info);
   const route = useRoute();
   const {id} = route.params as {id: string};
+  if (id === myId) {
+    navigation.navigate('ProfileTab');
+  }
 
   const [userFriends, setUserFriendState] = useState();
   const [data, setData] = useState();
@@ -95,141 +100,7 @@ const ProfileFriendScreen = () => {
   }, [param, getPosts]);
 
   return (
-    <ScrollView bounces={false} style={styles.container}>
-      <View style={styles.infoWrapper}>
-        <View style={styles.avatarCoverWrapper}>
-          <TouchableOpacity activeOpacity={0.8}>
-            <Image
-              style={styles.cover}
-              source={
-                data?.cover_image
-                  ? {uri: data?.cover_image}
-                  : require('@/Assets/Images/cover.png')
-              }
-            />
-          </TouchableOpacity>
-          <View style={styles.avatarWrapper}>
-            <TouchableOpacity activeOpacity={0.9}>
-              <Image style={styles.avatar} source={{uri: data?.avatar}} />
-            </TouchableOpacity>
-          </View>
-        </View>
-        <View style={styles.introWrapper}>
-          <Text style={styles.name}>{data?.username}</Text>
-          <Text style={styles.introTxt}>{data?.description}</Text>
-          <View style={styles.introButtonWrapper}>
-            {data?.is_friend === '1' ? (
-              <TouchableOpacity style={styles.btnAddStory}>
-                <FontAwesome6 size={16} color="#fff" name="user-check" />
-                <Text
-                  style={{
-                    fontSize: 16,
-                    fontWeight: '500',
-                    color: '#fff',
-                    marginLeft: 5,
-                  }}>
-                  Bạn bè
-                </Text>
-              </TouchableOpacity>
-            ) : (
-              <TouchableOpacity style={styles.btnAddStory}>
-                <FontAwesome6 size={16} color="#fff" name="user-plus" />
-                <Text
-                  style={{
-                    fontSize: 16,
-                    fontWeight: '500',
-                    color: '#fff',
-                    marginLeft: 5,
-                  }}>
-                  Thêm bạn
-                </Text>
-              </TouchableOpacity>
-            )}
-            <View style={styles.introOptionsWrapper}>
-              <TouchableOpacity
-                // onPress={onPressProfileSettingHandler}
-                style={styles.btnEditProfileScreen}>
-                <MaterialCommunityIcons
-                  size={20}
-                  color="#000"
-                  name="facebook-messenger"
-                />
-                <Text
-                  style={{
-                    fontSize: 16,
-                    fontWeight: '500',
-                    color: '#000',
-                    marginLeft: 5,
-                  }}>
-                  Nhắn tin
-                </Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                onPress={() => {
-                  navigation.navigate('OtherPeopleSetting', {userId: data?.id});
-                }}
-                style={styles.btnOption}>
-                <FontAwesome5Icon size={20} color="#000" name="ellipsis-h" />
-              </TouchableOpacity>
-            </View>
-          </View>
-        </View>
-        <View style={styles.introListWrapper}>
-          {data?.city && (
-            <View style={styles.introLine}>
-              <FontAwesome5Icon
-                size={20}
-                color="#333"
-                style={styles.introIcon}
-                name="home"
-              />
-              <Text style={styles.introLineText}>
-                Sống tại <Text style={styles.introHightLight}>{data.city}</Text>
-              </Text>
-            </View>
-          )}
-          {(data?.address || data?.city) && (
-            <View style={styles.introLine}>
-              <FontAwesome5Icon
-                size={20}
-                color="#333"
-                style={styles.introIcon}
-                name="map-marker-alt"
-              />
-              <Text style={styles.introLineText}>
-                Đến từ{' '}
-                <Text style={styles.introHightLight}>
-                  {data.address}, {data.city}, {data.country}
-                </Text>
-              </Text>
-            </View>
-          )}
-          <View style={styles.introLine}>
-            <FontAwesome5Icon
-              size={20}
-              color="#333"
-              style={styles.introIcon}
-              name="rss"
-            />
-            <Text style={styles.introLineText}>
-              Có <Text style={styles.introHightLight}>{data?.listing} </Text>
-              người theo dõi
-            </Text>
-          </View>
-          <View style={styles.introLine}>
-            <FontAwesome5Icon
-              size={20}
-              color="#333"
-              style={styles.introIcon}
-              name="link"
-            />
-            <TouchableOpacity>
-              <Text style={styles.introLineText}>{data?.link}</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-        <FriendsShowing userFriends={userFriends} user_id={data?.id} />
-      </View>
+    <>
       <FlatList
         data={listPosts}
         keyExtractor={(item, index) => index.toString()}
@@ -244,8 +115,159 @@ const ProfileFriendScreen = () => {
         maxToRenderPerBatch={10}
         updateCellsBatchingPeriod={100}
         initialNumToRender={5}
+        ListHeaderComponent={
+          <View style={styles.infoWrapper}>
+            <View style={styles.avatarCoverWrapper}>
+              <TouchableOpacity activeOpacity={0.8}>
+                <Image
+                  style={styles.cover}
+                  source={
+                    data?.cover_image
+                      ? {uri: data?.cover_image}
+                      : require('@/Assets/Images/cover.png')
+                  }
+                />
+              </TouchableOpacity>
+              <View style={styles.avatarWrapper}>
+                <TouchableOpacity activeOpacity={0.9}>
+                  <Image
+                    style={styles.avatar}
+                    source={
+                      data?.avatar
+                        ? {uri: data?.avatar}
+                        : require('@/Assets/Images/Avatar.png')
+                    }
+                  />
+                </TouchableOpacity>
+              </View>
+            </View>
+            <View style={styles.introWrapper}>
+              <Text style={styles.name}>{data?.username}</Text>
+              <Text style={styles.introTxt}>{data?.description}</Text>
+              <View style={styles.introButtonWrapper}>
+                {data?.is_friend === '1' ? (
+                  <TouchableOpacity style={styles.btnAddStory}>
+                    <FontAwesome6 size={16} color="#fff" name="user-check" />
+                    <Text
+                      style={{
+                        fontSize: 16,
+                        fontWeight: '500',
+                        color: '#fff',
+                        marginLeft: 5,
+                      }}>
+                      Bạn bè
+                    </Text>
+                  </TouchableOpacity>
+                ) : (
+                  <TouchableOpacity style={styles.btnAddStory}>
+                    <FontAwesome6 size={16} color="#fff" name="user-plus" />
+                    <Text
+                      style={{
+                        fontSize: 16,
+                        fontWeight: '500',
+                        color: '#fff',
+                        marginLeft: 5,
+                      }}>
+                      Thêm bạn
+                    </Text>
+                  </TouchableOpacity>
+                )}
+                <View style={styles.introOptionsWrapper}>
+                  <TouchableOpacity
+                    // onPress={onPressProfileSettingHandler}
+                    style={styles.btnEditProfileScreen}>
+                    <MaterialCommunityIcons
+                      size={20}
+                      color="#000"
+                      name="facebook-messenger"
+                    />
+                    <Text
+                      style={{
+                        fontSize: 16,
+                        fontWeight: '500',
+                        color: '#000',
+                        marginLeft: 5,
+                      }}>
+                      Nhắn tin
+                    </Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    onPress={() => {
+                      navigation.navigate('OtherPeopleSetting', {
+                        userId: data?.id,
+                      });
+                    }}
+                    style={styles.btnOption}>
+                    <FontAwesome5Icon
+                      size={20}
+                      color="#000"
+                      name="ellipsis-h"
+                    />
+                  </TouchableOpacity>
+                </View>
+              </View>
+            </View>
+            <View style={styles.introListWrapper}>
+              {data?.city && (
+                <View style={styles.introLine}>
+                  <FontAwesome5Icon
+                    size={20}
+                    color="#333"
+                    style={styles.introIcon}
+                    name="home"
+                  />
+                  <Text style={styles.introLineText}>
+                    Sống tại{' '}
+                    <Text style={styles.introHightLight}>{data?.city}</Text>
+                  </Text>
+                </View>
+              )}
+              {(data?.address || data?.city) && (
+                <View style={styles.introLine}>
+                  <FontAwesome5Icon
+                    size={20}
+                    color="#333"
+                    style={styles.introIcon}
+                    name="map-marker-alt"
+                  />
+                  <Text style={styles.introLineText}>
+                    Đến từ{' '}
+                    <Text style={styles.introHightLight}>
+                      {data.address}, {data.city}, {data.country}
+                    </Text>
+                  </Text>
+                </View>
+              )}
+              <View style={styles.introLine}>
+                <FontAwesome5Icon
+                  size={20}
+                  color="#333"
+                  style={styles.introIcon}
+                  name="rss"
+                />
+                <Text style={styles.introLineText}>
+                  Có{' '}
+                  <Text style={styles.introHightLight}>{data?.listing} </Text>
+                  người theo dõi
+                </Text>
+              </View>
+              <View style={styles.introLine}>
+                <FontAwesome5Icon
+                  size={20}
+                  color="#333"
+                  style={styles.introIcon}
+                  name="link"
+                />
+                <TouchableOpacity>
+                  <Text style={styles.introLineText}>{data?.link}</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+            <FriendsShowing userFriends={userFriends} user_id={data?.id} />
+          </View>
+        }
       />
-    </ScrollView>
+    </>
   );
 };
 

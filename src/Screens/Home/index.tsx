@@ -143,9 +143,9 @@ const HomeScreen = () => {
             />
           )}
           onEndReached={loadMorePosts}
-          onEndReachedThreshold={10}
+          onEndReachedThreshold={0.1}
           maxToRenderPerBatch={10}
-          updateCellsBatchingPeriod={100}
+          updateCellsBatchingPeriod={20}
           initialNumToRender={5}
           ListHeaderComponent={PostTool}
           ListFooterComponent={
@@ -156,8 +156,6 @@ const HomeScreen = () => {
           onRefresh={handleRefresh}
           refreshing={isLoadingPosts}
         />
-
-        <Text style={styles.subtitle}>user: {userId}</Text>
       </SafeAreaView>
 
       {/* Model Comment */}

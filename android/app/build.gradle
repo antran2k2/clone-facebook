@@ -123,6 +123,9 @@ dependencies {
     }
     implementation project(':react-native-splash-screen')
     implementation project(':react-native-exit-app')
+    implementation project(':react-native-video')
+    implementation "androidx.appcompat:appcompat:1.0.0"
+
 
 }
 

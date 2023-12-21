@@ -16,7 +16,9 @@ const PostTool = () => {
   return (
     <View style={styles.container}>
       <View style={styles.postToolWrapper}>
-        <TouchableOpacity activeOpacity={0.5}>
+        <TouchableOpacity
+          activeOpacity={0.5}
+          onPress={() => navigation.navigate('ProfileTab')}>
           <Image
             // source={require('@/Assets/Images/Avatar.png')}
             source={{uri: avatar || 'https://i.imgur.com/An9lt4E.png'}}

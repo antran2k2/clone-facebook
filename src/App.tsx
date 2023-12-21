@@ -15,6 +15,7 @@ function App(): JSX.Element {
   useEffect(() => {
     SplashScreen.hide();
   }, []);
+
   return (
     <Provider store={store}>
       <PersistGate loading={null} persistor={persistor}>
