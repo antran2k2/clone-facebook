@@ -14,6 +14,7 @@ import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import FontAwesome6 from 'react-native-vector-icons/FontAwesome6';
 import Entypo from 'react-native-vector-icons/Entypo';
 import {TSearch} from '@/types/user.type';
+import {useFocusEffect} from '@react-navigation/native';
 import {
   useGetSavedSearchQuery,
   useDelSavedSearchMutation,
@@ -25,6 +26,7 @@ const ActivityLogScreen = () => {
     isLoading,
     isError,
     isSuccess,
+    refetch,
   } = useGetSavedSearchQuery({
     index: '0',
     count: '20',
@@ -39,15 +41,30 @@ const ActivityLogScreen = () => {
     }
   }, [isSuccess]);
 
+  useFocusEffect(
+    React.useCallback(() => {
+      refetch();
+    }, [refetch]),
+  );
+
   const [listActivityItem, setListActivityItem] = useState<TSearch[]>();
 
   const deleteAllActivityLog = () => {
-    // Xử lý API xóa toàn bộ tìm kiếm ở đây
+    delSavedSearch({all: '1'})
+      .unwrap()
+      .then(res => {
+        console.log(res);
+      })
+      .catch(err => console.log(err));
   };
 
   const handleDeleteSearch = (_id: string) => {
-    // Xử lý API xóa hoạt động tìm kiếm ở đây
-    console.log(_id);
+    delSavedSearch({search_id: _id})
+      .unwrap()
+      .then(res => {
+        console.log(res);
+      })
+      .catch(err => console.log(err));
   };
 
   const uniqueDates = [
@@ -122,11 +139,6 @@ const ActivityLogScreen = () => {
                               size={28}
                             />
                           </View>
-                          <View>
-                            <Text style={{fontSize: 15}}>
-                              Đã ẩn khỏi dòng thời gian
-                            </Text>
-                          </View>
                         </View>
                       </View>
                       <View>
@@ -193,7 +205,8 @@ const styles = StyleSheet.create({
   content_search_item: {
     display: 'flex',
     flexDirection: 'column',
-    marginRight: 20,
+    marginRight: 0,
+    width: 250,
     gap: 2,
   },
   title: {

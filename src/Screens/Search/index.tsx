@@ -28,6 +28,7 @@ export interface SearchKey {
 }
 import {useNavigation} from '@react-navigation/native';
 import {RootStackParamList, ScreenNavigationProp} from '@/Routes/Stack';
+import {useFocusEffect} from '@react-navigation/native';
 
 import {useGetSavedSearchQuery} from '@/Redux/api/search';
 // fake data
@@ -281,6 +282,11 @@ function SearchScreen() {
       setSearchTopHistory(data?.data || []);
     }
   }, [isSuccess, data?.data]);
+  useFocusEffect(
+    React.useCallback(() => {
+      refetch();
+    }, [refetch]),
+  );
   const [searchText, setSearchText] = useState('');
 
   // - xử lý data, xếp theo thời gian, lấy ra top 20
@@ -295,6 +301,7 @@ function SearchScreen() {
 
       return dateA.isAfter(dateB) ? -1 : 1;
     });
+    // return searchListCopy;
   };
 
   const sortedSearchKeywordByCreated =
