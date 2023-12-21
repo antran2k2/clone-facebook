@@ -79,6 +79,10 @@ const ProfileUserSendRequestForMeScreen = () => {
 
     const navigation = useNavigation<ScreenNavigationProp>();
 
+    const handleResponseFriendRequest = () => {
+        // Xử lý trả lời lời mời kết bạn ở đây, mỗi tội có vẻ cần thêm giao diện chấp nhận hay đồng ý
+    };
+
     return (
         <ScrollView bounces={false} style={styles.container}>
             <View style={styles.infoWrapper}>
@@ -96,7 +100,7 @@ const ProfileUserSendRequestForMeScreen = () => {
                     <Text style={styles.name}>{data.username}</Text>
                     <Text style={styles.introTxt}>{data.description}</Text>
                     <View style={styles.introButtonWrapper}>
-                        <TouchableOpacity style={styles.btnAddStory}>
+                        <TouchableOpacity onPress={handleResponseFriendRequest} style={styles.btnAddStory}>
                             <FontAwesome6 size={16} color="#fff" name="user-check" />
                             <Text style={{ fontSize: 16, fontWeight: '500', color: '#fff', marginLeft: 5 }}>Trả lời</Text>
                         </TouchableOpacity>

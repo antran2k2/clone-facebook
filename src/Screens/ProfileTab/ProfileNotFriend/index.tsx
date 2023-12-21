@@ -79,6 +79,10 @@ const ProfileNotFriendScreen = () => {
 
     const navigation = useNavigation<ScreenNavigationProp>();
 
+    const handleAddFriend = () => {
+        // Xử lý add bạn bè ở đây
+    };
+
     return (
         <ScrollView bounces={false} style={styles.container}>
             <View style={styles.infoWrapper}>
@@ -96,7 +100,7 @@ const ProfileNotFriendScreen = () => {
                     <Text style={styles.name}>{data.username}</Text>
                     <Text style={styles.introTxt}>{data.description}</Text>
                     <View style={styles.introButtonWrapper}>
-                        <TouchableOpacity style={styles.btnAddStory}>
+                        <TouchableOpacity onPress={handleAddFriend} style={styles.btnAddStory}>
                             <FontAwesome6 size={16} color="#fff" name="user-plus" />
                             <Text style={{ fontSize: 16, fontWeight: '500', color: '#fff', marginLeft: 5 }}>Thêm bạn bè</Text>
                         </TouchableOpacity>
