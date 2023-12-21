@@ -98,8 +98,7 @@ const FullFriendScreen = () => {
   };
 
   const onPressProfileHandler = (id: String | undefined) => {
-    console.log(id);
-    //Handle to Profile của bạn bè
+    navigation.navigate('ProfileFriend', {id: id});
   };
 
   const onPressFriendOptionsHandler = (friend: TFriend | undefined) => {

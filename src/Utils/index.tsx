@@ -17,7 +17,7 @@ export const calculateTimeDifference = (createdTime: string) => {
     return `${Math.floor(timeDifference.asMinutes())} phút trước`;
   } else if (timeDifference.asHours() < 24) {
     return `${Math.floor(timeDifference.asHours())} giờ trước`;
-  } else if (timeDifference.asDays() < 7) {
+  } else if (timeDifference.asDays() < 31) {
     return `${Math.floor(timeDifference.asDays())} ngày trước`;
   } else if (timeDifference.asMonths() < 12) {
     return `${Math.floor(timeDifference.asMonths())} tháng trước`;

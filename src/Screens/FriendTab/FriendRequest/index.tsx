@@ -154,7 +154,7 @@ const FriendRequestScreen = () => {
   };
 
   const onPressProfileHandler = (friendId: String | undefined) => {
-    // handle Sang trang cá nhân của bạn bè
+    navigation.navigate('ProfileFriend', {id: friendId});
   };
 
   const onPressArrangeHandler = () => {

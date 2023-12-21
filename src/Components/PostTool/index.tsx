@@ -32,14 +32,6 @@ const PostTool = () => {
             <Text>What are u thinking?</Text>
           </View>
         </TouchableOpacity>
-        <TouchableOpacity activeOpacity={0.5}>
-          <FontAweSome5
-            style={styles.postOptionIcon}
-            name="image"
-            color="green"
-            size={16}
-          />
-        </TouchableOpacity>
       </View>
     </View>
   );

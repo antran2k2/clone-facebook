@@ -204,7 +204,7 @@ const HomeScreen = () => {
             <View style={styles.postOptionItem}>
               <View style={styles.optionIcon}>
                 <MaterialCommunityIcons
-                  name="pencil-outline"
+                  name="content-save"
                   size={26}
                   color="#000"></MaterialCommunityIcons>
               </View>
@@ -224,7 +224,7 @@ const HomeScreen = () => {
             <View style={styles.postOptionItem}>
               <View style={styles.optionIcon}>
                 <MaterialCommunityIcons
-                  name="pencil-outline"
+                  name="file-hidden"
                   size={26}
                   color="#000"></MaterialCommunityIcons>
               </View>
@@ -245,7 +245,7 @@ const HomeScreen = () => {
             <View style={styles.postOptionItem}>
               <View style={styles.optionIcon}>
                 <MaterialCommunityIcons
-                  name="pencil-outline"
+                  name="message-question-outline"
                   size={26}
                   color="#000"></MaterialCommunityIcons>
               </View>
@@ -267,7 +267,7 @@ const HomeScreen = () => {
             <View style={styles.postOptionItem}>
               <View style={styles.optionIcon}>
                 <MaterialCommunityIcons
-                  name="pencil-outline"
+                  name="alert-box-outline"
                   size={26}
                   color="#000"></MaterialCommunityIcons>
               </View>
@@ -287,7 +287,7 @@ const HomeScreen = () => {
             <View style={styles.postOptionItem}>
               <View style={styles.optionIcon}>
                 <MaterialCommunityIcons
-                  name="pencil-outline"
+                  name="bell-outline"
                   size={26}
                   color="#000"></MaterialCommunityIcons>
               </View>

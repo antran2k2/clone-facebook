@@ -85,7 +85,9 @@ const SuggestFriendScreen = () => {
     //navigation.push('friendSuggest')
   };
 
-  const onPressProfileHandler = () => {};
+  const onPressProfileHandler = (friendId: string) => {
+    navigation.navigate('ProfileFriend', {id: friendId});
+  };
 
   // const onPressArrangeHandler = () => {
   //     // Xử lý khi ấn nút Sắp xếp
@@ -234,7 +236,7 @@ const SuggestFriendScreen = () => {
               {friendSuggest &&
                 friendSuggest.map((friendRequest, index) => (
                   <TouchableOpacity
-                    // onPress={onPressProfileHandler.bind(this, friendRequest.id)}
+                    onPress={onPressProfileHandler.bind(this, friendRequest.id)}
                     key={index}
                     style={styles.recommendFriendItem}>
                     <Image

@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useCallback, useEffect} from 'react';
 import {
   View,
   TextInput,
@@ -16,15 +16,45 @@ import {AddPostDTO} from '@/types/post.type';
 import {useAppSelector} from '@/Redux/store';
 import EntypoIcon from 'react-native-vector-icons/Entypo';
 import axios from 'axios';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 const screenWidth = Dimensions.get('window').width;
+import Modal from 'react-native-modal';
+import FontAwesome5Icon from 'react-native-vector-icons/FontAwesome5';
+import {ScreenNavigationProp} from '@/Routes/Stack';
+import {useNavigation, useRoute} from '@react-navigation/native';
+import {useFocusEffect} from '@react-navigation/native';
+import {useGetUserInfoQuery} from '@/Redux/api/profile';
 
 const AddPostScreen = () => {
   const {avatar, id: userId, username} = useAppSelector(state => state.info);
+
+  const [user, setUser] = useState();
+  const {
+    data,
+    isLoading: isGetinfo,
+    isSuccess,
+    refetch,
+  } = useGetUserInfoQuery({
+    user_id: userId || '-1',
+  });
+  const [description, setDescription] = useState('');
+
+  useEffect(() => {
+    if (isSuccess) {
+      setUser(data.data);
+    }
+  }, [isSuccess, data]);
+  useFocusEffect(
+    useCallback(() => {
+      refetch();
+    }, [refetch]),
+  );
 
   const [postText, setPostText] = useState('');
   const [response, setResponse] = React.useState<any>(null);
   const [addPost, {isLoading}] = useAddPostMutation();
   const [textValue, setTextValue] = useState('');
+  const navigation = useNavigation<ScreenNavigationProp>();
   const handlePost = () => {
     const formData = new FormData();
     // formData.append('image', response.assets);
@@ -50,18 +80,18 @@ const AddPostScreen = () => {
     //   // Thêm thông tin vào mảng arr
     //   formData.append('image', {uri, name, type});
     // });
+    console.log(postText);
 
-    formData.append('described', 'test123 image');
+    formData.append('described', postText);
     formData.append('status', 'happy');
     formData.append('auto_accept', '1');
     // addPost(formData)
     //   .unwrap()
     //   .then(res => console.log(res.data));
-    console.log('Post:', formData);
 
     addPost(formData)
       .unwrap()
-      .then(res => console.log(res.data))
+      .then(res => navigation.goBack())
       .catch(err => Alert.alert('Lỗi', err.message));
   };
 
@@ -73,28 +103,101 @@ const AddPostScreen = () => {
     }
   }, []);
 
+  const [isModalVisible1, setModalVisible1] = useState(false);
+  const toggleModal1 = () => {
+    setModalVisible1(!isModalVisible1);
+  };
+
+  const handleBack = () => {};
+
   return (
     <View style={styles.container}>
+      <View style={styles.navigationBar}>
+        <View style={styles.navigationBarLeft}>
+          <TouchableOpacity onPress={toggleModal1} style={styles.btnBack}>
+            <FontAwesome5Icon name="arrow-left" color="#000" size={20} />
+          </TouchableOpacity>
+          <Text style={styles.textNavigationBar}>Tạo bài viết</Text>
+        </View>
+        <TouchableOpacity
+          disabled={postText.length === 0}
+          style={postText.length === 0 ? styles.btnPost1 : styles.btnPost}
+          onPress={handlePost}>
+          <Text style={styles.btnText}>Đăng</Text>
+        </TouchableOpacity>
+      </View>
       <View style={styles.imageRow}>
         <Image
-          source={require('@/Assets/Images/Avatar.png')}
+          source={
+            user?.avatar
+              ? {uri: user.avatar}
+              : require('@/Assets/Images/Avatar.png')
+          }
           resizeMode="contain"
           style={styles.imageAvt}
         />
-        <Text style={styles.name}>Trần Viết An</Text>
-        <View style={styles.group}>
-          <TouchableOpacity
-            // onPress={() => props.navigation.goBack()}
-            onPress={handlePost}
-            style={styles.button}>
-            <Text style={styles.dang}>Đăng</Text>
-          </TouchableOpacity>
+        <View>
+          <Text style={styles.name}>{user?.username}</Text>
+          <View style={{flexDirection: 'row', gap: 2}}>
+            <TouchableOpacity
+              style={{
+                borderRadius: 8,
+                borderWidth: 1,
+                borderColor: '#ddd',
+                paddingHorizontal: 6,
+                paddingVertical: 2,
+                width: 70,
+                flexDirection: 'row',
+                alignItems: 'center',
+              }}>
+              <MaterialCommunityIcons
+                name="account-multiple-outline"
+                size={12}
+                color="#000"></MaterialCommunityIcons>
+              <Text
+                style={{
+                  color: '#000',
+                  fontWeight: '400',
+                  fontSize: 12,
+                  marginLeft: 2,
+                }}>
+                Bạn bè
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={{
+                borderRadius: 8,
+                borderWidth: 1,
+                borderColor: '#ddd',
+                paddingHorizontal: 6,
+                paddingVertical: 2,
+                width: 70,
+                flexDirection: 'row',
+                alignItems: 'center',
+              }}>
+              <MaterialCommunityIcons
+                name="image-album"
+                size={12}
+                color="#000"></MaterialCommunityIcons>
+              <Text
+                style={{
+                  color: '#000',
+                  fontWeight: '400',
+                  fontSize: 12,
+                  marginLeft: 2,
+                }}>
+                Album
+              </Text>
+            </TouchableOpacity>
+          </View>
         </View>
       </View>
       <TextInput
         placeholder="Bạn đang nghĩ gì?"
         editable
         multiline
+        value={postText}
+        onChange={e => setPostText(e.nativeEvent.text)}
         numberOfLines={4}
         style={styles.inputPost}
       />
@@ -111,7 +214,7 @@ const AddPostScreen = () => {
             </View>
           ))}
       </View>
-      <View style={styles.group3Row}>
+      {/* <View style={styles.group3Row}>
         <View style={styles.group3}>
           <TouchableOpacity
             style={styles.button2}
@@ -147,7 +250,232 @@ const AddPostScreen = () => {
             </View>
           </TouchableOpacity>
         </View>
+      </View> */}
+      <View>
+        <TouchableOpacity
+          style={styles.postOptionItemWrapper}
+          onPress={() =>
+            onButtonPress('library', {
+              selectionLimit: 4,
+              mediaType: 'photo',
+              includeBase64: false,
+              includeExtra: true,
+            })
+          }>
+          <View style={styles.postOptionItem}>
+            <View style={styles.optionIcon}>
+              <MaterialCommunityIcons
+                name="image"
+                size={26}
+                color="#000"></MaterialCommunityIcons>
+            </View>
+            <View>
+              <Text
+                style={{
+                  fontSize: 17,
+                  fontWeight: '600',
+                  color: '#000',
+                }}>
+                Ảnh/Video
+              </Text>
+            </View>
+          </View>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.postOptionItemWrapper}
+          onPress={() =>
+            onButtonPress('capture', {
+              selectionLimit: 1,
+              mediaType: 'photo',
+              includeBase64: false,
+              includeExtra: true,
+            })
+          }>
+          <View style={styles.postOptionItem}>
+            <View style={styles.optionIcon}>
+              <MaterialCommunityIcons
+                name="camera-image"
+                size={26}
+                color="#000"></MaterialCommunityIcons>
+            </View>
+            <View>
+              <Text
+                style={{
+                  fontSize: 17,
+                  fontWeight: '600',
+                  color: '#000',
+                }}>
+                Camera
+              </Text>
+            </View>
+          </View>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.postOptionItemWrapper}
+          onPress={() =>
+            onButtonPress('capture', {
+              selectionLimit: 1,
+              mediaType: 'video',
+              formatAsMp4: true,
+              includeBase64: false,
+              includeExtra: true,
+            })
+          }>
+          <View style={styles.postOptionItem}>
+            <View style={styles.optionIcon}>
+              <MaterialCommunityIcons
+                name="video-box"
+                size={26}
+                color="#000"></MaterialCommunityIcons>
+            </View>
+            <View>
+              <Text
+                style={{
+                  fontSize: 17,
+                  fontWeight: '600',
+                  color: '#000',
+                }}>
+                Video trực tiếp
+              </Text>
+            </View>
+          </View>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.postOptionItemWrapper}
+          // onPress={() => { navigation.navigate("EditPublicInfo") }}
+        >
+          <View style={styles.postOptionItem}>
+            <View style={styles.optionIcon}>
+              <MaterialCommunityIcons
+                name="account-multiple-plus"
+                size={26}
+                color="#000"></MaterialCommunityIcons>
+            </View>
+            <View>
+              <Text
+                style={{
+                  fontSize: 17,
+                  fontWeight: '600',
+                  color: '#000',
+                }}>
+                Gắn thẻ bạn bè
+              </Text>
+            </View>
+          </View>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.postOptionItemWrapper}
+          // onPress={() => { navigation.navigate("EditPublicInfo") }}
+        >
+          <View style={styles.postOptionItem}>
+            <View style={styles.optionIcon}>
+              <MaterialCommunityIcons
+                name="emoticon-outline"
+                size={26}
+                color="#000"></MaterialCommunityIcons>
+            </View>
+            <View>
+              <Text
+                style={{
+                  fontSize: 17,
+                  fontWeight: '600',
+                  color: '#000',
+                }}>
+                Cảm xúc/Hoạt động
+              </Text>
+            </View>
+          </View>
+        </TouchableOpacity>
       </View>
+      {/* Model Report */}
+      <Modal
+        isVisible={isModalVisible1}
+        onBackdropPress={toggleModal1}
+        onBackButtonPress={toggleModal1}
+        backdropOpacity={0.3}
+        onSwipeComplete={() => setModalVisible1(false)}
+        useNativeDriverForBackdrop
+        swipeDirection={['down']}
+        style={{
+          margin: 5,
+          borderRadius: 50,
+          flex: 1,
+          justifyContent: 'flex-end',
+        }}>
+        <View
+          style={{
+            paddingTop: 16,
+            paddingBottom: 10,
+            backgroundColor: '#fff',
+          }}>
+          <TouchableOpacity
+            style={styles.postOptionItemWrapper}
+            onPress={() => navigation.goBack()}>
+            <View style={styles.postOptionItem}>
+              <View style={styles.optionIcon}>
+                <MaterialCommunityIcons
+                  name="content-save"
+                  size={26}
+                  color="#000"></MaterialCommunityIcons>
+              </View>
+              <View>
+                <Text
+                  style={{
+                    fontSize: 17,
+                    fontWeight: '400',
+                    color: '#000',
+                  }}>
+                  Lưu bản nháp
+                </Text>
+              </View>
+            </View>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.postOptionItemWrapper}
+            onPress={() => navigation.goBack()}>
+            <View style={styles.postOptionItem}>
+              <View style={styles.optionIcon}>
+                <MaterialCommunityIcons
+                  name="delete"
+                  size={26}
+                  color="#000"></MaterialCommunityIcons>
+              </View>
+              <View>
+                <Text
+                  style={{
+                    fontSize: 17,
+                    fontWeight: '400',
+                    color: '#000',
+                  }}>
+                  Bỏ bài viết
+                </Text>
+              </View>
+            </View>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.postOptionItemWrapper}
+            onPress={toggleModal1}>
+            <View style={styles.postOptionItem}>
+              <View style={styles.optionIcon}>
+                <MaterialCommunityIcons
+                  name="check"
+                  size={26}
+                  color="#318bfb"></MaterialCommunityIcons>
+              </View>
+              <View>
+                <Text
+                  style={{
+                    fontSize: 17,
+                    fontWeight: '400',
+                    color: '#318bfb',
+                  }}>
+                  Tiếp tục chỉnh sửa
+                </Text>
+              </View>
+            </View>
+          </TouchableOpacity>
+        </View>
+      </Modal>
     </View>
   );
 };
@@ -173,10 +501,11 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   imageAvt: {
-    width: 40,
-    height: 40,
+    width: 48,
+    height: 48,
     borderWidth: 1,
     borderRadius: 100,
+    marginRight: 2,
   },
   name: {
     fontFamily: 'roboto-regular',
@@ -187,7 +516,7 @@ const styles = StyleSheet.create({
   group: {
     width: 62,
     height: 28,
-    marginLeft: 124,
+    marginLeft: 104,
     marginTop: 5,
   },
   button: {
@@ -293,6 +622,66 @@ const styles = StyleSheet.create({
     marginTop: 51,
     marginLeft: 10,
     marginRight: 20,
+  },
+  postOptionItemWrapper: {
+    paddingBottom: 14,
+    paddingTop: 12,
+    paddingLeft: 20,
+    paddingRight: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: '#ddd',
+  },
+  postOptionItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  optionIcon: {
+    width: 35,
+    alignItems: 'center',
+  },
+  navigationBar: {
+    paddingTop: 12,
+    flexDirection: 'row',
+    height: 64,
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    borderBottomWidth: 1,
+    borderBottomColor: '#ddd',
+    backgroundColor: '#fff',
+  },
+  navigationBarLeft: {
+    flexDirection: 'row',
+  },
+  textNavigationBar: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#000',
+    marginLeft: 5,
+  },
+  btnBack: {
+    width: 50,
+    alignItems: 'center',
+  },
+  btnPost: {
+    backgroundColor: '#1877F2',
+    borderRadius: 8,
+    alignItems: 'center',
+    paddingHorizontal: 12,
+    paddingVertical: 5,
+    marginRight: 12,
+  },
+  btnPost1: {
+    backgroundColor: '#ddd',
+    borderRadius: 8,
+    alignItems: 'center',
+    paddingHorizontal: 12,
+    paddingVertical: 5,
+    marginRight: 12,
+  },
+  btnText: {
+    fontSize: 15,
+    fontWeight: 'bold',
+    color: 'white',
   },
 });
 

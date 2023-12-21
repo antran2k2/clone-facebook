@@ -49,6 +49,8 @@ import EditLinkScreen from '@/Screens/ProfileTab/EditLink';
 import EditDetailScreen from '@/Screens/ProfileTab/EditDetail';
 import SettingPersonalPageScreen from '@/Screens/ProfileTab/SettingPersonalPage';
 import ShowImageScreen from '@/Screens/ProfileTab/ShowImage';
+import ProfileFriendScreen from '@/Screens/ProfileTab/ProfileFriend';
+import OtherPersonalSettingScreen from '@/Screens/ProfileTab/OtherPeopleSetting';
 
 export type RootStackParamList = {
   Main: undefined;
@@ -93,6 +95,8 @@ export type RootStackParamList = {
   EditDetail: undefined;
   SettingPersonalPage: undefined;
   ShowImage: {link: string};
+  ProfileFriend: {id: string};
+  OtherPeopleSetting: undefined;
 };
 export type ScreenNavigationProp =
   NativeStackNavigationProp<RootStackParamList>;
@@ -123,7 +127,7 @@ function MyStack() {
         name="AddPost"
         component={AddPostScreen}
         options={{
-          headerShown: true,
+          // headerShown: true,
           title: 'Tạo bài viết',
         }}
       />
@@ -250,6 +254,11 @@ function MyStack() {
         component={SettingPersonalPageScreen}
       />
       <Stack.Screen name="ShowImage" component={ShowImageScreen} />
+      <Stack.Screen name="ProfileFriend" component={ProfileFriendScreen} />
+      <Stack.Screen
+        name="OtherPeopleSetting"
+        component={OtherPersonalSettingScreen}
+      />
     </Stack.Navigator>
   );
 }

@@ -100,7 +100,12 @@ const PostItem = React.memo(
           style={styles.header}
           onPress={() => handleTouchHeader(item)}>
           <View style={styles.row}>
-            <Image style={styles.avatarImg} source={imgSrc} />
+            <TouchableOpacity
+              onPress={() =>
+                navigation.navigate('ProfileFriend', {id: author.id})
+              }>
+              <Image style={styles.avatarImg} source={imgSrc} />
+            </TouchableOpacity>
             <View style={{paddingLeft: 10}}>
               <Text style={styles.user}>{author.name}</Text>
               <View style={styles.row}>
