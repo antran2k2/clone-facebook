@@ -23,6 +23,7 @@ let tabWidth = windowWidth / numberOfTabs;
 const Tab = createMaterialTopTabNavigator();
 
 function MainTab() {
+  const [isHasNoti, setIsHasNoti] = React.useState(false);
   const [setDevtokenMutation] = useSetDevtokenMutation();
   useEffect(() => {
     const registerDeviceForRemoteMessages = async () => {
@@ -49,7 +50,8 @@ function MainTab() {
   }, [setDevtokenMutation]);
   useEffect(() => {
     const unsubscribe = messaging().onMessage(async (remoteMessage: any) => {
-      Alert.alert(remoteMessage.notification.body, 'New Notification');
+      // Alert.alert(remoteMessage.notification.body, 'New Notification');
+      setIsHasNoti(true);
     });
 
     return unsubscribe;
@@ -109,6 +111,11 @@ function MainTab() {
         <Tab.Screen
           name="Notification"
           component={NotificationScreen}
+          listeners={({}) => ({
+            focus: () => {
+              setIsHasNoti(false);
+            },
+          })}
           options={{
             tabBarIcon: ({focused}) => (
               <Icon
@@ -118,15 +125,18 @@ function MainTab() {
                 color={focused ? '#007AFF' : '#222'}
               />
             ),
+
             tabBarBadge() {
               return (
-                <Icon
-                  style={{right: tabWidth / 3, top: 10}}
-                  name="circle"
-                  solid
-                  size={7}
-                  color="red"
-                />
+                isHasNoti && (
+                  <Icon
+                    style={{right: tabWidth / 3, top: 10}}
+                    name="circle"
+                    solid
+                    size={7}
+                    color="red"
+                  />
+                )
               );
             },
           }}

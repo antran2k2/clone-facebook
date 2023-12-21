@@ -17,7 +17,11 @@ import {
 } from 'react-native';
 import FontAwesome5Icon from 'react-native-vector-icons/FontAwesome5';
 import FontAwesome6 from 'react-native-vector-icons/FontAwesome6';
-
+import {useNavigation, useRoute} from '@react-navigation/native';
+import {useSearchQuery, useSearchUserQuery} from '@/Redux/api/search';
+import {useGetUserFriendsQuery} from '@/Redux/api/friend';
+import Spinner from 'react-native-loading-spinner-overlay';
+import {useAppSelector} from '@/Redux/store';
 const windowWidth = Math.round(Dimensions.get('window').width);
 
 const styles = StyleSheet.create({
@@ -139,26 +143,71 @@ const styles = StyleSheet.create({
   },
 });
 
-function SearchResultScreen({navigation}) {
+function SearchResultScreen() {
   // cần đặt default value thành từ khoá vừa search
-  const [searchText, setSearchText] = useState('');
+  const {id} = useAppSelector(state => state.info);
+  const {
+    data: resFriend,
+    isLoading,
+    isSuccess,
+  } = useGetUserFriendsQuery({index: '0', count: '1000', user_id: id || '-1'});
+  const route = useRoute();
+  const {keyword} = route.params;
+  const navigation = useNavigation();
+  const [searchText, setSearchText] = useState(keyword);
+  const [friendUser, setFriendUser] = useState([]); // [UserResult]
+  const [allUser, setAllUser] = useState([]); // [UserResult]
+  const [listPost, setListPost] = useState([]); // [PostResult
+  const initPararms = {
+    keyword: searchText,
+    index: '0',
+    count: '100',
+  };
+  const {
+    data: res,
+    isLoading: isLoadingQuery,
+    isSuccess: isSuccessQuery,
+  } = useSearchQuery(initPararms);
+  const {
+    data: resUser,
+    isLoading: isLoadingUser,
+    isSuccess: isSuccessUser,
+  } = useSearchUserQuery(initPararms);
+
+  useEffect(() => {
+    if (isSuccess) {
+      // console.log(resFriend.data);
+      setFriendUser(resFriend?.data?.friends);
+    }
+  }, [resFriend, isSuccess]);
+  useEffect(() => {
+    if (isSuccessQuery) {
+      setListPost(res?.data);
+    }
+  }, [res, isSuccessQuery]);
+
+  useEffect(() => {
+    if (isSuccessUser) {
+      setAllUser(resUser?.data);
+    }
+  }, [resUser, isSuccessUser]);
   const [selectedTab, setSelectedTab] = useState('Tất cả');
 
   const renderContent = () => {
     // Tùy thuộc vào mục được chọn, hiển thị nội dung tương ứng ở đây
     switch (selectedTab) {
       case 'Tất cả':
-        return <AllComponent />;
+        return <AllComponent friendUser={friendUser} allUser={allUser} />;
       case 'Bài viết':
-        return <AllComponent />;
+        return <AllComponent friendUser={friendUser} allUser={allUser} />;
       case 'Mọi người':
-        return <AllComponent />;
+        return <AllComponent friendUser={friendUser} allUser={allUser} />;
       case 'Nhóm':
-        return <AllComponent />;
+        return <AllComponent friendUser={friendUser} allUser={allUser} />;
       case 'Sự kiện':
-        return <AllComponent />;
+        return <AllComponent friendUser={friendUser} allUser={allUser} />;
       default:
-        return <AllComponent />;
+        return <AllComponent friendUser={friendUser} allUser={allUser} />;
     }
   };
   const handleTabPress = tabName => {
@@ -173,6 +222,7 @@ function SearchResultScreen({navigation}) {
 
   return (
     <SafeAreaView style={styles.container}>
+      <Spinner visible={isLoading || isLoadingQuery} />
       <View style={styles.containerHeader}>
         <FontAwesome6 style={styles.returnIcon} name="less-than" size={18} />
         <TextInput
@@ -181,7 +231,6 @@ function SearchResultScreen({navigation}) {
           placeholderTextColor="#999"
           value={searchText}
           onChangeText={text => {
-            console.log(text);
             setSearchText(text);
           }}
           returnKeyType="search"
@@ -232,10 +281,10 @@ function SearchResultScreen({navigation}) {
               </Text>
             </TouchableOpacity>
           </View>
-          {/* <View style={styles.contentContainer}>{renderContent()}</View> */}
-          <View>
+          <View>{renderContent()}</View>
+          {/* <View>
             <AllComponent />
-          </View>
+          </View> */}
         </View>
       </View>
     </SafeAreaView>
@@ -248,58 +297,10 @@ export interface UserResult {
   id: string;
   username: string;
   avatar: string;
-  mutualFriend: string;
+  same_friends: string;
 }
 
-function AllComponent() {
-  // fake data
-  const friendUser: UserResult[] = [
-    {
-      id: '1111',
-      username: 'Hà Vũ',
-      avatar:
-        'https://m.media-amazon.com/images/I/517i1zjTFNL._AC_UF1000,1000_QL80_.jpg',
-      mutualFriend: '46',
-    },
-    {
-      id: '1222',
-      username: 'An Trần',
-      avatar:
-        'https://m.media-amazon.com/images/I/517i1zjTFNL._AC_UF1000,1000_QL80_.jpg',
-      mutualFriend: '13',
-    },
-  ];
-  const allUser: UserResult[] = [
-    {
-      id: '1111',
-      username: 'Hà Vũ',
-      avatar:
-        'https://m.media-amazon.com/images/I/517i1zjTFNL._AC_UF1000,1000_QL80_.jpg',
-      mutualFriend: '46',
-    },
-    {
-      id: '1233',
-      username: 'Duy Anh',
-      avatar:
-        'https://m.media-amazon.com/images/I/517i1zjTFNL._AC_UF1000,1000_QL80_.jpg',
-      mutualFriend: '12',
-    },
-    {
-      id: '1253',
-      username: 'Bích Diệp',
-      avatar:
-        'https://m.media-amazon.com/images/I/517i1zjTFNL._AC_UF1000,1000_QL80_.jpg',
-      mutualFriend: '0',
-    },
-    {
-      id: '15t5',
-      username: 'Tùng Lâm',
-      avatar:
-        'https://m.media-amazon.com/images/I/517i1zjTFNL._AC_UF1000,1000_QL80_.jpg',
-      mutualFriend: '99',
-    },
-  ];
-
+function AllComponent({friendUser, allUser}: {friendUser: any; allUser: any}) {
   const renderFriendItem = ({
     item,
     index,
@@ -335,7 +336,7 @@ function AllComponent() {
     return missingUsers;
   })();
 
-  console.log('AllComponent', notFriendUser);
+  // console.log('AllComponent', notFriendUser);
   const combinedData = [
     {section: 'friends', data: friendUser},
     {section: 'new', data: notFriendUser},
@@ -347,22 +348,22 @@ function AllComponent() {
         <SectionList
           sections={[
             {
+              title: 'Bạn bè',
               data: friendUser,
               keyExtractor: (item, index) => index.toString(),
               renderItem: renderFriendItem,
             },
-          ]}
-        />
-      </View>
-      <View style={styles.NotFriendItemContainer}>
-        <SectionList
-          sections={[
-            {title: 'new', data: notFriendUser},
+            {
+              title: 'Mới',
+              data: notFriendUser,
+              keyExtractor: (item, index) => index.toString(),
+              renderItem: renderNotFriendItem,
+            },
             // Add more sections if needed
           ]}
-          keyExtractor={(item, index) => index.toString()}
-          renderItem={renderNotFriendItem}
-          renderSectionHeader={renderNotFriendHeader}
+          renderSectionHeader={({section: {title}}) => (
+            <Text style={styles.notFriendHeader}>{title}</Text>
+          )}
           stickySectionHeadersEnabled={false}
         />
       </View>
@@ -387,9 +388,13 @@ function FriendItem({user}) {
         <ImageBackground
           imageStyle={{borderRadius: 64}}
           style={styles.avatarFriend}
-          source={{
-            uri: user.avatar,
-          }}>
+          source={
+            user?.avatar
+              ? {
+                  uri: user.avatar,
+                }
+              : require('@/Assets/Images/Avatar.png')
+          }>
           <View style={{...styles.searchAvatarNotFriendIcon}}>
             <FontAwesome5Icon />
           </View>
@@ -410,7 +415,7 @@ function FriendItem({user}) {
             style={{color: '#65676b', marginLeft: 3}}
           />
           <Text style={{justifyContent: 'center', paddingHorizontal: 10}}>
-            {user.mutualFriend} bạn chung
+            {user.same_friends} bạn chung
           </Text>
         </View>
         <TouchableOpacity
@@ -443,9 +448,13 @@ function NotFriendItem({user}) {
         <ImageBackground
           imageStyle={{borderRadius: 64}}
           style={styles.avatarNotFriend}
-          source={{
-            uri: user.avatar,
-          }}>
+          source={
+            user?.avatar
+              ? {
+                  uri: user.avatar,
+                }
+              : require('@/Assets/Images/Avatar.png')
+          }>
           <View style={{...styles.searchAvatarNotFriendIcon}}>
             <FontAwesome5Icon />
           </View>
@@ -455,7 +464,7 @@ function NotFriendItem({user}) {
             {user.username}
           </Text>
           <Text style={{paddingVertical: 1}}>
-            {user.mutualFriend !== '0' ? user.mutualFriend : 'Không có'} bạn
+            {user.same_friends !== '0' ? user.same_friends : 'Không có'} bạn
             chung
           </Text>
           <TouchableOpacity

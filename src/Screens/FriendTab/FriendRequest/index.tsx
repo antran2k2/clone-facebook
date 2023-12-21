@@ -25,6 +25,7 @@ import {
   useSetAcceptFriendMutation,
   useDelRequestFriendMutation,
 } from '@/Redux/api/friend';
+import {useFocusEffect} from '@react-navigation/native';
 
 // const dayjs = require("dayjs");
 // var duration = require("dayjs/plugin/duration");
@@ -43,6 +44,7 @@ const FriendRequestScreen = () => {
     isLoading,
     isSuccess,
     error,
+    refetch,
   } = useGetRequestedFriendsQuery(
     {
       index: '0',
@@ -59,6 +61,11 @@ const FriendRequestScreen = () => {
       setFriendRequests(response.data?.requests);
     }
   }, [isSuccess, response]);
+  useFocusEffect(
+    React.useCallback(() => {
+      refetch();
+    }, [refetch]),
+  );
 
   const [isModalVisible1, setModalVisible1] = useState(false);
 

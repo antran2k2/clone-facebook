@@ -13,7 +13,7 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import FontAwesome6Icon from 'react-native-vector-icons/FontAwesome6';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import {useNavigation} from '@react-navigation/native';
-import {RootStackParamList} from '@/Routes/Stack';
+import {RootStackParamList, ScreenNavigationProp} from '@/Routes/Stack';
 const Header = ({translateY}: any) => {
   const navigation = useNavigation<ScreenNavigationProp>();
   const handleOpenSearchScreen = () => {

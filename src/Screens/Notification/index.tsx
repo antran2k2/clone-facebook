@@ -12,6 +12,7 @@ import FontAwesome5Icon from 'react-native-vector-icons/FontAwesome5';
 import NotificationList, {
   NotificationListNew,
 } from '@/Components/NotificationList';
+import {useFocusEffect} from '@react-navigation/native';
 import dayjs from 'dayjs';
 
 import {useGetNotificationQuery} from '@/Redux/api/notification';
@@ -48,7 +49,8 @@ function NotificationScreen() {
     index: '0',
     count: '100',
   };
-  const {data, isLoading, isSuccess} = useGetNotificationQuery(initParams);
+  const {data, isLoading, isSuccess, refetch} =
+    useGetNotificationQuery(initParams);
   const dayjs = require('dayjs');
   var duration = require('dayjs/plugin/duration');
   dayjs.extend(duration);
@@ -60,6 +62,12 @@ function NotificationScreen() {
       setNotiList(data?.data as Notification[]);
     }
   }, [data, isSuccess]);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      refetch();
+    }, [refetch]),
+  );
 
   enum NotificationType {
     FriendRequest = 1,

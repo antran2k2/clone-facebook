@@ -329,7 +329,27 @@ function SearchScreen() {
   const handleOpenSearchDiary = () => {
     navigation.navigate('ActivityLog');
   };
-
+  function OptionHistorySearch({option}) {
+    return (
+      <TouchableOpacity
+        style={styles.searchHistoryItem}
+        onPress={() => handleSearch(option)}>
+        {/* <FontAwesomeIcon
+          icon={faMagnifyingGlass}
+          size={18}
+          color="#c9c8cd"
+          style={{padding: 8, marginHorizontal: 6}}
+        /> */}
+        <FontAwesome6
+          name="magnifying-glass"
+          size={18}
+          color="#c9c8cd"
+          style={{padding: 8, marginHorizontal: 6}}
+        />
+        <Text style={{padding: 6, marginHorizontal: 6}}>{option}</Text>
+      </TouchableOpacity>
+    );
+  }
   // // - render giao diện
   return (
     <SafeAreaView style={styles.container}>
@@ -402,23 +422,3 @@ function SearchScreen() {
 }
 
 export default SearchScreen;
-
-function OptionHistorySearch({option}) {
-  return (
-    <View style={styles.searchHistoryItem}>
-      {/* <FontAwesomeIcon
-        icon={faMagnifyingGlass}
-        size={18}
-        color="#c9c8cd"
-        style={{padding: 8, marginHorizontal: 6}}
-      /> */}
-      <FontAwesome6
-        name="magnifying-glass"
-        size={18}
-        color="#c9c8cd"
-        style={{padding: 8, marginHorizontal: 6}}
-      />
-      <Text style={{padding: 6, marginHorizontal: 6}}>{option}</Text>
-    </View>
-  );
-}
