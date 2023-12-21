@@ -1,14 +1,14 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, Image, StyleSheet } from 'react-native';
+import {View, Text, TouchableOpacity, Image, StyleSheet} from 'react-native';
 
 import Entypo from 'react-native-vector-icons/Entypo';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import { TPost } from '@/types/post.type';
-import { useFeelMutation } from '@/Redux/api/comment';
-import { useNavigation } from '@react-navigation/native';
-import { ScreenNavigationProp } from '@/Routes/Stack';
-import { calculateTimeDifference } from '@/Utils';
+import {TPost} from '@/types/post.type';
+import {useFeelMutation, useDeleteFeelMutation} from '@/Redux/api/comment';
+import {useNavigation} from '@react-navigation/native';
+import {ScreenNavigationProp} from '@/Routes/Stack';
+import {calculateTimeDifference} from '@/Utils';
 import ListImageZoomable from '../ListImageZoomable';
 import ImageViewer from 'react-native-image-zoom-viewer';
 
@@ -19,40 +19,76 @@ type Props = {
   handleShowComment: () => void;
 };
 const PostItem = React.memo(
-  ({ item, handleTouchThreeDot, handleShowComment }: Props) => {
-    const [mutateFeel, { isLoading }] = useFeelMutation();
-    const [feel, setFeel] = React.useState<string>(item.feel);
-    const [isFelt, setIsFelt] = React.useState<string>(item.is_felt);
-
+  ({item, handleTouchThreeDot, handleShowComment}: Props) => {
     const navigation = useNavigation<ScreenNavigationProp>();
 
     const handleTouchHeader = (item: any) => {
-      navigation.navigate('PostDetail', { postId: item.id });
+      navigation.navigate('PostDetail', {postId: item.id});
     };
 
-    const { author, described, image, created } = item;
-    const imgSrc =
-      author.avatar
-        ? { uri: author.avatar }
-        : require('@/Assets/Images/Avatar.png');
+    const {author, described, image, created} = item;
+    const imgSrc = author.avatar
+      ? {uri: author.avatar}
+      : require('@/Assets/Images/Avatar.png');
 
+    const [mutateFeel, {isLoading}] = useFeelMutation();
+    const [mutateDeleteFeel, {isLoading: isLoadingDelete}] =
+      useDeleteFeelMutation();
+    const [feel, setFeel] = React.useState<string>(item.feel);
+    const [isFelt, setIsFelt] = React.useState<string>(item.is_felt);
     const handleFeelLike = () => {
-      mutateFeel({ id: item.id, type: String(1) })
+      if (isFelt === '1') {
+        mutateDeleteFeel({id: item.id})
+          .unwrap()
+          .then(res => {
+            setFeel(feel =>
+              String(Number(res.data.disappointed) + Number(res.data.kudos)),
+            );
+            setIsFelt('-1');
+            console.log(res);
+          })
+          .catch(err => {
+            console.log(err);
+          });
+        return;
+      }
+      mutateFeel({id: item.id, type: String(1)})
         .unwrap()
-        .then(({ message }) => {
-          setFeel(feel => String(Number(feel) + 1));
+        .then(res => {
+          setFeel(feel =>
+            String(Number(res.data.disappointed) + Number(res.data.kudos)),
+          );
           setIsFelt('1');
+          console.log(res);
         })
         .catch(err => {
           console.log(err);
         });
     };
     const handleFeelDislike = () => {
-      mutateFeel({ id: item.id, type: String(0) })
+      if (isFelt === '0') {
+        mutateDeleteFeel({id: item.id})
+          .unwrap()
+          .then(res => {
+            setFeel(feel =>
+              String(Number(res.data.disappointed) + Number(res.data.kudos)),
+            );
+            setIsFelt('-1');
+            console.log(res);
+          })
+          .catch(err => {
+            console.log(err);
+          });
+        return;
+      }
+      mutateFeel({id: item.id, type: String(0)})
         .unwrap()
-        .then(({ message }) => {
-          setFeel(feel => String(Number(feel) + 1));
+        .then(res => {
+          setFeel(feel =>
+            String(Number(res.data.disappointed) + Number(res.data.kudos)),
+          );
           setIsFelt('0');
+          console.log(res);
         })
         .catch(err => {
           console.log(err);
@@ -65,7 +101,7 @@ const PostItem = React.memo(
           onPress={() => handleTouchHeader(item)}>
           <View style={styles.row}>
             <Image style={styles.avatarImg} source={imgSrc} />
-            <View style={{ paddingLeft: 10 }}>
+            <View style={{paddingLeft: 10}}>
               <Text style={styles.user}>{author.name}</Text>
               <View style={styles.row}>
                 <Text style={styles.time}>
@@ -85,9 +121,9 @@ const PostItem = React.memo(
         <View style={styles.footer}>
           <View style={styles.separator} />
           <View style={styles.footerMenu}>
-            <View style={[styles.row, { flex: 2 }]}>
+            <View style={[styles.row, {flex: 2}]}>
               <TouchableOpacity
-                style={{ ...styles.button, marginRight: -14 }}
+                style={{...styles.button, marginRight: -14}}
                 onPress={() => handleFeelLike()}>
                 <View style={styles.icon}>
                   <AntDesign
@@ -108,10 +144,10 @@ const PostItem = React.memo(
                   />
                 </View>
               </TouchableOpacity>
-              <Text style={{ ...styles.text, marginLeft: 8 }}>{feel}</Text>
+              <Text style={{...styles.text, marginLeft: 8}}>{feel}</Text>
             </View>
             <TouchableOpacity
-              style={[styles.button, { flex: 1 }]}
+              style={[styles.button, {flex: 1}]}
               onPress={() => handleShowComment()}>
               <View style={styles.icon}>
                 <MaterialCommunityIcons
@@ -233,6 +269,6 @@ const styles = StyleSheet.create({
   text: {
     fontSize: 14,
     color: '#000',
-    fontWeight: '600'
+    fontWeight: '600',
   },
 });

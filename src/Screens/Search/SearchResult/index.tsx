@@ -21,7 +21,10 @@ import {useNavigation, useRoute} from '@react-navigation/native';
 import {useSearchQuery, useSearchUserQuery} from '@/Redux/api/search';
 import {useGetUserFriendsQuery} from '@/Redux/api/friend';
 import Spinner from 'react-native-loading-spinner-overlay';
+import Modal from 'react-native-modal';
 import {useAppSelector} from '@/Redux/store';
+import PostItem from '@/Components/PostItem';
+import CommentListScreen from '@/Components/ListComment';
 const windowWidth = Math.round(Dimensions.get('window').width);
 
 const styles = StyleSheet.create({
@@ -144,6 +147,15 @@ const styles = StyleSheet.create({
 });
 
 function SearchResultScreen() {
+  const [selectPost, setSelectPost] = useState(null);
+  const handleShowComment = (item: any) => {
+    setSelectPost(item);
+    toggleModal11();
+  };
+  const [isModalVisible11, setModalVisible11] = useState(false);
+  const toggleModal11 = () => {
+    setModalVisible11(!isModalVisible11);
+  };
   // cần đặt default value thành từ khoá vừa search
   const {id} = useAppSelector(state => state.info);
   const {
@@ -168,6 +180,15 @@ function SearchResultScreen() {
     isLoading: isLoadingQuery,
     isSuccess: isSuccessQuery,
   } = useSearchQuery(initPararms);
+
+  const [listPosts, setListPosts] = useState<TPost[]>([]);
+
+  useEffect(() => {
+    if (isSuccessQuery) {
+      setListPosts(res?.data);
+    }
+  }, [res, isSuccessQuery]);
+
   const {
     data: resUser,
     isLoading: isLoadingUser,
@@ -196,16 +217,27 @@ function SearchResultScreen() {
   const renderContent = () => {
     // Tùy thuộc vào mục được chọn, hiển thị nội dung tương ứng ở đây
     switch (selectedTab) {
-      case 'Tất cả':
-        return <AllComponent friendUser={friendUser} allUser={allUser} />;
       case 'Bài viết':
-        return <AllComponent friendUser={friendUser} allUser={allUser} />;
+        return (
+          <FlatList
+            data={listPosts}
+            keyExtractor={(item, index) => index.toString()}
+            renderItem={({item}) => (
+              <PostItem
+                item={item}
+                handleShowComment={() => handleShowComment(item)}
+                handleTouchThreeDot={() => {}}
+              />
+            )}
+            onEndReachedThreshold={10}
+            maxToRenderPerBatch={10}
+            updateCellsBatchingPeriod={100}
+            initialNumToRender={5}
+          />
+        );
       case 'Mọi người':
         return <AllComponent friendUser={friendUser} allUser={allUser} />;
-      case 'Nhóm':
-        return <AllComponent friendUser={friendUser} allUser={allUser} />;
-      case 'Sự kiện':
-        return <AllComponent friendUser={friendUser} allUser={allUser} />;
+
       default:
         return <AllComponent friendUser={friendUser} allUser={allUser} />;
     }
@@ -242,14 +274,6 @@ function SearchResultScreen() {
       <View style={styles.containerSearchResult}>
         <View style={styles.containerSearchResultOption}>
           <View style={styles.menuContainer}>
-            <TouchableOpacity onPress={() => handleTabPress('Tất cả')}>
-              <Text
-                style={
-                  selectedTab === 'Tất cả' ? styles.selectedTab : styles.tab
-                }>
-                Tất cả
-              </Text>
-            </TouchableOpacity>
             <TouchableOpacity onPress={() => handleTabPress('Bài viết')}>
               <Text
                 style={
@@ -266,26 +290,29 @@ function SearchResultScreen() {
                 Mọi người
               </Text>
             </TouchableOpacity>
-            <TouchableOpacity onPress={() => handleTabPress('Nhóm')}>
-              <Text
-                style={
-                  selectedTab === 'Nhóm' ? styles.selectedTab : styles.tab
-                }>
-                Nhóm
-              </Text>
-            </TouchableOpacity>
-            <TouchableOpacity onPress={() => handleTabPress('Ảnh')}>
-              <Text
-                style={selectedTab === 'Ảnh' ? styles.selectedTab : styles.tab}>
-                Ảnh
-              </Text>
-            </TouchableOpacity>
           </View>
-          <View>{renderContent()}</View>
+          <View style={{marginBottom: 50}}>{renderContent()}</View>
           {/* <View>
             <AllComponent />
           </View> */}
         </View>
+        <Modal
+          isVisible={isModalVisible11}
+          onBackdropPress={toggleModal11}
+          onBackButtonPress={toggleModal11}
+          backdropOpacity={0.3}
+          //onSwipeComplete={() => setModalVisible(false)}
+          useNativeDriverForBackdrop
+          //swipeDirection={['down']}
+          style={{
+            margin: 5,
+            borderRadius: 50,
+            flex: 1,
+            justifyContent: 'flex-end',
+            marginBottom: -90,
+          }}>
+          <CommentListScreen postItem={selectPost} />
+        </Modal>
       </View>
     </SafeAreaView>
   );

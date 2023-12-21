@@ -25,19 +25,18 @@ import messaging from '@react-native-firebase/messaging';
 import CommentListScreen from '@/Components/ListComment';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 const HomeScreen = () => {
-  const [selectPost, setSelectPost] = useState(null);
   const token = useAppSelector(state => state.auth.token);
   const {avatar, id: userId, username} = useAppSelector(state => state.info);
   const navigation = useNavigation<ScreenNavigationProp>();
-  const [mutateFeel, {isLoading}] = useFeelMutation();
+  const [selectPost, setSelectPost] = useState(null);
   const initParams: GetListPostsDTO = {
     // user_id: userId || '12',
     index: '0',
     count: '100',
   };
 
-  const [listPosts, setListPosts] = useState<TPost[]>([]);
   const [param, setParam] = useState<GetListPostsDTO>(initParams);
+  const [listPosts, setListPosts] = useState<TPost[]>([]);
   const [lastId, setLastId] = useState<string>('0');
 
   const [getPosts, {isLoading: isLoadingPosts, isFetching}] =
@@ -139,7 +138,6 @@ const HomeScreen = () => {
           renderItem={({item}) => (
             <PostItem
               item={item}
-              handleTouchThreeDot={handleTouchThreeDot}
               handleShowComment={() => handleShowComment(item)}
               handleTouchThreeDot={() => handleTouchThreeDot(item)}
             />

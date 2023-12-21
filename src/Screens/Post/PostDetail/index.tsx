@@ -24,7 +24,7 @@ import Entypo from 'react-native-vector-icons/Entypo';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import {TPost} from '@/types/post.type';
-import {useFeelMutation} from '@/Redux/api/comment';
+import {useFeelMutation, useDeleteFeelMutation} from '@/Redux/api/comment';
 import {ScreenNavigationProp} from '@/Routes/Stack';
 import {calculateTimeDifference} from '@/Utils';
 import Comment from '@/Components/Comment';
@@ -103,11 +103,91 @@ const PostDetailScreen = () => {
     }
   };
 
-  const handleFeelLike = () => {};
+  const {
+    data,
+    isLoading,
+    isSuccess: isSuccessPost,
+    refetch: refetchPost,
+  } = useGetPostQuery({id: postId});
+  // const post = data?.data;
+  const [post, setPost] = useState(null);
 
-  const handleUnFeelLike = () => {};
-  const {data, isLoading} = useGetPostQuery({id: postId});
-  const post = data?.data;
+  useEffect(() => {
+    if (isSuccessPost) {
+      setPost(data?.data);
+      setIsFelt(data?.data.is_felt);
+      setFeel(data?.data.feel);
+    }
+  }, [isSuccessPost, data]);
+  useFocusEffect(
+    React.useCallback(() => {
+      refetchPost();
+    }, [refetchPost]),
+  );
+
+  const [mutateFeel] = useFeelMutation();
+  const [mutateDeleteFeel, {isLoading: isLoadingDelete}] =
+    useDeleteFeelMutation();
+  const [feel, setFeel] = React.useState<string>(post?.feel);
+  const [isFelt, setIsFelt] = React.useState<string>(post?.is_felt);
+  const handleFeelLike = () => {
+    if (isFelt === '1') {
+      mutateDeleteFeel({id: postId})
+        .unwrap()
+        .then(res => {
+          setFeel(feel =>
+            String(Number(res.data.disappointed) + Number(res.data.kudos)),
+          );
+          setIsFelt('-1');
+          console.log(res);
+        })
+        .catch(err => {
+          console.log(err);
+        });
+      return;
+    }
+    mutateFeel({id: postId, type: String(1)})
+      .unwrap()
+      .then(res => {
+        setFeel(feel =>
+          String(Number(res.data.disappointed) + Number(res.data.kudos)),
+        );
+        setIsFelt('1');
+        console.log(res);
+      })
+      .catch(err => {
+        console.log(err);
+      });
+  };
+  const handleFeelDislike = () => {
+    if (isFelt === '0') {
+      mutateDeleteFeel({id: postId})
+        .unwrap()
+        .then(res => {
+          setFeel(feel =>
+            String(Number(res.data.disappointed) + Number(res.data.kudos)),
+          );
+          setIsFelt('-1');
+          console.log(res);
+        })
+        .catch(err => {
+          console.log(err);
+        });
+      return;
+    }
+    mutateFeel({id: postId, type: String(0)})
+      .unwrap()
+      .then(res => {
+        setFeel(feel =>
+          String(Number(res.data.disappointed) + Number(res.data.kudos)),
+        );
+        setIsFelt('0');
+        console.log(res);
+      })
+      .catch(err => {
+        console.log(err);
+      });
+  };
 
   const ref_input = useRef<TextInput | null>(null);
   const [isTrust, setIsTrust] = useState('1');
@@ -185,19 +265,19 @@ const PostDetailScreen = () => {
               <TouchableOpacity style={styles.button} onPress={handleFeelLike}>
                 <View style={styles.icon}>
                   <AntDesign
-                    name={post?.is_felt === '1' ? 'like1' : 'like2'}
+                    name={isFelt === '1' ? 'like1' : 'like2'}
                     size={20}
                     color="#424040"
                   />
                 </View>
               </TouchableOpacity>
-              {/* <Text style={[styles.text]}>{feel}</Text> */}
+              <Text style={[styles.text]}>{post?.feel}</Text>
               <TouchableOpacity
                 style={styles.button}
-                onPress={handleUnFeelLike}>
+                onPress={handleFeelDislike}>
                 <View style={styles.icon}>
                   <AntDesign
-                    name={post?.is_felt === '0' ? 'dislike1' : 'dislike2'}
+                    name={isFelt === '0' ? 'dislike1' : 'dislike2'}
                     size={20}
                     color="#424040"
                   />

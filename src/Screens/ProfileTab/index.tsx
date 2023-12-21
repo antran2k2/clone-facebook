@@ -21,8 +21,22 @@ import BuyCoinScreen from '@/Components/BuyCoin';
 import {useGetUserInfoQuery} from '@/Redux/api/profile';
 import {useGetUserFriendsQuery} from '@/Redux/api/friend';
 import {useFocusEffect} from '@react-navigation/native';
+import {useGetListPostsQuery, useLazyGetListPostsQuery} from '@/Redux/api/post';
+import PostItem from '@/Components/PostItem';
+import {FlatList} from 'react-native';
+import CommentListScreen from '@/Components/ListComment';
 
 const ProfileTabScreen = () => {
+  const [selectPost, setSelectPost] = useState(null);
+  const handleShowComment = (item: any) => {
+    setSelectPost(item);
+    toggleModal11();
+  };
+  const [isModalVisible11, setModalVisible11] = useState(false);
+  const toggleModal11 = () => {
+    setModalVisible11(!isModalVisible11);
+  };
+
   const [data, setData] = useState();
   const {id, coins} = useAppSelector(state => state.info);
   const {
@@ -43,6 +57,7 @@ const ProfileTabScreen = () => {
     isSuccess: isSuccessFriend,
     refetch: refetchFriend,
   } = useGetUserFriendsQuery(initParams);
+  const [param, setParam] = useState<GetListPostsDTO>(initParams);
 
   useFocusEffect(
     React.useCallback(() => {
@@ -61,6 +76,29 @@ const ProfileTabScreen = () => {
       setData(info.data);
     }
   }, [isSuccess, info?.data]);
+  const [listPosts, setListPosts] = useState<TPost[]>([]);
+  const [lastId, setLastId] = useState<string>('0');
+
+  const [getPosts, {isLoading: isLoadingPosts, isFetching}] =
+    useLazyGetListPostsQuery();
+
+  useEffect(() => {
+    getPosts(param)
+      .unwrap()
+      .then(res => {
+        // setListPosts(res.data.post);
+        setListPosts(prev => {
+          // Lọc ra những bài viết có ID khác với bài viết hiện tại
+          const newPosts = res.data.post.filter(newPost => {
+            return !prev.some(prevPost => prevPost.id === newPost.id);
+          });
+
+          // Thêm những bài viết mới vào danh sách prev
+          return [...prev, ...newPosts];
+        });
+        setLastId(res.data.last_id);
+      });
+  }, [param, getPosts]);
 
   const navigation = useNavigation<ScreenNavigationProp>();
 
@@ -310,31 +348,23 @@ const ProfileTabScreen = () => {
           user_id={data?.id || id}
         />
       </View>
-      <ScrollView
-        // alignItems="center"
-        bounces={false}
-        horizontal={true}
-        showsHorizontalScrollIndicator={false}
-        style={styles.navigationsWrapper}>
-        <TouchableOpacity style={styles.navigation}>
-          <FontAwesome5Icon
-            style={styles.navigationIcon}
-            color="#000"
-            size={20}
-            name="images"
+
+      <FlatList
+        data={listPosts}
+        keyExtractor={(item, index) => index.toString()}
+        renderItem={({item}) => (
+          <PostItem
+            item={item}
+            handleShowComment={() => handleShowComment(item)}
+            handleTouchThreeDot={() => {}}
           />
-          <Text style={{fontSize: 16, fontWeight: '500'}}>Ảnh</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.navigation}>
-          <FontAwesome5Icon
-            style={styles.navigationIcon}
-            color="#000"
-            size={20}
-            name="video"
-          />
-          <Text style={{fontSize: 16, fontWeight: '500'}}>Videos</Text>
-        </TouchableOpacity>
-      </ScrollView>
+        )}
+        onEndReachedThreshold={10}
+        maxToRenderPerBatch={10}
+        updateCellsBatchingPeriod={100}
+        initialNumToRender={5}
+      />
+
       {/* Model when Click Avatar*/}
       <Modal
         isVisible={isModalVisible1}
@@ -461,6 +491,23 @@ const ProfileTabScreen = () => {
           alignItems: 'center',
         }}>
         <BuyCoinScreen refetch={refetch} toggleModal={toggleModal3} />
+      </Modal>
+      <Modal
+        isVisible={isModalVisible11}
+        onBackdropPress={toggleModal11}
+        onBackButtonPress={toggleModal11}
+        backdropOpacity={0.3}
+        //onSwipeComplete={() => setModalVisible(false)}
+        useNativeDriverForBackdrop
+        //swipeDirection={['down']}
+        style={{
+          margin: 5,
+          borderRadius: 50,
+          flex: 1,
+          justifyContent: 'flex-end',
+          marginBottom: -90,
+        }}>
+        <CommentListScreen postItem={selectPost} />
       </Modal>
     </ScrollView>
   );
@@ -620,6 +667,7 @@ const styles = StyleSheet.create({
     width: SCREEN_WIDTH,
     paddingHorizontal: 10,
     paddingTop: 24,
+    marginBottom: 50,
   },
   navigation: {
     flexDirection: 'row',

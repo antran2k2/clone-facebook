@@ -38,6 +38,17 @@ import BlockingScreen from '@/Screens/Setting/Blocking';
 import AddUserToBlockListScreen from '@/Screens/Setting/AddUserToBlockList';
 import ActivityLogScreen from '@/Screens/Setting/ActivityLogScreen';
 import ReportScreen from '@/Screens/Post/Report';
+import SearchScreen from '@/Screens/Search';
+import SearchResultScreen from '@/Screens/Search/SearchResult';
+import SuggestFriendScreen from '@/Screens/FriendTab/SuggestFriend';
+import ChangeAvatarScreen from '@/Screens/ProfileTab/ChangeAvatar';
+import PreViewAvatarScreen from '@/Screens/ProfileTab/PreViewAvatar';
+import EditPublicInfoScreen from '@/Screens/ProfileTab/EditPublicInfo';
+import EditBioScreen from '@/Screens/ProfileTab/EditBio';
+import EditLinkScreen from '@/Screens/ProfileTab/EditLink';
+import EditDetailScreen from '@/Screens/ProfileTab/EditDetail';
+import SettingPersonalPageScreen from '@/Screens/ProfileTab/SettingPersonalPage';
+import ShowImageScreen from '@/Screens/ProfileTab/ShowImage';
 
 export type RootStackParamList = {
   Main: undefined;
@@ -69,6 +80,19 @@ export type RootStackParamList = {
   FriendRequest: undefined;
   Profile: {userId: string};
   PostDetail: {postId: string};
+  Search: undefined;
+  Report: any;
+  ActivityLog: undefined;
+  SearchResult: {keyword: string};
+  SuggestFriend: undefined;
+  ChangeAvatar: {type: String};
+  PreViewAvatar: {image: any | undefined; type: String};
+  EditPublicInfo: undefined;
+  EditBio: undefined;
+  EditLink: undefined;
+  EditDetail: undefined;
+  SettingPersonalPage: undefined;
+  ShowImage: {link: string};
 };
 export type ScreenNavigationProp =
   NativeStackNavigationProp<RootStackParamList>;
@@ -211,6 +235,21 @@ function MyStack() {
       <Stack.Screen name="FriendRequest" component={FriendRequestScreen} />
       <Stack.Screen name="PostDetail" component={PostDetailScreen} />
       <Stack.Screen name="Report" component={ReportScreen} />
+      <Stack.Screen name="Search" component={SearchScreen} />
+      <Stack.Screen name="SearchResult" component={SearchResultScreen} />
+      <Stack.Screen name="SuggestFriend" component={SuggestFriendScreen} />
+
+      <Stack.Screen name="ChangeAvatar" component={ChangeAvatarScreen} />
+      <Stack.Screen name="PreViewAvatar" component={PreViewAvatarScreen} />
+      <Stack.Screen name="EditPublicInfo" component={EditPublicInfoScreen} />
+      <Stack.Screen name="EditBio" component={EditBioScreen} />
+      <Stack.Screen name="EditLink" component={EditLinkScreen} />
+      <Stack.Screen name="EditDetail" component={EditDetailScreen} />
+      <Stack.Screen
+        name="SettingPersonalPage"
+        component={SettingPersonalPageScreen}
+      />
+      <Stack.Screen name="ShowImage" component={ShowImageScreen} />
     </Stack.Navigator>
   );
 }
