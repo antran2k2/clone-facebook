@@ -8,6 +8,7 @@ import {
   StyleSheet,
   TouchableOpacity,
   ScrollView,
+  Alert,
 } from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
@@ -55,7 +56,7 @@ const ActivityLogScreen = () => {
       .then(res => {
         console.log(res);
       })
-      .catch(err => console.log(err));
+      .catch(err => Alert.alert('Lỗi', JSON.parse(err).message));
   };
 
   const handleDeleteSearch = (_id: string) => {
@@ -64,7 +65,7 @@ const ActivityLogScreen = () => {
       .then(res => {
         console.log(res);
       })
-      .catch(err => console.log(err));
+      .catch(err => Alert.alert('Lỗi', JSON.parse(err).message));
   };
 
   const uniqueDates = [

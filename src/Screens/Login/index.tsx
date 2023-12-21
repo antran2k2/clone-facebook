@@ -60,7 +60,7 @@ const LoginScreen = () => {
         console.log(data);
       })
       .catch(err => {
-        Alert.alert('Đăng nhập thất bại');
+        Alert.alert('Đăng nhập thất bại', JSON.parse(err).message);
       });
   };
 

@@ -1,5 +1,12 @@
 import {TFriend, TUserFriend} from '@/types/user.type';
-import {Text, StyleSheet, View, TouchableOpacity, Image} from 'react-native';
+import {
+  Text,
+  StyleSheet,
+  View,
+  TouchableOpacity,
+  Image,
+  Alert,
+} from 'react-native';
 import {SCREEN_WIDTH} from '@/Constants';
 import {ScreenNavigationProp} from '@/Routes/Stack';
 import {useNavigation} from '@react-navigation/native';
@@ -23,7 +30,7 @@ const UnFriendAlert: React.FC<IMyProps> = props => {
         props.toggleModal();
       })
       .catch(err => {
-        console.log(err);
+        Alert.alert('Lỗi', JSON.parse(err).message);
       });
   };
   return (

@@ -6,6 +6,7 @@ import {
   Image,
   StyleSheet,
   Dimensions,
+  Alert,
 } from 'react-native';
 
 import Entypo from 'react-native-vector-icons/Entypo';
@@ -57,7 +58,7 @@ const PostItem = React.memo(
             console.log(res);
           })
           .catch(err => {
-            console.log(err);
+            Alert.alert('Lỗi', JSON.parse(err).message);
           });
         return;
       }
@@ -71,7 +72,7 @@ const PostItem = React.memo(
           console.log(res);
         })
         .catch(err => {
-          console.log(err);
+          Alert.alert('Lỗi', JSON.parse(err).message);
         });
     };
     const handleFeelDislike = () => {
@@ -86,7 +87,7 @@ const PostItem = React.memo(
             console.log(res);
           })
           .catch(err => {
-            console.log(err);
+            Alert.alert('Lỗi', JSON.parse(err).message);
           });
         return;
       }
@@ -100,7 +101,7 @@ const PostItem = React.memo(
           console.log(res);
         })
         .catch(err => {
-          console.log(err);
+          Alert.alert('Lỗi', JSON.parse(err).message);
         });
     };
     return (

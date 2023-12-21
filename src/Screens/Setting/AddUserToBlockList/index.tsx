@@ -10,6 +10,7 @@ import {
   ScrollView,
   Image,
   TextInput,
+  Alert,
 } from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import FontAwesome6 from 'react-native-vector-icons/FontAwesome6';
@@ -50,9 +51,8 @@ const AddUserToBlockListScreen = () => {
         navigation.goBack();
       })
       .catch(err => {
-        console.log(err);
+        Alert.alert('Lỗi', JSON.parse(err).message);
       });
-    console.log(id);
   };
 
   useEffect(() => {

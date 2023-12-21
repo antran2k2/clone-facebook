@@ -55,7 +55,7 @@ const ReportScreen = () => {
         navigation.goBack();
       })
       .catch(err => {
-        Alert.alert(err);
+        Alert.alert('Lỗi', JSON.parse(err).message);
       });
   };
 

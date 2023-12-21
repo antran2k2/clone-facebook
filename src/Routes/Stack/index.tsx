@@ -111,7 +111,10 @@ function MyStack() {
   const nav = useNavigation<ScreenNavigationProp>();
   useEffect(() => {
     if (!token) {
-      nav.navigate('Login');
+      nav.reset({
+        index: 0,
+        routes: [{name: 'Login'}],
+      });
     }
   }, [nav, token]);
   return (

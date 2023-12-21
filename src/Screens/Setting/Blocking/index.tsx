@@ -47,8 +47,7 @@ const BlockingScreen = () => {
         setListBlockUser(prevList => prevList.filter(user => user.id !== id));
       })
       .catch(err => {
-        Alert.alert('Thông báo', 'Có lỗi xảy ra, vui lòng thử lại sau');
-        console.log('err:', err);
+        Alert.alert('Lỗi', JSON.parse(err).message);
       });
     console.log(id);
   };

@@ -72,8 +72,7 @@ const ChangePasswordScreen = () => {
         navigation.goBack();
       })
       .catch((err: any) => {
-        const error = JSON.parse(err);
-        Alert.alert('Lỗi', error.message);
+        Alert.alert('Lỗi', JSON.parse(err).message);
       });
   };
 

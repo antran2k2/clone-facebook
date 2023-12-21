@@ -63,7 +63,7 @@ const EditBioScreen = () => {
         console.log(res);
       })
       .catch(err => {
-        Alert.alert('Lỗi', 'Có lỗi xảy ra, vui lòng thử lại sau');
+        Alert.alert('Lỗi', JSON.parse(err).message);
       });
   };
 

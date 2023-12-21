@@ -9,6 +9,7 @@ import {
   Dimensions,
   Image,
   Button,
+  Alert,
 } from 'react-native';
 import {useNavigation, useRoute} from '@react-navigation/native';
 import {ScreenNavigationProp, ScreenFullFriendProp} from '@/Routes/Stack';
@@ -133,7 +134,7 @@ const FriendRequestScreen = () => {
         toggleModal2();
       })
       .catch(err => {
-        console.log(err);
+        Alert.alert('Lỗi', JSON.parse(err).message);
       });
 
     //Call API đồng ý kết bạn với id của Friend là friendSelect?.id
@@ -148,7 +149,7 @@ const FriendRequestScreen = () => {
         toggleModal3();
       })
       .catch(err => {
-        console.log(err);
+        Alert.alert('Lỗi', JSON.parse(err).message);
       });
     //Call API không chấp nhận kết bạn
   };

@@ -13,6 +13,7 @@ import {
   StatusBar,
   ImageBackground,
   Platform,
+  Alert,
 } from 'react-native';
 import {useNavigation, useRoute} from '@react-navigation/native';
 import {
@@ -75,7 +76,8 @@ const SetAvatarScreen = () => {
           index: 0,
           routes: [{name: 'Main'}],
         }),
-      );
+      )
+      .catch(err => Alert.alert('Lỗi', JSON.parse(err).message));
     // navigation.navigate("Home")
   };
 

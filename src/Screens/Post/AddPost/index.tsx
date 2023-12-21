@@ -77,7 +77,7 @@ const AddPostScreen = () => {
     addPost(formData)
       .unwrap()
       .then(res => navigation.goBack())
-      .catch(err => Alert.alert('Lỗi', err.message));
+      .catch(err => Alert.alert('Lỗi', JSON.parse(err).message));
   };
 
   const onButtonPress = React.useCallback((type, options) => {

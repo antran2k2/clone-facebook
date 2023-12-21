@@ -63,7 +63,7 @@ const SettingNameScreen = () => {
         navigation.navigate('SettingTab');
       })
       .catch(() => {
-        Alert.alert('Lỗi', 'Cập nhật tên thất bại');
+        Alert.alert('Lỗi', JSON.parse(err).message);
       });
   };
 

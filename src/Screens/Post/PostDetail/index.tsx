@@ -86,7 +86,7 @@ const PostDetailScreen = () => {
           setData1(res.data);
           ref_input.current?.clear();
         })
-        .catch(err => Alert.alert('Lỗi', err.message));
+        .catch(err => Alert.alert('Lỗi', JSON.parse(err).message));
     } else {
       setMarkComment({
         content: text,
@@ -97,12 +97,11 @@ const PostDetailScreen = () => {
       })
         .unwrap()
         .then(res => {
-          console.log('comment not mảk', res.data);
           setData1(res.data);
           ref_input.current?.clear();
           setMarkIdSelect('0');
         })
-        .catch(err => Alert.alert('Lỗi', err.message));
+        .catch(err => Alert.alert('Lỗi', JSON.parse(err).message));
     }
   };
 
@@ -145,7 +144,7 @@ const PostDetailScreen = () => {
           console.log(res);
         })
         .catch(err => {
-          console.log(err);
+          Alert.alert('Lỗi', JSON.parse(err).message);
         });
       return;
     }
@@ -159,7 +158,7 @@ const PostDetailScreen = () => {
         console.log(res);
       })
       .catch(err => {
-        console.log(err);
+        Alert.alert('Lỗi', JSON.parse(err).message);
       });
   };
   const handleFeelDislike = () => {
@@ -174,7 +173,7 @@ const PostDetailScreen = () => {
           console.log(res);
         })
         .catch(err => {
-          console.log(err);
+          Alert.alert('Lỗi', JSON.parse(err).message);
         });
       return;
     }
@@ -188,7 +187,7 @@ const PostDetailScreen = () => {
         console.log(res);
       })
       .catch(err => {
-        console.log(err);
+        Alert.alert('Lỗi', JSON.parse(err).message);
       });
   };
 

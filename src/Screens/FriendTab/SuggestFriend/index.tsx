@@ -9,6 +9,7 @@ import {
   Dimensions,
   Image,
   Button,
+  Alert,
 } from 'react-native';
 import {useNavigation, useRoute} from '@react-navigation/native';
 import {ScreenNavigationProp, ScreenFullFriendProp} from '@/Routes/Stack';
@@ -120,7 +121,7 @@ const SuggestFriendScreen = () => {
         toggleModal1();
       })
       .catch(err => {
-        console.log(err);
+        Alert.alert('Lỗi', JSON.parse(err).message);
       });
   };
 
@@ -163,7 +164,7 @@ const SuggestFriendScreen = () => {
         toggleModal2();
       })
       .catch(err => {
-        console.log(err);
+        Alert.alert('Lỗi', JSON.parse(err).message);
       });
   };
 

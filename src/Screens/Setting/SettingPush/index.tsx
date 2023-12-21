@@ -25,7 +25,7 @@ const SettingPushScreen = () => {
         })
         .catch(err => {
           // console.log(err);
-          Alert.alert('Thông báo', 'Có lỗi xảy ra, vui lòng thử lại sau');
+          Alert.alert('Lỗi', JSON.parse(err).message);
         });
 
       return updatedState; // Trả về giá trị mới để cập nhật state

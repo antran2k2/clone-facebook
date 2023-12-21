@@ -12,6 +12,7 @@ import {
   SafeAreaView,
   StatusBar,
   ImageBackground,
+  Alert,
 } from 'react-native';
 import {useNavigation, useRoute} from '@react-navigation/native';
 import {
@@ -49,7 +50,8 @@ const PreViewAvatarScreen = () => {
         .unwrap()
         .then(() => {
           navigation.navigate('ProfileTab');
-        });
+        })
+        .catch(err => Alert.alert('Lỗi', JSON.parse(err).message));
     }
 
     if (type === 'cover_image') {
@@ -63,7 +65,8 @@ const PreViewAvatarScreen = () => {
         .unwrap()
         .then(() => {
           navigation.navigate('ProfileTab');
-        });
+        })
+        .catch(err => Alert.alert('Lỗi', JSON.parse(err).message));
     }
   };
 

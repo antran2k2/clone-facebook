@@ -119,7 +119,7 @@ const CommentListScreen = ({postItem}: {postItem: any}) => {
 
           setComments(res.data);
         })
-        .catch(err => Alert.alert('Lỗi', err.message));
+        .catch(err => Alert.alert('Lỗi', JSON.parse(err).message));
     } else {
       setMarkComment({
         content: text,
@@ -135,7 +135,7 @@ const CommentListScreen = ({postItem}: {postItem: any}) => {
 
           setMarkIdSelect('0');
         })
-        .catch(err => Alert.alert('Lỗi', err.message));
+        .catch(err => Alert.alert('Lỗi', JSON.parse(err).message));
     }
   };
 
