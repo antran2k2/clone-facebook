@@ -36,20 +36,8 @@ import SettingNotificationScreen from '@/Screens/Setting/SettingNotification';
 import SettingPushScreen from '@/Screens/Setting/SettingPush';
 import BlockingScreen from '@/Screens/Setting/Blocking';
 import AddUserToBlockListScreen from '@/Screens/Setting/AddUserToBlockList';
-import SuggestFriendScreen from '@/Screens/FriendTab/SuggestFriend';
-import EditPublicInfoScreen from '@/Screens/ProfileTab/EditPublicInfo';
-import ShowImageScreen from '@/Screens/ProfileTab/ShowImage';
-import VideoScreen from '@/Screens/Video';
-import PreViewAvatarScreen from '@/Screens/ProfileTab/PreViewAvatar';
-import ChangeAvatarScreen from '@/Screens/ProfileTab/ChangeAvatar';
-import EditBioScreen from '@/Screens/ProfileTab/EditBio';
-import EditLinkScreen from '@/Screens/ProfileTab/EditLink';
-import EditDetailScreen from '@/Screens/ProfileTab/EditDetail';
-import SettingPersonalPageScreen from '@/Screens/ProfileTab/SettingPersonalPage';
-import SetAvatarScreen from '@/Screens/Signup/SetAvatar';
 import ActivityLogScreen from '@/Screens/Setting/ActivityLogScreen';
-import SearchScreen from '@/Screens/Search';
-import SearchResultScreen from '@/Screens/Search/SearchResult';
+import ReportScreen from '@/Screens/Post/Report';
 
 export type RootStackParamList = {
   Main: undefined;
@@ -77,22 +65,10 @@ export type RootStackParamList = {
   Blocking: undefined;
   AddUserToBlockList: undefined;
   ProfileTab: undefined;
-  EditPublicInfo: undefined;
-  EditBio: undefined;
-  EditLink: undefined;
-  EditDetail: undefined;
-  SettingPersonalPage: undefined;
-  ShowImage: {link: string};
   FullFriend: {user_id: string};
   FriendRequest: undefined;
-  PostDetail: {postId: string};
-  SuggestFriend: undefined;
-  ChangeAvatar: {type: String};
-  PreViewAvatar: {image: any | undefined; type: String};
   Profile: {userId: string};
-  ActivityLog: undefined;
-  Search: undefined;
-  SearchResult: {keyword: string};
+  PostDetail: {postId: string};
 };
 export type ScreenNavigationProp =
   NativeStackNavigationProp<RootStackParamList>;
@@ -100,15 +76,6 @@ const Stack = createNativeStackNavigator<RootStackParamList>();
 
 export type ScreenPolicyProp = RouteProp<RootStackParamList, 'WebViewPolicy'>;
 export type ScreenFullFriendProp = RouteProp<RootStackParamList, 'FullFriend'>;
-export type ScreenShowImageProp = RouteProp<RootStackParamList, 'ShowImage'>;
-export type ScreenPreViewImageProp = RouteProp<
-  RootStackParamList,
-  'PreViewAvatar'
->;
-export type ScreenChangeViewImageProp = RouteProp<
-  RootStackParamList,
-  'ChangeAvatar'
->;
 
 function MyStack() {
   const token = useAppSelector(state => state.auth.token);
@@ -243,21 +210,7 @@ function MyStack() {
       <Stack.Screen name="FullFriend" component={FullFriendScreen} />
       <Stack.Screen name="FriendRequest" component={FriendRequestScreen} />
       <Stack.Screen name="PostDetail" component={PostDetailScreen} />
-      <Stack.Screen name="SetAvatar" component={SetAvatarScreen} />
-      <Stack.Screen name="EditPublicInfo" component={EditPublicInfoScreen} />
-      <Stack.Screen name="EditBio" component={EditBioScreen} />
-      <Stack.Screen name="EditLink" component={EditLinkScreen} />
-      <Stack.Screen name="EditDetail" component={EditDetailScreen} />
-      <Stack.Screen name="ShowImage" component={ShowImageScreen} />
-      <Stack.Screen name="ChangeAvatar" component={ChangeAvatarScreen} />
-      <Stack.Screen name="PreViewAvatar" component={PreViewAvatarScreen} />
-      <Stack.Screen
-        name="SettingPersonalPage"
-        component={SettingPersonalPageScreen}
-      />
-      <Stack.Screen name="SuggestFriend" component={SuggestFriendScreen} />
-      <Stack.Screen name="Search" component={SearchScreen} />
-      <Stack.Screen name="SearchResult" component={SearchResultScreen} />
+      <Stack.Screen name="Report" component={ReportScreen} />
     </Stack.Navigator>
   );
 }

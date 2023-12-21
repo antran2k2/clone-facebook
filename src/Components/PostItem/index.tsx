@@ -14,7 +14,7 @@ import ImageViewer from 'react-native-image-zoom-viewer';
 
 type Props = {
   item: TPost;
-  handleTouchThreeDot: (post: any) => void;
+  handleTouchThreeDot: (post: TPost) => void;
 
   handleShowComment: () => void;
 };
