@@ -335,6 +335,16 @@ function AllComponent({friendUser, allUser}: {friendUser: any; allUser: any}) {
     }
     return missingUsers;
   })();
+  const isFriendUser: UserResult[] = (() => {
+    const missingUsers: UserResult[] = [];
+    for (const user of allUser) {
+      const found = friendUser.find(u => u.id === user.id);
+      if (found) {
+        missingUsers.push(user);
+      }
+    }
+    return missingUsers;
+  })();
 
   // console.log('AllComponent', notFriendUser);
   const combinedData = [
@@ -349,12 +359,12 @@ function AllComponent({friendUser, allUser}: {friendUser: any; allUser: any}) {
           sections={[
             {
               title: 'Bạn bè',
-              data: friendUser,
+              data: isFriendUser,
               keyExtractor: (item, index) => index.toString(),
               renderItem: renderFriendItem,
             },
             {
-              title: 'Mới',
+              title: 'Người khác',
               data: notFriendUser,
               keyExtractor: (item, index) => index.toString(),
               renderItem: renderNotFriendItem,

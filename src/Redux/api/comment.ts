@@ -7,7 +7,7 @@ export const commentApi = createApi({
   baseQuery: baseQuery,
   tagTypes: ['Comment'],
   endpoints: builder => ({
-    getMarkComment: builder.mutation<
+    getMarkComment: builder.query<
       TResponse<any>,
       {
         id: string;
@@ -20,7 +20,6 @@ export const commentApi = createApi({
         method: 'post',
         data: data,
       }),
-      invalidatesTags: ['Comment'],
     }),
     setMarkComment: builder.mutation<
       TResponse<any>,
@@ -73,7 +72,7 @@ export const commentApi = createApi({
 
 export const {
   useFeelMutation,
-  useGetMarkCommentMutation,
+  useGetMarkCommentQuery,
   useSetMarkCommentMutation,
   useGetListFeelsMutation,
   useDeleteFeelMutation,

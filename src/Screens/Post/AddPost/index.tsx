@@ -8,6 +8,7 @@ import {
   Text,
   TouchableOpacity,
   Dimensions,
+  Alert,
 } from 'react-native';
 import * as ImagePicker from 'react-native-image-picker';
 import {useAddPostMutation} from '@/Redux/api/post';
@@ -29,6 +30,8 @@ const AddPostScreen = () => {
     // formData.append('image', response.assets);
 
     // Duyệt qua mảng assets và gán thông tin vào mảng arr
+
+    //if image:
     response.assets.forEach(asset => {
       const uri = asset.uri;
       const name = asset.fileName;
@@ -37,7 +40,16 @@ const AddPostScreen = () => {
       // Thêm thông tin vào mảng arr
       formData.append('image', {uri, name, type});
     });
-    // console.log('mảng ảnh', response);
+
+    // if video:
+    // response.assets.forEach(asset => {
+    //   const uri = asset.uri;
+    //   const name = asset.fileName;
+    //   const type = asset.type;
+
+    //   // Thêm thông tin vào mảng arr
+    //   formData.append('image', {uri, name, type});
+    // });
 
     formData.append('described', 'test123 image');
     formData.append('status', 'happy');
@@ -47,15 +59,12 @@ const AddPostScreen = () => {
     //   .then(res => console.log(res.data));
     console.log('Post:', formData);
 
-    axios
-      .post('https://it4788.catan.io.vn/add_post', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      })
+    addPost(formData)
+      .unwrap()
       .then(res => console.log(res.data))
-      .catch(err => console.log(err.request._response));
+      .catch(err => Alert.alert('Lỗi', err.message));
   };
+
   const onButtonPress = React.useCallback((type, options) => {
     if (type === 'capture') {
       ImagePicker.launchCamera(options, setResponse);
@@ -108,7 +117,7 @@ const AddPostScreen = () => {
             style={styles.button2}
             onPress={() =>
               onButtonPress('library', {
-                selectionLimit: 0,
+                selectionLimit: 4,
                 mediaType: 'photo',
                 includeBase64: false,
                 includeExtra: true,
@@ -125,7 +134,7 @@ const AddPostScreen = () => {
             style={styles.button3}
             onPress={() =>
               onButtonPress('capture', {
-                selectionLimit: 0,
+                selectionLimit: 1,
                 mediaType: 'video',
                 formatAsMp4: true,
                 includeBase64: false,

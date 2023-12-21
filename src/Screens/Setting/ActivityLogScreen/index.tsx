@@ -14,40 +14,32 @@ import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import FontAwesome6 from 'react-native-vector-icons/FontAwesome6';
 import Entypo from 'react-native-vector-icons/Entypo';
 import {TSearch} from '@/types/user.type';
+import {
+  useGetSavedSearchQuery,
+  useDelSavedSearchMutation,
+} from '@/Redux/api/search';
+import Spinner from 'react-native-loading-spinner-overlay';
 const ActivityLogScreen = () => {
-  const data: TSearch[] = [
-    {
-      id: '6',
-      keyword: 'An Trần',
-      created: '2023-12-20T03:25:23.550Z',
-    },
-    {
-      id: '5',
-      keyword: 'Đinh Duy Anh',
-      created: '2023-12-20T10:52:13.550Z',
-    },
-    {
-      id: '4',
-      keyword: 'Diệp',
-      created: '2023-12-20T10:50:02.828Z',
-    },
-    {
-      id: '3',
-      keyword: 'Tùng Lâm',
-      created: '2023-12-19T10:48:57.262Z',
-    },
-    {
-      id: '2',
-      keyword: 'Ri Đỗ',
-      created: '2023-12-19T11:20:34.550Z',
-    },
-    {
-      id: '1',
-      keyword: 'Hello',
-      created: '2023-12-18T07:25:74.550Z',
-    },
-  ];
-  const [listActivityItem, setListActivityItem] = useState<TSearch[]>(data);
+  const {
+    data: resSaved,
+    isLoading,
+    isError,
+    isSuccess,
+  } = useGetSavedSearchQuery({
+    index: '0',
+    count: '20',
+  });
+  const [delSavedSearch, {isLoading: isLoadingDel}] =
+    useDelSavedSearchMutation();
+
+  React.useEffect(() => {
+    if (isSuccess) {
+      setListActivityItem(resSaved?.data || []);
+      console.log(resSaved?.data);
+    }
+  }, [isSuccess]);
+
+  const [listActivityItem, setListActivityItem] = useState<TSearch[]>();
 
   const deleteAllActivityLog = () => {
     // Xử lý API xóa toàn bộ tìm kiếm ở đây
@@ -60,24 +52,21 @@ const ActivityLogScreen = () => {
 
   const uniqueDates = [
     ...new Set(
-      listActivityItem.map(item => new Date(item.created).toLocaleDateString()),
+      listActivityItem?.map(item =>
+        new Date(item.created).toLocaleDateString(),
+      ),
     ),
   ];
 
-  const formatDate = (date: Date) => {
-    const day = date.getDate();
-    const month = date.getMonth() + 1; // Tháng bắt đầu từ 0
-    const year = date.getFullYear();
-    return `${day} tháng ${month} ${year}`;
-  };
-
   const convertToDate = (dateString: string) => {
-    const [month, day, year] = dateString.split('/');
-    return new Date(`${year}-${month}-${day}`);
+    const [day, month, year] = dateString.split('/');
+
+    return `${day} tháng ${month} ${year}`;
   };
 
   return (
     <View style={styles.container}>
+      <Spinner visible={isLoading || isLoadingDel} />
       <TouchableOpacity
         onPress={deleteAllActivityLog}
         style={styles.delete_all_search}>
@@ -86,15 +75,13 @@ const ActivityLogScreen = () => {
       <View style={styles.activity_log_container}>
         <ScrollView bounces={false} showsVerticalScrollIndicator={false}>
           <View style={styles.list_search}>
-            {uniqueDates.map(date => (
+            {uniqueDates?.map(date => (
               <View
                 key={date}
                 style={{display: 'flex', flexDirection: 'column', gap: 20}}>
-                <Text style={styles.dateText}>
-                  {formatDate(convertToDate(date))}
-                </Text>
+                <Text style={styles.dateText}>{convertToDate(date)}</Text>
                 {listActivityItem
-                  .filter(
+                  ?.filter(
                     item =>
                       new Date(item.created).toLocaleDateString() === date,
                   )

@@ -20,8 +20,10 @@ import {ScreenNavigationProp} from '@/Routes/Stack';
 import {useFeelMutation} from '@/Redux/api/comment';
 import Modal from 'react-native-modal';
 import messaging from '@react-native-firebase/messaging';
+import CommentListScreen from '@/Components/ListComment';
 const HomeScreen = () => {
   const token = useAppSelector(state => state.auth.token);
+  const [selectPost, setSelectPost] = useState(null);
   const {avatar, id: userId, username} = useAppSelector(state => state.info);
   const navigation = useNavigation<ScreenNavigationProp>();
   const [mutateFeel, {isLoading}] = useFeelMutation();
@@ -57,6 +59,14 @@ const HomeScreen = () => {
   }, [param, getPosts]);
 
   const [isModalVisible, setModalVisible] = useState(false);
+  const toggleModal = () => {
+    setModalVisible(!isModalVisible);
+  };
+  const handleShowComment = (item: any) => {
+    setSelectPost(item);
+
+    toggleModal();
+  };
 
   const toggleArrageModal = () => {};
 
@@ -95,6 +105,9 @@ const HomeScreen = () => {
   const handleTouchHeader = (item: any) => {
     navigation.navigate('PostDetail', {postId: item.id});
   };
+  // const handleTouchHeader = (item: any) => {
+  //   navigation.navigate('PostDetail', { postId: '908' });
+  // };
   const handleTouchThreeDot = (item: any) => {
     setModalVisible(!isModalVisible);
     console.log('touch 3 dot');
@@ -111,11 +124,8 @@ const HomeScreen = () => {
           renderItem={({item}) => (
             <PostItem
               item={item}
-              handleTouchHeader={handleTouchHeader}
               handleTouchThreeDot={handleTouchThreeDot}
-              handleShowComment={function (): void {
-                throw new Error('Function not implemented.');
-              }}
+              handleShowComment={() => handleShowComment(item)}
             />
           )}
           onEndReached={loadMorePosts}
@@ -135,16 +145,24 @@ const HomeScreen = () => {
 
         <Text style={styles.subtitle}>user: {userId}</Text>
       </SafeAreaView>
+
+      {/* Model Comment */}
       <Modal
         isVisible={isModalVisible}
-        onBackdropPress={toggleArrageModal}
-        onBackButtonPress={toggleArrageModal}
+        onBackdropPress={toggleModal}
+        onBackButtonPress={toggleModal}
         backdropOpacity={0.3}
-        // onSwipeComplete={() => setModalArrageVisible(false)}
+        //onSwipeComplete={() => setModalVisible(false)}
         useNativeDriverForBackdrop
-        swipeDirection={['down']}
-        style={{margin: 5, borderRadius: 50}}>
-        <Text>123</Text>
+        //swipeDirection={['down']}
+        style={{
+          margin: 5,
+          borderRadius: 50,
+          flex: 1,
+          justifyContent: 'flex-end',
+          marginBottom: -90,
+        }}>
+        <CommentListScreen postItem={selectPost} />
       </Modal>
     </>
   );

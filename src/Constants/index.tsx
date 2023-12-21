@@ -7,3 +7,5 @@ export const SCREEN_WIDTH = Math.round(Dimensions.get('window').width);
 // export const STATUSBAR_HEIGHT = StatusBar.currentHeight !== undefined ? StatusBar.currentHeight : 100;
 // export const STATUSBAR_HEIGHT = StatusBar.currentHeight;
 export const STATUSBAR_HEIGHT = getStatusBarHeight()
+
+export const FIXED_STATUSBAR_HEIGHT = 44
