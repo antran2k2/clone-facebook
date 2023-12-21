@@ -58,6 +58,9 @@ const FriendsShowing: React.FC<IMyProps> = props => {
           <View key={index} style={styles.friendItem}>
             <TouchableOpacity
               // onPress={this.onPressProfileHandler.bind(this, friend.id)}
+              onPress={() =>
+                navigation.navigate('ProfileFriend', {id: friend.id})
+              }
               activeOpacity={0.8}>
               <Image
                 source={

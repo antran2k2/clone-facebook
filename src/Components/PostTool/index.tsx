@@ -21,7 +21,9 @@ const PostTool = () => {
           onPress={() => navigation.navigate('ProfileTab')}>
           <Image
             // source={require('@/Assets/Images/Avatar.png')}
-            source={{uri: avatar || 'https://i.imgur.com/An9lt4E.png'}}
+            source={
+              avatar ? {uri: avatar} : require('@/Assets/Images/Avatar.png')
+            }
             defaultSource={require('@/Assets/Images/Avatar.png')}
             style={styles.avatarImg}
           />

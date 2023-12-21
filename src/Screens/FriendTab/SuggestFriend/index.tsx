@@ -242,7 +242,11 @@ const SuggestFriendScreen = () => {
                     style={styles.recommendFriendItem}>
                     <Image
                       style={styles.avatar}
-                      source={{uri: friendRequest?.avatar}}
+                      source={
+                        friendRequest?.avatar
+                          ? {uri: friendRequest?.avatar}
+                          : require('@/Assets/Images/Avatar.png')
+                      }
                     />
                     <View style={styles.recommendInfo}>
                       <Text style={styles.name}>{friendRequest?.username}</Text>

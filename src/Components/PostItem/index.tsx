@@ -65,6 +65,10 @@ const PostItem = React.memo(
       mutateFeel({id: item.id, type: String(1)})
         .unwrap()
         .then(res => {
+          Alert.alert(
+            'Thành công',
+            'Bạn đã bỏ cảm xúc thành công và bị trừ 1 coin',
+          );
           setFeel(feel =>
             String(Number(res.data.disappointed) + Number(res.data.kudos)),
           );
@@ -94,6 +98,11 @@ const PostItem = React.memo(
       mutateFeel({id: item.id, type: String(0)})
         .unwrap()
         .then(res => {
+          Alert.alert(
+            'Thành công',
+            'Bạn đã bỏ cảm xúc thành công và bị trừ 1 coin',
+          );
+
           setFeel(feel =>
             String(Number(res.data.disappointed) + Number(res.data.kudos)),
           );
@@ -226,6 +235,8 @@ const styles = StyleSheet.create({
     flex: 1,
     // flexDirection: 'row',
     // flexWrap: 'wrap',
+    borderTopWidth: 1,
+    borderTopColor: '#999',
   },
   header: {
     height: 50,
@@ -261,6 +272,7 @@ const styles = StyleSheet.create({
     lineHeight: 16,
     padding: 0,
     paddingHorizontal: 11,
+    marginVertical: 10,
   },
   photo: {
     marginTop: 9,

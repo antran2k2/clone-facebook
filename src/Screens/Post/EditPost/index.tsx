@@ -25,8 +25,10 @@ import {ScreenNavigationProp} from '@/Routes/Stack';
 import {useNavigation, useRoute} from '@react-navigation/native';
 import {useFocusEffect} from '@react-navigation/native';
 import {useGetUserInfoQuery} from '@/Redux/api/profile';
+import Spinner from 'react-native-loading-spinner-overlay';
+import {useGetPostQuery, useEditPostMutation} from '@/Redux/api/post';
 
-const AddPostScreen = () => {
+const EditPostScreen = () => {
   const {avatar, id: userId, username} = useAppSelector(state => state.info);
 
   const [user, setUser] = useState();
@@ -56,8 +58,14 @@ const AddPostScreen = () => {
   const [addPost, {isLoading}] = useAddPostMutation();
   const [textValue, setTextValue] = useState('');
   const navigation = useNavigation<ScreenNavigationProp>();
+
+  const [editPost, {isLoading: isEditLoading}] = useEditPostMutation();
+
   const handlePost = () => {
+    console.log('postText', delImage);
+
     const formData = new FormData();
+    formData.append('id', myPostId);
 
     response?.assets?.forEach(asset => {
       const uri = asset.uri;
@@ -70,15 +78,22 @@ const AddPostScreen = () => {
         formData.append('image', {uri, name, type});
       }
     });
+    formData.append('status', `${selectedEmoji?.name} ${selectedEmoji?.icon}`);
+
+    if (delImage.length > 0) {
+      formData.append('image_del', delImage);
+    }
 
     formData.append('described', postText);
-    formData.append('status', `${selectedEmoji?.name} ${selectedEmoji?.icon}`);
     formData.append('auto_accept', '1');
 
-    addPost(formData)
+    editPost(formData)
       .unwrap()
       .then(res => {
-        Alert.alert('Thành công', 'Bạn vừa tốn 10 coin để đăng bài');
+        Alert.alert(
+          'Thành công',
+          'Tốn 10 coin và chỉnh sửa bài viết thành công',
+        );
         navigation.goBack();
       })
       .catch(err => Alert.alert('Lỗi', JSON.parse(err).message));
@@ -107,20 +122,53 @@ const AddPostScreen = () => {
 
   const handleBack = () => {};
 
+  const route = useRoute();
+  const {id: myPostId} = route.params as {id: string};
+  const [myPost, setMyPost] = useState<any>(null);
+  const [oldImages, setOldImages] = useState<any>([]);
+  const {
+    data: post,
+    isLoading: isPostLoading,
+    isSuccess: isSuccessPost,
+    refetch: refetchPost,
+  } = useGetPostQuery({
+    id: myPostId,
+  });
+
+  useEffect(() => {
+    if (isSuccessPost) {
+      setPostText(post.data.described);
+      setMyPost(post.data);
+      setOldImages(post.data.image);
+    }
+  }, [isSuccessPost, post]);
+
+  useFocusEffect(
+    useCallback(() => {
+      refetchPost();
+    }, [refetchPost]),
+  );
+  const [delImage, setDelImage] = useState<string>('');
+  const onDeleteImage = (imageId: string) => {
+    const newImages = oldImages.filter((image: any) => image.id !== imageId);
+    setOldImages(newImages);
+    setDelImage(del => del.concat(',').concat(imageId));
+  };
   return (
     <View style={styles.container}>
+      <Spinner visible={isLoading || isGetinfo || isPostLoading} />
       <View style={styles.navigationBar}>
         <View style={styles.navigationBarLeft}>
           <TouchableOpacity onPress={toggleModal1} style={styles.btnBack}>
             <FontAwesome5Icon name="arrow-left" color="#000" size={20} />
           </TouchableOpacity>
-          <Text style={styles.textNavigationBar}>Tạo bài viết</Text>
+          <Text style={styles.textNavigationBar}>Chỉnh sửa bài viết</Text>
         </View>
         <TouchableOpacity
           disabled={postText.length === 0}
           style={postText.length === 0 ? styles.btnPost1 : styles.btnPost}
           onPress={handlePost}>
-          <Text style={styles.btnText}>Đăng</Text>
+          <Text style={styles.btnText}>Lưu</Text>
         </TouchableOpacity>
       </View>
       <View style={styles.imageRow}>
@@ -205,19 +253,66 @@ const AddPostScreen = () => {
         numberOfLines={4}
         style={styles.inputPost}
       />
-      <View style={styles.containerImg}>
-        {response?.assets &&
-          response?.assets.map(({uri}: {uri: string}) => (
-            <View key={uri} style={styles.imageContainer}>
-              <Image
-                resizeMode="cover"
-                resizeMethod="scale"
-                style={styles.image}
-                source={{uri: uri}}
-              />
-            </View>
-          ))}
-      </View>
+      {oldImages && oldImages.length > 0 && (
+        <View>
+          <Text>Ảnh cũ</Text>
+          <View style={styles.containerImg}>
+            {oldImages.map((image: string) => (
+              <View key={image} style={styles.imageContainer}>
+                <View
+                  style={{
+                    position: 'relative',
+                    borderRadius: 8,
+                    overflow: 'hidden',
+                  }}>
+                  <Image
+                    resizeMode="cover"
+                    resizeMethod="scale"
+                    style={styles.image}
+                    source={{uri: image.url}}
+                  />
+                  <TouchableOpacity
+                    onPress={() => {
+                      onDeleteImage(image.id);
+                    }}
+                    style={{
+                      ...StyleSheet.absoluteFillObject,
+                      justifyContent: 'flex-start',
+                      alignItems: 'flex-end',
+                    }}>
+                    <Text
+                      style={{
+                        color: 'red',
+                        fontSize: 16,
+                        fontWeight: 'bold',
+                      }}>
+                      X
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            ))}
+          </View>
+        </View>
+      )}
+
+      {response?.assets && (
+        <View>
+          <Text>Ảnh mới</Text>
+          <View style={styles.containerImg}>
+            {response?.assets.map(({uri}: {uri: string}) => (
+              <View key={uri} style={styles.imageContainer}>
+                <Image
+                  resizeMode="cover"
+                  resizeMethod="scale"
+                  style={styles.image}
+                  source={{uri: uri}}
+                />
+              </View>
+            ))}
+          </View>
+        </View>
+      )}
       {/* <View style={styles.group3Row}>
         <View style={styles.group3}>
           <TouchableOpacity
@@ -260,7 +355,7 @@ const AddPostScreen = () => {
           style={styles.postOptionItemWrapper}
           onPress={() =>
             onButtonPress('library', {
-              selectionLimit: 4,
+              selectionLimit: 4 - oldImages.length,
               mediaType: 'photo',
               includeBase64: false,
               includeExtra: true,
@@ -778,7 +873,7 @@ const styles = StyleSheet.create({
   },
 });
 
-export default AddPostScreen;
+export default EditPostScreen;
 const listEmoji = [
   {
     imageName: 'emojiHappy',

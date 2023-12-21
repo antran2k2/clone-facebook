@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   Image,
   FlatList,
+  Alert,
 } from 'react-native';
 import {TUserFriend, TUserInfo} from '@/types/user.type';
 import FontAwesome6 from 'react-native-vector-icons/FontAwesome6';
@@ -23,9 +24,18 @@ import {useFocusEffect} from '@react-navigation/native';
 import {useGetUserInfoQuery} from '@/Redux/api/profile';
 import {useGetUserFriendsQuery} from '@/Redux/api/friend';
 import {useRoute} from '@react-navigation/native';
-import {useLazyGetListPostsQuery} from '@/Redux/api/post';
+import {useLazyGetListPostsQuery, useGetListPostsQuery} from '@/Redux/api/post';
 import PostItem from '@/Components/PostItem';
 import {useAppSelector} from '@/Redux/store';
+import {useGetRequestedFriendsQuery} from '@/Redux/api/friend';
+import {
+  useSetAcceptFriendMutation,
+  useUnFriendMutation,
+  useSetRequestFriendMutation,
+  useDelRequestFriendMutation,
+} from '@/Redux/api/friend';
+import Spinner from 'react-native-loading-spinner-overlay';
+
 const ProfileFriendScreen = () => {
   const navigation = useNavigation<ScreenNavigationProp>();
   const {id: myId, username} = useAppSelector(state => state.info);
@@ -35,6 +45,12 @@ const ProfileFriendScreen = () => {
     navigation.navigate('ProfileTab');
   }
 
+  // type =1 là bạn
+  // type = 2 không là bạn
+  // type = 3 là chờ xác nhận
+  // type = 4 là Trả lời yêu cầu kết bạn
+  const [type, setType] = useState<string>();
+
   const [userFriends, setUserFriendState] = useState();
   const [data, setData] = useState();
 
@@ -43,6 +59,7 @@ const ProfileFriendScreen = () => {
     isLoading,
     isSuccess,
     refetch,
+    isError,
   } = useGetUserInfoQuery({user_id: id});
 
   const initParams = {
@@ -73,6 +90,7 @@ const ProfileFriendScreen = () => {
   useEffect(() => {
     if (isSuccess) {
       setData(info.data);
+      setType(info.data.is_friend === '1' ? '1' : '2');
     }
   }, [isSuccess, info?.data]);
   const [listPosts, setListPosts] = useState<TPost[]>([]);
@@ -81,33 +99,290 @@ const ProfileFriendScreen = () => {
   const [getPosts, {isLoading: isLoadingPosts, isFetching}] =
     useLazyGetListPostsQuery();
 
+  const {
+    data: dataPosts,
+    isLoading: isLoadingPosts2,
+    isSuccess: isSuccessPosts,
+    refetch: refetchPosts,
+  } = useGetListPostsQuery(param);
+
   useEffect(() => {
-    getPosts(param)
-      .unwrap()
-      .then(res => {
-        // setListPosts(res.data.post);
-        setListPosts(prev => {
-          // Lọc ra những bài viết có ID khác với bài viết hiện tại
-          const newPosts = res.data.post.filter(newPost => {
-            return !prev.some(prevPost => prevPost.id === newPost.id);
-          });
+    if (isSuccessPosts) {
+      setListPosts(dataPosts?.data.post);
+    }
+  }, [isSuccessPosts, dataPosts?.data]);
 
-          // Thêm những bài viết mới vào danh sách prev
-          return [...prev, ...newPosts];
-        });
-        setLastId(res.data.last_id);
-      });
-  }, [param, getPosts]);
+  useFocusEffect(
+    React.useCallback(() => {
+      refetchPosts();
+    }, [refetchPosts]),
+  );
 
+  const [setRequestFriend, {isLoading: isLoading1}] =
+    useSetRequestFriendMutation();
+  const [setAcceptFriend, {isLoading: isLoading2}] =
+    useSetAcceptFriendMutation();
+  const [unFriend, {isLoading: isLoading3}] = useUnFriendMutation();
+  const [delRequestFriend, {isLoading: isLoading4}] =
+    useDelRequestFriendMutation();
+
+  const {
+    data: response,
+    isLoading: isLoadingGetRequestedFriends,
+    isSuccess: isSuccessGetRequestedFriends,
+    error,
+    refetch: refetchGetRequestedFriends,
+  } = useGetRequestedFriendsQuery({
+    index: '0',
+    count: '200',
+  });
+
+  useEffect(() => {
+    if (isSuccess) {
+      // setFriendRequests(response.data?.requests);
+      const idExists: boolean = response?.data?.requests.some(
+        item => item.id === data?.id,
+      );
+      if (idExists) {
+        setType('4');
+      }
+    }
+  }, [data?.id, isSuccess, response?.data]);
+  useFocusEffect(
+    React.useCallback(() => {
+      refetch();
+    }, [refetch]),
+  );
+
+  const renderButton = () => {
+    if (type === '1') {
+      return (
+        <TouchableOpacity
+          style={styles.btnAddStory}
+          onPress={() => {
+            Alert.alert(
+              'Huỷ kết bạn',
+              'Bạn có chắc chắn muốn huy kết bạn với ' + data?.username + '?',
+              [
+                {
+                  text: 'Đóng',
+                  onPress: () => console.log('Cancel Pressed'),
+                  style: 'cancel',
+                },
+                {
+                  text: 'Huỷ kết bạn',
+                  onPress: () => {
+                    console.log('OK Pressed');
+                    unFriend({user_id: data?.id})
+                      .unwrap()
+                      .then(res => {
+                        setType('2');
+                      })
+                      .catch(err => {
+                        Alert.alert('Lỗi', JSON.parse(err).message);
+                      });
+                  },
+                },
+              ],
+              {cancelable: false},
+            );
+          }}>
+          <FontAwesome6 size={16} color="#fff" name="user-check" />
+          <Text
+            style={{
+              fontSize: 16,
+              fontWeight: '500',
+              color: '#fff',
+              marginLeft: 5,
+            }}>
+            Bạn bè
+          </Text>
+        </TouchableOpacity>
+      );
+    } else if (type === '2') {
+      return (
+        <TouchableOpacity
+          style={styles.btnAddStory}
+          onPress={() => {
+            setRequestFriend({user_id: data?.id})
+              .unwrap()
+              .then(res => {
+                setType('3');
+              })
+              .catch(err => {
+                Alert.alert('Lỗi', JSON.parse(err).message);
+                if (JSON.parse(err).code === '4003') {
+                  setType('3');
+                }
+              });
+          }}>
+          <FontAwesome6 size={16} color="#fff" name="user-plus" />
+          <Text
+            style={{
+              fontSize: 16,
+              fontWeight: '500',
+              color: '#fff',
+              marginLeft: 5,
+            }}>
+            Thêm bạn
+          </Text>
+        </TouchableOpacity>
+      );
+    } else if (type === '3') {
+      return (
+        <TouchableOpacity
+          style={styles.btnAddStory}
+          onPress={() => {
+            Alert.alert(
+              'Huỷ yêu cầu kết bạn',
+              'Bạn có chắc chắn muốn huy yêu cầu kết bạn tới ' +
+                data?.username +
+                '?',
+              [
+                {
+                  text: 'Đóng',
+                  onPress: () => console.log('Cancel Pressed'),
+                  style: 'cancel',
+                },
+                {
+                  text: 'Huỷ yêu cầu',
+                  onPress: () => {
+                    console.log('OK Pressed');
+                    delRequestFriend({user_id: data?.id})
+                      .unwrap()
+                      .then(res => {
+                        setType('2');
+                      })
+                      .catch(err => {
+                        Alert.alert('Lỗi', JSON.parse(err).message);
+                      });
+                  },
+                },
+              ],
+              {cancelable: false},
+            );
+          }}>
+          <FontAwesome6 size={16} color="#fff" name="user-clock" />
+          <Text
+            style={{
+              fontSize: 16,
+              fontWeight: '500',
+              color: '#fff',
+              marginLeft: 5,
+            }}>
+            Đang chờ xác nhận
+          </Text>
+        </TouchableOpacity>
+      );
+    } else if (type === '4') {
+      return (
+        <TouchableOpacity
+          style={styles.btnAddStory}
+          onPress={() => {
+            Alert.alert(
+              'Trả lời yêu cầu kết bạn',
+              'Bạn có chắc chắn muốn chấp nhận yêu cầu kết bạn từ ' +
+                data?.username +
+                '?',
+              [
+                {
+                  text: 'Từ chối',
+                  onPress: () => {
+                    setAcceptFriend({user_id: data?.id, is_accept: '0'})
+                      .unwrap()
+                      .then(res => {
+                        setType('2');
+                      })
+                      .catch(err => {
+                        Alert.alert('Lỗi', JSON.parse(err).message);
+                      });
+                  },
+                  style: 'destructive',
+                },
+                {
+                  text: 'Chấp nhận',
+                  onPress: () => {
+                    console.log('OK Pressed');
+                    setAcceptFriend({user_id: data?.id, is_accept: '1'})
+                      .unwrap()
+                      .then(res => {
+                        setType('1');
+                      })
+                      .catch(err => {
+                        Alert.alert('Lỗi', JSON.parse(err).message);
+                      });
+                  },
+                },
+              ],
+              {cancelable: true},
+            );
+          }}>
+          <FontAwesome6 size={16} color="#fff" name="user-clock" />
+          <Text
+            style={{
+              fontSize: 16,
+              fontWeight: '500',
+              color: '#fff',
+              marginLeft: 5,
+            }}>
+            Trả lời yêu cầu kết bạn
+          </Text>
+        </TouchableOpacity>
+      );
+    }
+  };
+
+  if (isError) {
+    return (
+      <View
+        style={{
+          flex: 1,
+          backgroundColor: '#fff',
+          // justifyContent: 'center',
+          // alignItems: 'center',
+        }}>
+        <Image
+          // width={SCREEN_WIDTH}
+          // height={SCREEN_WIDTH}
+          style={{width: SCREEN_WIDTH, height: SCREEN_WIDTH}}
+          resizeMode="contain"
+          source={require('@/Assets/Images/NotFound.png')}
+        />
+        <View
+          style={{
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}>
+          <TouchableOpacity
+            style={{padding: 10, backgroundColor: '#ddd'}}
+            onPress={() => {
+              navigation.navigate('Home');
+            }}>
+            <Text>Quay về trang chủ</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+    );
+  }
   return (
     <>
+      <Spinner
+        visible={
+          isLoading ||
+          isLoadingFriend ||
+          isLoading1 ||
+          isLoading2 ||
+          isLoading3 ||
+          isLoading4
+        }
+      />
       <FlatList
         data={listPosts}
         keyExtractor={(item, index) => index.toString()}
         renderItem={({item}) => (
           <PostItem
             item={item}
-            handleShowComment={() => handleShowComment(item)}
+            handleShowComment={() => {}}
             handleTouchThreeDot={() => {}}
           />
         )}
@@ -145,33 +420,7 @@ const ProfileFriendScreen = () => {
               <Text style={styles.name}>{data?.username}</Text>
               <Text style={styles.introTxt}>{data?.description}</Text>
               <View style={styles.introButtonWrapper}>
-                {data?.is_friend === '1' ? (
-                  <TouchableOpacity style={styles.btnAddStory}>
-                    <FontAwesome6 size={16} color="#fff" name="user-check" />
-                    <Text
-                      style={{
-                        fontSize: 16,
-                        fontWeight: '500',
-                        color: '#fff',
-                        marginLeft: 5,
-                      }}>
-                      Bạn bè
-                    </Text>
-                  </TouchableOpacity>
-                ) : (
-                  <TouchableOpacity style={styles.btnAddStory}>
-                    <FontAwesome6 size={16} color="#fff" name="user-plus" />
-                    <Text
-                      style={{
-                        fontSize: 16,
-                        fontWeight: '500',
-                        color: '#fff',
-                        marginLeft: 5,
-                      }}>
-                      Thêm bạn
-                    </Text>
-                  </TouchableOpacity>
-                )}
+                {renderButton()}
                 <View style={styles.introOptionsWrapper}>
                   <TouchableOpacity
                     // onPress={onPressProfileSettingHandler}
@@ -195,6 +444,7 @@ const ProfileFriendScreen = () => {
                     onPress={() => {
                       navigation.navigate('OtherPeopleSetting', {
                         userId: data?.id,
+                        username: data?.username,
                       });
                     }}
                     style={styles.btnOption}>
@@ -251,17 +501,20 @@ const ProfileFriendScreen = () => {
                   người theo dõi
                 </Text>
               </View>
-              <View style={styles.introLine}>
-                <FontAwesome5Icon
-                  size={20}
-                  color="#333"
-                  style={styles.introIcon}
-                  name="link"
-                />
-                <TouchableOpacity>
-                  <Text style={styles.introLineText}>{data?.link}</Text>
-                </TouchableOpacity>
-              </View>
+
+              {data?.link && (
+                <View style={styles.introLine}>
+                  <FontAwesome5Icon
+                    size={20}
+                    color="#333"
+                    style={styles.introIcon}
+                    name="link"
+                  />
+                  <TouchableOpacity>
+                    <Text style={styles.introLineText}>{data?.link}</Text>
+                  </TouchableOpacity>
+                </View>
+              )}
             </View>
             <FriendsShowing userFriends={userFriends} user_id={data?.id} />
           </View>
@@ -441,6 +694,35 @@ const styles = StyleSheet.create({
   navigationIcon: {
     width: 30,
     alignItems: 'center',
+  },
+  navigationBar: {
+    paddingTop: 12,
+    flexDirection: 'row',
+    height: 64,
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    borderBottomWidth: 1,
+    borderBottomColor: '#ddd',
+  },
+  navigationBarLeft: {
+    flexDirection: 'row',
+  },
+  textNavigationBar: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#000',
+    marginLeft: 5,
+  },
+  btnBack: {
+    width: 50,
+    alignItems: 'center',
+  },
+  navigationTitle: {
+    fontSize: 18,
+  },
+  searchToolWrapper: {
+    paddingVertical: 10,
+    paddingHorizontal: 15,
   },
 });
 

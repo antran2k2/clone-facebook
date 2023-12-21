@@ -28,12 +28,13 @@ import {useFeelMutation, useDeleteFeelMutation} from '@/Redux/api/comment';
 import {ScreenNavigationProp} from '@/Routes/Stack';
 import {calculateTimeDifference} from '@/Utils';
 import Comment from '@/Components/Comment';
-import {FIXED_STATUSBAR_HEIGHT} from '@/Constants';
+import {FIXED_STATUSBAR_HEIGHT, SCREEN_WIDTH} from '@/Constants';
 import {
   useGetMarkCommentQuery,
   useSetMarkCommentMutation,
 } from '@/Redux/api/comment';
 import VideoPlayer from 'react-native-video-player';
+import Spinner from 'react-native-loading-spinner-overlay';
 
 const width = Dimensions.get('window').width;
 
@@ -110,7 +111,15 @@ const PostDetailScreen = () => {
     isLoading,
     isSuccess: isSuccessPost,
     refetch: refetchPost,
+    isError,
+    error,
   } = useGetPostQuery({id: postId});
+
+  // useEffect(() => {
+  //   if (isError) {
+  //     Alert.alert('Lỗi', JSON.parse(error).message);
+  //   }
+  // }, [isError, error]);
   // const post = data?.data;
   const [post, setPost] = useState(null);
 
@@ -151,6 +160,10 @@ const PostDetailScreen = () => {
     mutateFeel({id: postId, type: String(1)})
       .unwrap()
       .then(res => {
+        Alert.alert(
+          'Thành công',
+          'Bạn đã bỏ cảm xúc thành công và bị trừ 1 coin',
+        );
         setFeel(feel =>
           String(Number(res.data.disappointed) + Number(res.data.kudos)),
         );
@@ -180,6 +193,10 @@ const PostDetailScreen = () => {
     mutateFeel({id: postId, type: String(0)})
       .unwrap()
       .then(res => {
+        Alert.alert(
+          'Thành công',
+          'Bạn đã bỏ cảm xúc thành công và bị trừ 1 coin',
+        );
         setFeel(feel =>
           String(Number(res.data.disappointed) + Number(res.data.kudos)),
         );
@@ -217,8 +234,56 @@ const PostDetailScreen = () => {
     avatar && avatar.length > 0
       ? {uri: avatar}
       : require('@/Assets/Images/Avatar.png');
+  if (isError) {
+    return (
+      <View
+        style={{
+          flex: 1,
+          backgroundColor: '#fff',
+          // justifyContent: 'center',
+          // alignItems: 'center',
+        }}>
+        <View style={styles.navigationBar}>
+          <View style={styles.navigationBarLeft}>
+            <TouchableOpacity
+              onPress={onPressGoBackHandler}
+              style={styles.btnBack}>
+              <FontAwesome5Icon name="arrow-left" color="#000" size={20} />
+            </TouchableOpacity>
+            <Text style={styles.textNavigationBar}>{post?.author.name}</Text>
+          </View>
+          <TouchableOpacity
+            onPress={onPressSearchHandler}
+            style={styles.btnBack}>
+            <FontAwesome5Icon name="search" color="#000" size={20} />
+          </TouchableOpacity>
+        </View>
+        <Image
+          // width={SCREEN_WIDTH}
+          // height={SCREEN_WIDTH}
+          style={{width: SCREEN_WIDTH, height: SCREEN_WIDTH}}
+          resizeMode="contain"
+          source={require('@/Assets/Images/NotFound.png')}
+        />
+        <View
+          style={{
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}>
+          <TouchableOpacity
+            style={{padding: 10, backgroundColor: '#ddd'}}
+            onPress={() => {
+              navigation.navigate('Home');
+            }}>
+            <Text>Quay về trang chủ</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+    );
+  }
   return (
     <View style={styles.container}>
+      <Spinner visible={isLoadingGet || isLoadingSet} />
       <View style={styles.navigationBar}>
         <View style={styles.navigationBarLeft}>
           <TouchableOpacity

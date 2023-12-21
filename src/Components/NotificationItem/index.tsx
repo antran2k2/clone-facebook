@@ -8,16 +8,28 @@ import {
   Text,
 } from 'react-native';
 import Modal from 'react-native-modal';
-import FontAwesome5Icon from 'react-native-vector-icons/FontAwesome5';
 import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
 import {faSquareXmark} from '@fortawesome/free-solid-svg-icons';
-import {faMinus} from '@fortawesome/free-solid-svg-icons';
+import FontAwesome5Icon from 'react-native-vector-icons/FontAwesome5';
+import FontAwesome6Icon from 'react-native-vector-icons/FontAwesome6';
 
+import {useNavigation} from '@react-navigation/native';
+import {ScreenNavigationProp} from '@/Routes/Stack';
 export default function NotificationItem({notification}) {
+  const navigation = useNavigation<ScreenNavigationProp>();
+
   const [showNotiPopup, setShowNotiPopup] = useState<Notification | null>(null);
   const handleCancelPopup = () => {
     setShowNotiPopup(null);
   };
+  const handlePressNotification = noti => {
+    if (noti.type === '1' || noti.type === '2') {
+      navigation.navigate('ProfileFriend', {id: noti.user.id});
+    } else {
+      navigation.navigate('PostDetail', {postId: noti.post.id});
+    }
+  };
+
   if (notification.type !== '1') {
     return (
       <View>
@@ -51,31 +63,31 @@ export default function NotificationItem({notification}) {
                     marginTop: -12,
                     transform: 'translateY(-10px)',
                   }}>
-                  <FontAwesomeIcon
-                    icon={faMinus}
+                  <FontAwesome5Icon
+                    name="minus"
                     size={20}
                     color="#c9c8cd"
                     style={{marginRight: -8}}
                   />
-                  <FontAwesomeIcon
-                    icon={faMinus}
+                  <FontAwesome5Icon
+                    name="minus"
                     size={20}
                     color="#c9c8cd"
                     style={{marginRight: -8}}
                   />
-                  <FontAwesomeIcon
-                    icon={faMinus}
+                  <FontAwesome5Icon
+                    name="minus"
                     size={20}
                     color="#c9c8cd"
                     style={{marginRight: -8}}
                   />
-                  <FontAwesomeIcon
-                    icon={faMinus}
+                  <FontAwesome5Icon
+                    name="minus"
                     size={20}
                     color="#c9c8cd"
                     style={{marginRight: -8}}
                   />
-                  <FontAwesomeIcon icon={faMinus} size={20} color="#c9c8cd" />
+                  {/* <FontAwesomeIcon icon={faMinus} size={20} color="#c9c8cd" /> */}
                 </View>
                 <ImageBackground
                   imageStyle={{borderRadius: 64}}
@@ -98,23 +110,24 @@ export default function NotificationItem({notification}) {
                 <View style={styles.containerline}>
                   <View style={styles.line} />
                 </View>
-                <View
+                <TouchableOpacity
                   style={{
                     display: 'flex',
                     flexDirection: 'row',
                     alignItems: 'center',
                   }}>
                   <View style={{...styles.popupIcon}}>
-                    <FontAwesomeIcon icon={faSquareXmark} size={20} />
+                    <FontAwesome6Icon name="square-xmark" size={20} />
                   </View>
                   <Text style={styles.popupOption}>Gỡ thông báo này</Text>
-                </View>
+                </TouchableOpacity>
               </View>
             </View>
           </Modal>
         )}
 
         <TouchableOpacity
+          onPress={() => handlePressNotification(notification)}
           style={{
             ...styles.container,
             backgroundColor: notification.read === '0' ? '#ebf1fd' : '#ffffff',
@@ -163,6 +176,7 @@ export default function NotificationItem({notification}) {
       //  style={{ backgroundColor: "rgba(0,0,0,0.3)" }}
       >
         <TouchableOpacity
+          onPress={() => handlePressNotification(notification)}
           style={{
             ...styles.container,
             backgroundColor: notification.read === '0' ? '#ebf1fd' : '#ffffff',

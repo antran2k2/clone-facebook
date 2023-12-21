@@ -14,6 +14,7 @@ import {
   StatusBar,
   ImageBackground,
   Clipboard,
+  Alert,
 } from 'react-native';
 import {useNavigation, useRoute} from '@react-navigation/native';
 // import { ScreenNavigationProp, ScreenFullFriendProp, ScreenPreViewImageProp } from '@/Routes/Stack';
@@ -22,30 +23,18 @@ import FontAwesome5Icon from 'react-native-vector-icons/FontAwesome5';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import {ScreenNavigationProp} from '@/Routes/Stack';
+import {useSetBlockMutation} from '@/Redux/api/block';
+import Spinner from 'react-native-loading-spinner-overlay';
 // import Clipboard from '@react-native-clipboard/clipboard';
 
 //Giá trị User lấy trong Redux hoặc call API getUserInfo
-const user: TUserInfo = {
-  id: '1',
-  username: 'Duy Anh',
-  created: new Date(),
-  description: 'The best is yet to come',
-  avatar:
-    'https://thuthuatnhanh.com/wp-content/uploads/2018/07/anh-dai-dien-dep.jpg',
-  cover_image:
-    'https://images.pexels.com/photos/572897/pexels-photo-572897.jpeg?auto=compress&cs=tinysrgb&w=600',
-  link: 'https://www.facebook.com/profile.php?id=100014770352006',
-  address: 'Ha-Nam, Hà Nam, Việt Nam',
-  city: 'Hà Nam',
-  country: 'VietNam',
-  listing: '6',
-  is_friend: 'true',
-  online: '1',
-  coins: '100',
-};
 
 const OtherPersonalSettingScreen = () => {
+  const route = useRoute();
+  const {userId, username} = route.params;
+  const [setBlock, {isLoading}] = useSetBlockMutation();
   // const navigation = useNavigation<ScreenNavigationProp>();
+
   const [link, setLink] = useState('');
   const navigation = useNavigation<ScreenNavigationProp>();
 
@@ -62,10 +51,19 @@ const OtherPersonalSettingScreen = () => {
 
   const handleBlocking = () => {
     // Xử lý block người dùng qua user.id ở đây
+    setBlock({user_id: userId})
+      .unwrap()
+      .then(() => {
+        navigation.navigate('Home');
+      })
+      .catch(err => {
+        Alert.alert('Lỗi', JSON.parse(err).message);
+      });
   };
 
   return (
     <View style={styles.parentContainer}>
+      <Spinner visible={isLoading} />
       <View style={styles.navigationBar}>
         <View style={styles.navigationBarLeft}>
           <TouchableOpacity onPress={handleBack} style={styles.btnBack}>
@@ -148,45 +146,13 @@ const OtherPersonalSettingScreen = () => {
                 marginBottom: 8,
                 marginTop: 8,
               }}>
-              Liên kết đến trang cá nhân của {user.username}
+              Liên kết đến trang cá nhân của {username}
             </Text>
             <Text style={{fontSize: 15, paddingRight: 30}}>
-              Liên kết riêng của {user.username} trên AntiFacebook
+              Liên kết riêng của {username} trên AntiFacebook
             </Text>
           </View>
         </TouchableOpacity>
-        {user.link ? (
-          <TouchableOpacity style={styles.postOptionItemWrapper}>
-            <View>
-              <Text
-                style={{
-                  fontSize: 16,
-                  fontWeight: '700',
-                  color: '#000',
-                  marginBottom: 8,
-                  marginTop: 4,
-                }}>
-                {user.link}
-              </Text>
-              <TouchableOpacity
-                style={{
-                  borderRadius: 8,
-                  borderWidth: 1,
-                  borderColor: '#ddd',
-                  paddingHorizontal: 6,
-                  paddingVertical: 8,
-                  width: 150,
-                }}
-                onPress={() => Clipboard.setString(user.link)}>
-                <Text style={{color: '#000', fontWeight: '500'}}>
-                  SAO CHÉP LIÊN KẾT
-                </Text>
-              </TouchableOpacity>
-            </View>
-          </TouchableOpacity>
-        ) : (
-          <View />
-        )}
       </ScrollView>
     </View>
   );

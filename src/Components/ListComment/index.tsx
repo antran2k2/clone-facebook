@@ -114,6 +114,7 @@ const CommentListScreen = ({postItem}: {postItem: any}) => {
       })
         .unwrap()
         .then(res => {
+          Alert.alert('Thành công', 'Tốn 2 coin để tạo Mark thành công');
           setMarkIdSelect('0');
           ref_input.current?.clear();
 

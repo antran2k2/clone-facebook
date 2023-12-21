@@ -14,6 +14,7 @@ import {
   SectionList,
   ImageBackground,
   Button,
+  Alert,
 } from 'react-native';
 import FontAwesome5Icon from 'react-native-vector-icons/FontAwesome5';
 import FontAwesome6 from 'react-native-vector-icons/FontAwesome6';
@@ -25,6 +26,11 @@ import Modal from 'react-native-modal';
 import {useAppSelector} from '@/Redux/store';
 import PostItem from '@/Components/PostItem';
 import CommentListScreen from '@/Components/ListComment';
+import {
+  useSetRequestFriendMutation,
+  useDelRequestFriendMutation,
+} from '@/Redux/api/friend';
+import {SCREEN_WIDTH} from '@/Constants';
 const windowWidth = Math.round(Dimensions.get('window').width);
 
 const styles = StyleSheet.create({
@@ -144,6 +150,26 @@ const styles = StyleSheet.create({
     width: '86%',
     marginTop: 3,
   },
+  postOptionsWrapper: {
+    paddingTop: 16,
+    paddingBottom: 10,
+    backgroundColor: '#fff',
+    width: SCREEN_WIDTH - 60,
+  },
+  postOptionItemWrapper: {
+    paddingBottom: 10,
+    paddingTop: 10,
+    paddingLeft: 20,
+    paddingRight: 10,
+  },
+  postOptionWrapperEnd: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingBottom: 10,
+    paddingTop: 10,
+    paddingLeft: 140,
+    paddingRight: 50,
+  },
 });
 
 function SearchResultScreen() {
@@ -256,7 +282,12 @@ function SearchResultScreen() {
     <SafeAreaView style={styles.container}>
       <Spinner visible={isLoading || isLoadingQuery} />
       <View style={styles.containerHeader}>
-        <FontAwesome6 style={styles.returnIcon} name="less-than" size={18} />
+        <FontAwesome6
+          style={styles.returnIcon}
+          name="less-than"
+          size={18}
+          onPress={() => navigation.goBack()}
+        />
         <TextInput
           style={styles.input}
           placeholder="Tìm kiếm trên Facebook"
@@ -409,6 +440,7 @@ function AllComponent({friendUser, allUser}: {friendUser: any; allUser: any}) {
 }
 
 function FriendItem({user}) {
+  const navigation = useNavigation();
   const [isPressed, setIsPressed] = useState<boolean>(false);
 
   const handlePressIn = () => {
@@ -420,7 +452,9 @@ function FriendItem({user}) {
     // handleChat();
   };
   return (
-    <View style={{paddingVertical: 10, paddingHorizontal: 15}}>
+    <TouchableOpacity
+      onPress={(() => navigation.navigate('ProfileFriend'), {id: user.id})}
+      style={{paddingVertical: 10, paddingHorizontal: 15}}>
       <View style={{display: 'flex', flexDirection: 'row'}}>
         <ImageBackground
           imageStyle={{borderRadius: 64}}
@@ -465,22 +499,70 @@ function FriendItem({user}) {
           <Text style={{color: '#0064d1', fontWeight: 'bold'}}>Nhắn tin</Text>
         </TouchableOpacity>
       </View>
-    </View>
+    </TouchableOpacity>
   );
 }
 function NotFriendItem({user}) {
+  const navigation = useNavigation();
+  const [setRequestFriend] = useSetRequestFriendMutation();
+  const [delRequestFriend] = useDelRequestFriendMutation();
   const [isPressed, setIsPressed] = useState<boolean>(false);
+  const [isRequest, setIsRequest] = useState(false);
+
+  const [isModalVisible1, setModalVisible1] = useState(false);
+
+  const toggleModal1 = () => {
+    setModalVisible1(!isModalVisible1);
+  };
+
+  const [isModalVisible2, setModalVisible2] = useState(false);
+
+  const toggleModal2 = () => {
+    setModalVisible2(!isModalVisible2);
+  };
 
   const handlePressIn = () => {
     setIsPressed(true);
   };
 
+  const handleAcceptSent = () => {
+    setRequestFriend({user_id: user.id || '-1'})
+      .unwrap()
+      .then(res => {
+        toggleModal1();
+        setIsRequest(true);
+      })
+      .catch(err => {
+        Alert.alert('Lỗi', JSON.parse(err).message);
+      });
+  };
+
+  const handleCancelSent = () => {
+    delRequestFriend({user_id: user.id || '-1'})
+      .unwrap()
+      .then(res => {
+        toggleModal2();
+        setIsRequest(false);
+      })
+      .catch(err => {
+        Alert.alert('Lỗi', JSON.parse(err).message);
+      });
+  };
+
   const handlePressOut = () => {
     setIsPressed(false);
+    toggleModal1();
+    // handleAddFriend();
+  };
+  const handlePressOut1 = () => {
+    setIsPressed(false);
+    toggleModal2();
     // handleAddFriend();
   };
   return (
-    <View style={{paddingVertical: 10, paddingHorizontal: 15}}>
+    <TouchableOpacity
+      onPress={() => navigation.navigate('ProfileFriend', {id: user?.id})}
+      style={{paddingVertical: 10, paddingHorizontal: 15}}>
       <View style={{display: 'flex', flexDirection: 'row'}}>
         <ImageBackground
           imageStyle={{borderRadius: 64}}
@@ -504,19 +586,149 @@ function NotFriendItem({user}) {
             {user.same_friends !== '0' ? user.same_friends : 'Không có'} bạn
             chung
           </Text>
-          <TouchableOpacity
-            onPressOut={handlePressOut}
-            onPressIn={handlePressIn}
-            style={[
-              styles.addFriendButton,
-              {backgroundColor: isPressed ? 'gray' : '#ebf4ff'},
-            ]}>
-            <Text style={{color: '#0064d1', fontWeight: 'bold'}}>
-              Thêm bạn bè
-            </Text>
-          </TouchableOpacity>
+          {!isRequest ? (
+            <TouchableOpacity
+              onPressOut={handlePressOut}
+              onPressIn={handlePressIn}
+              style={[
+                styles.addFriendButton,
+                {backgroundColor: isPressed ? 'gray' : '#ebf4ff'},
+              ]}>
+              <Text style={{color: '#0064d1', fontWeight: 'bold'}}>
+                Thêm bạn bè
+              </Text>
+            </TouchableOpacity>
+          ) : (
+            <TouchableOpacity
+              onPressOut={handlePressOut1}
+              onPressIn={handlePressIn}
+              style={[
+                styles.addFriendButton,
+                {backgroundColor: isPressed ? '#ebf4ff' : '#ddd'},
+              ]}>
+              <Text style={{color: '#fff', fontWeight: 'bold'}}>Hủy</Text>
+            </TouchableOpacity>
+          )}
         </View>
       </View>
-    </View>
+      {/* Model Chấp nhận */}
+      <Modal
+        isVisible={isModalVisible1}
+        onBackdropPress={toggleModal1}
+        onBackButtonPress={toggleModal1}
+        backdropOpacity={0.3}
+        onSwipeComplete={() => setModalVisible1(false)}
+        useNativeDriverForBackdrop
+        swipeDirection={['down']}
+        style={{margin: 5, borderRadius: 50, alignItems: 'center'}}>
+        <View style={styles.postOptionsWrapper}>
+          <View style={styles.postOptionItemWrapper}>
+            <Text
+              style={{
+                fontSize: 17,
+                fontWeight: '700',
+                color: '#000',
+              }}>
+              Kết bạn với {user?.username}
+            </Text>
+          </View>
+          <View style={styles.postOptionItemWrapper}>
+            <Text
+              style={{
+                fontSize: 16,
+                fontWeight: '400',
+                color: '#000',
+              }}>
+              Bạn có chắc chắn muốn gửi lời kết bạn tới {user?.username} không ?{' '}
+            </Text>
+          </View>
+          <View style={styles.postOptionWrapperEnd}>
+            <TouchableOpacity onPress={handleAcceptSent}>
+              <View>
+                <Text
+                  style={{
+                    fontSize: 17,
+                    fontWeight: '700',
+                    color: '#318bfb',
+                  }}>
+                  Xác nhận
+                </Text>
+              </View>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => setModalVisible1(false)}>
+              <View>
+                <Text
+                  style={{
+                    fontSize: 17,
+                    fontWeight: '700',
+                    color: '#318bfb',
+                  }}>
+                  Hủy
+                </Text>
+              </View>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
+      {/* Model Hủy lời mời kết bạn */}
+      <Modal
+        isVisible={isModalVisible2}
+        onBackdropPress={toggleModal2}
+        onBackButtonPress={toggleModal2}
+        backdropOpacity={0.3}
+        onSwipeComplete={() => setModalVisible2(false)}
+        useNativeDriverForBackdrop
+        swipeDirection={['down']}
+        style={{margin: 5, borderRadius: 50, alignItems: 'center'}}>
+        <View style={styles.postOptionsWrapper}>
+          <View style={styles.postOptionItemWrapper}>
+            <Text
+              style={{
+                fontSize: 17,
+                fontWeight: '700',
+                color: '#000',
+              }}>
+              Hủy lời mời tới {user.username}
+            </Text>
+          </View>
+          <View style={styles.postOptionItemWrapper}>
+            <Text
+              style={{
+                fontSize: 16,
+                fontWeight: '400',
+                color: '#000',
+              }}>
+              Bạn có chắc chắn muốn hủy lời kết bạn tới {user.username} không ?{' '}
+            </Text>
+          </View>
+          <View style={styles.postOptionWrapperEnd}>
+            <TouchableOpacity onPress={handleCancelSent}>
+              <View>
+                <Text
+                  style={{
+                    fontSize: 17,
+                    fontWeight: '700',
+                    color: '#318bfb',
+                  }}>
+                  Xác nhận
+                </Text>
+              </View>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => setModalVisible2(false)}>
+              <View>
+                <Text
+                  style={{
+                    fontSize: 17,
+                    fontWeight: '700',
+                    color: '#318bfb',
+                  }}>
+                  Hủy
+                </Text>
+              </View>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
+    </TouchableOpacity>
   );
 }

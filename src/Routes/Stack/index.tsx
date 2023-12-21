@@ -51,6 +51,8 @@ import SettingPersonalPageScreen from '@/Screens/ProfileTab/SettingPersonalPage'
 import ShowImageScreen from '@/Screens/ProfileTab/ShowImage';
 import ProfileFriendScreen from '@/Screens/ProfileTab/ProfileFriend';
 import OtherPersonalSettingScreen from '@/Screens/ProfileTab/OtherPeopleSetting';
+import SetAvatarScreen from '@/Screens/Signup/SetAvatar';
+import EditPostScreen from '@/Screens/Post/EditPost';
 
 export type RootStackParamList = {
   Main: undefined;
@@ -96,7 +98,8 @@ export type RootStackParamList = {
   SettingPersonalPage: undefined;
   ShowImage: {link: string};
   ProfileFriend: {id: string};
-  OtherPeopleSetting: undefined;
+  OtherPeopleSetting: {userId: string; username: string};
+  EditPostScreen: {id: string};
 };
 export type ScreenNavigationProp =
   NativeStackNavigationProp<RootStackParamList>;
@@ -143,6 +146,11 @@ function MyStack() {
         screenOptions={{
           headerShown: true,
         }}>
+        <Stack.Screen
+          name="SetAvatar"
+          component={SetAvatarScreen}
+          options={{title: 'Ảnh đại diện'}}
+        />
         <Stack.Screen
           name="JoinFb"
           component={JoinFbScreen}
@@ -262,6 +270,7 @@ function MyStack() {
         name="OtherPeopleSetting"
         component={OtherPersonalSettingScreen}
       />
+      <Stack.Screen name="EditPostScreen" component={EditPostScreen} />
     </Stack.Navigator>
   );
 }

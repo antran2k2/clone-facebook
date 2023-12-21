@@ -24,6 +24,8 @@ import Modal from 'react-native-modal';
 import messaging from '@react-native-firebase/messaging';
 import CommentListScreen from '@/Components/ListComment';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import {useDeletePostMutation} from '@/Redux/api/post';
+import Spinner from 'react-native-loading-spinner-overlay';
 const HomeScreen = () => {
   const token = useAppSelector(state => state.auth.token);
   const {avatar, id: userId, username} = useAppSelector(state => state.info);
@@ -72,6 +74,10 @@ const HomeScreen = () => {
   const [isModalVisible1, setModalVisible1] = useState(false);
   const toggleModal1 = () => {
     setModalVisible1(!isModalVisible1);
+  };
+  const [isModalVisible01, setModalVisible01] = useState(false);
+  const toggleModal01 = () => {
+    setModalVisible01(!isModalVisible01);
   };
 
   const handleReport = () => {
@@ -122,13 +128,57 @@ const HomeScreen = () => {
   };
   const handleTouchThreeDot = (item: any) => {
     setSelectPost(item);
-    console.log(item);
-    toggleModal1();
-    console.log('touch 3 dot');
+    console.log('authot:', item.author);
+
+    if (item.author.id === userId) {
+      toggleModal01();
+    } else {
+      toggleModal1();
+    }
+  };
+
+  const handleEditPost = () => {
+    toggleModal01();
+    navigation.navigate('EditPostScreen', {id: selectPost?.id});
+  };
+
+  const [deletePost, {isLoading: isLoadingDeletePost}] =
+    useDeletePostMutation();
+  const handleDeletePost = () => {
+    toggleModal01();
+    Alert.alert(
+      'Xoá bài viết',
+      'Bạn có chắc chắn muốn xoá bài viết này?',
+      [
+        {
+          text: 'Huỷ',
+          onPress: () => console.log('Cancel Pressed'),
+          style: 'cancel',
+        },
+        {
+          text: 'Xoá',
+          onPress: () => {
+            console.log('OK Pressed');
+            deletePost({id: selectPost?.id})
+              .unwrap()
+              .then(res => {
+                setListPosts(prev => {
+                  return prev.filter(post => post.id !== selectPost?.id);
+                });
+              })
+              .catch(err => {
+                Alert.alert('Xoá bài viết thất bại', JSON.parse(err).message);
+              });
+          },
+        },
+      ],
+      {cancelable: false},
+    );
   };
   return (
     <>
       <SafeAreaView style={styles.container}>
+        <Spinner visible={isLoadingDeletePost} />
         <Header translateY={translateY} />
 
         <FlatList
@@ -183,7 +233,7 @@ const HomeScreen = () => {
         onBackdropPress={toggleModal1}
         onBackButtonPress={toggleModal1}
         backdropOpacity={0.3}
-        onSwipeComplete={() => setModalVisible(false)}
+        onSwipeComplete={() => setModalVisible1(false)}
         useNativeDriverForBackdrop
         swipeDirection={['down']}
         style={{
@@ -297,6 +347,94 @@ const HomeScreen = () => {
                     color: '#000',
                   }}>
                   Bật thông báo về bài viết này
+                </Text>
+              </View>
+            </View>
+          </TouchableOpacity>
+        </View>
+      </Modal>
+
+      {/* Model My Post */}
+      <Modal
+        isVisible={isModalVisible01}
+        onBackdropPress={toggleModal01}
+        onBackButtonPress={toggleModal01}
+        backdropOpacity={0.3}
+        onSwipeComplete={() => setModalVisible01(false)}
+        useNativeDriverForBackdrop
+        swipeDirection={['down']}
+        style={{
+          margin: 5,
+          borderRadius: 50,
+          flex: 1,
+          justifyContent: 'flex-end',
+        }}>
+        <View
+          style={{
+            paddingTop: 16,
+            paddingBottom: 10,
+            backgroundColor: '#fff',
+          }}>
+          <TouchableOpacity style={styles.postOptionItemWrapper}>
+            <View style={styles.postOptionItem}>
+              <View style={styles.optionIcon}>
+                <MaterialCommunityIcons
+                  name="content-save"
+                  size={26}
+                  color="#000"></MaterialCommunityIcons>
+              </View>
+              <View>
+                <Text
+                  style={{
+                    fontSize: 17,
+                    fontWeight: '400',
+                    color: '#000',
+                  }}>
+                  Lưu bài viết của mình
+                </Text>
+              </View>
+            </View>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.postOptionItemWrapper}
+            onPress={handleEditPost}>
+            <View style={styles.postOptionItem}>
+              <View style={styles.optionIcon}>
+                <MaterialCommunityIcons
+                  name="pencil"
+                  size={26}
+                  color="#000"></MaterialCommunityIcons>
+              </View>
+              <View>
+                <Text
+                  style={{
+                    fontSize: 17,
+                    fontWeight: '400',
+                    color: '#000',
+                  }}>
+                  Chỉnh sửa bài viết
+                </Text>
+              </View>
+            </View>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.postOptionItemWrapper}
+            onPress={handleDeletePost}>
+            <View style={styles.postOptionItem}>
+              <View style={styles.optionIcon}>
+                <MaterialCommunityIcons
+                  name="delete-forever"
+                  size={26}
+                  color="#000"></MaterialCommunityIcons>
+              </View>
+              <View>
+                <Text
+                  style={{
+                    fontSize: 17,
+                    fontWeight: '400',
+                    color: '#000',
+                  }}>
+                  Xoá bài viết
                 </Text>
               </View>
             </View>

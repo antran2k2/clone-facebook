@@ -28,11 +28,13 @@ import Modal from 'react-native-modal';
 import * as ImagePicker from 'react-native-image-picker';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import {useChangeInfoAfterSignupMutation} from '@/Redux/api/profile';
-import {useAppSelector} from '@/Redux/store';
+import {useAppDispatch, useAppSelector} from '@/Redux/store';
+import {setAvatar, setUsername} from '@/Redux/reducer/userInfo';
 /* toggle includeExtra */
 const includeExtra = true;
 
 const SetAvatarScreen = () => {
+  const dispatch = useAppDispatch();
   const navigation = useNavigation<ScreenNavigationProp>();
   const {ho, ten} = useAppSelector(state => state.signUpInfo.data);
   const [changeInfoAfterSignup] = useChangeInfoAfterSignupMutation();
@@ -71,12 +73,14 @@ const SetAvatarScreen = () => {
 
     changeInfoAfterSignup(formData)
       .unwrap()
-      .then(res =>
+      .then(res => {
+        dispatch(setAvatar(uri));
+        dispatch(setUsername(`${ho} ${ten}`));
         navigation.reset({
           index: 0,
           routes: [{name: 'Main'}],
-        }),
-      )
+        });
+      })
       .catch(err => Alert.alert('Lỗi', JSON.parse(err).message));
     // navigation.navigate("Home")
   };
@@ -257,7 +261,7 @@ const actions: Action[] = [
     title: 'Chọn Ảnh từ thư viện',
     type: 'library',
     options: {
-      selectionLimit: 0,
+      selectionLimit: 1,
       mediaType: 'photo',
       includeBase64: false,
       includeExtra,

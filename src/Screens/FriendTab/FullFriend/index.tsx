@@ -23,15 +23,21 @@ import FriendOption from '@/Components/FriendOption';
 import ArrangeWrapper from '@/Components/ArrangeWrapper';
 import BlockAlert from '@/Components/BlockAlert';
 import UnFriendAlert from '@/Components/UnFriendAlert';
-
 import {useGetUserFriendsQuery} from '@/Redux/api/friend';
 
 const FullFriendScreen = () => {
   const {id} = useAppSelector(state => state.info);
+  const route = useRoute<ScreenFullFriendProp>();
+  //const horizontalScrollRef = useRef<ScrollView>(null);
+  const horizontalScrollRef = useRef() as MutableRefObject<ScrollView>;
+  // const horizontalScrollRef =useRef<ScrollView|null>(null);
+
+  const user_id: string = route.params.user_id;
+
   const initParams = {
     index: '0',
     count: '1000',
-    user_id: id || '-1',
+    user_id: id === user_id ? id : user_id,
   };
   const [params, setParams] = useState(initParams);
   const {
@@ -53,12 +59,7 @@ const FullFriendScreen = () => {
     }
   }, [resquest, isSuccess]);
   const navigation = useNavigation<ScreenNavigationProp>();
-  const route = useRoute<ScreenFullFriendProp>();
-  //const horizontalScrollRef = useRef<ScrollView>(null);
-  const horizontalScrollRef = useRef() as MutableRefObject<ScrollView>;
-  // const horizontalScrollRef =useRef<ScrollView|null>(null);
 
-  const user_id: string = route.params.user_id;
   //--------------------Call APi Get Friend dựa vào giá trị user_id---------------------
   const [isModalVisible, setModalVisible] = useState(false);
   const [isModalArrageVisible, setModalArrageVisible] = useState(false);
@@ -245,11 +246,16 @@ const FullFriendScreen = () => {
                           </Text>
                         )}
                       </View>
-                      <TouchableOpacity
-                        onPress={onPressFriendOptionsHandler.bind(this, friend)}
-                        style={styles.btnFriendOptions}>
-                        <FontAwesome5Icon name="ellipsis-h" size={20} />
-                      </TouchableOpacity>
+                      {id === user_id && (
+                        <TouchableOpacity
+                          onPress={onPressFriendOptionsHandler.bind(
+                            this,
+                            friend,
+                          )}
+                          style={styles.btnFriendOptions}>
+                          <FontAwesome5Icon name="ellipsis-h" size={20} />
+                        </TouchableOpacity>
+                      )}
                     </TouchableOpacity>
                   ) : (
                     <View></View>
