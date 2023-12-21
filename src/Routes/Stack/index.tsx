@@ -1,7 +1,7 @@
 /* eslint-disable react-native/no-inline-styles */
 /* eslint-disable react/no-unstable-nested-components */
-import React, {useEffect} from 'react';
-import type {RouteProp} from '@react-navigation/native';
+import React, { useEffect } from 'react';
+import type { RouteProp } from '@react-navigation/native';
 
 import {
   NativeStackNavigationProp,
@@ -17,8 +17,8 @@ import PasswordScreen from '@/Screens/Signup/Password';
 import WebViewPolicyScreen from '@/Screens/Signup/WebViewPolicy';
 import RulesScreen from '@/Screens/Signup/Rules';
 import ConfirmScreen from '@/Screens/Signup/Confirm';
-import {useAppSelector} from '@/Redux/store';
-import {useNavigation} from '@react-navigation/native';
+import { useAppSelector } from '@/Redux/store';
+import { useNavigation } from '@react-navigation/native';
 import MainTab from './tab';
 import AddPostScreen from '@/Screens/Post/AddPost';
 import SettingTabScreen from '@/Screens/Setting/SettingTab';
@@ -26,7 +26,7 @@ import SettingAccountScreen from '@/Screens/Setting/SettingAccount';
 import SettingPersonalInfoScreen from '@/Screens/Setting/SettingPersonalInfo';
 import ProfileTabScreen from '@/Screens/ProfileTab';
 import FullFriendScreen from '@/Screens/FriendTab/FullFriend';
-import {TUserFriend} from '@/types/user.type';
+import { TUserFriend } from '@/types/user.type';
 import FriendRequestScreen from '@/Screens/FriendTab/FriendRequest';
 import PostDetailScreen from '@/Screens/Post/PostDetail';
 import SettingNameScreen from '@/Screens/Setting/SettingName';
@@ -36,6 +36,7 @@ import SettingNotificationScreen from '@/Screens/Setting/SettingNotification';
 import SettingPushScreen from '@/Screens/Setting/SettingPush';
 import BlockingScreen from '@/Screens/Setting/Blocking';
 import AddUserToBlockListScreen from '@/Screens/Setting/AddUserToBlockList';
+import ReportScreen from '@/Screens/Post/Report';
 
 export type RootStackParamList = {
   Main: undefined;
@@ -48,7 +49,7 @@ export type RootStackParamList = {
   Email: undefined;
   Password: undefined;
   Confirm: undefined;
-  WebViewPolicy: {url: string};
+  WebViewPolicy: { url: string };
   Rules: undefined;
   AddPost: undefined;
   SettingTab: undefined /* Thực tế cần truyền userId để lấy ảnh và tên người dùng */;
@@ -62,10 +63,11 @@ export type RootStackParamList = {
   Blocking: undefined;
   AddUserToBlockList: undefined;
   ProfileTab: undefined;
-  FullFriend: {user_id: string};
+  FullFriend: { user_id: string };
   FriendRequest: undefined;
-  Profile: {userId: string};
-  PostDetail: {postId: string};
+  Profile: { userId: string };
+  PostDetail: { postId: string };
+  Report: { authorId: string | undefined, postId: string | undefined, authorName: string | undefined };
 };
 export type ScreenNavigationProp =
   NativeStackNavigationProp<RootStackParamList>;
@@ -73,6 +75,7 @@ const Stack = createNativeStackNavigator<RootStackParamList>();
 
 export type ScreenPolicyProp = RouteProp<RootStackParamList, 'WebViewPolicy'>;
 export type ScreenFullFriendProp = RouteProp<RootStackParamList, 'FullFriend'>;
+export type ScreenReportProp = RouteProp<RootStackParamList, 'Report'>;
 
 function MyStack() {
   const token = useAppSelector(state => state.auth.token);
@@ -109,42 +112,42 @@ function MyStack() {
         <Stack.Screen
           name="JoinFb"
           component={JoinFbScreen}
-          options={{title: 'Tạo tài khoản'}}
+          options={{ title: 'Tạo tài khoản' }}
         />
         <Stack.Screen
           name="Name"
           component={NameScreen}
-          options={{title: 'Tên'}}
+          options={{ title: 'Tên' }}
         />
         <Stack.Screen
           name="BirthDay"
           component={BirthDayScreen}
-          options={{title: 'Ngày sinh'}}
+          options={{ title: 'Ngày sinh' }}
         />
         <Stack.Screen
           name="Email"
           component={EmailScreen}
-          options={{title: 'Địa chỉ Email'}}
+          options={{ title: 'Địa chỉ Email' }}
         />
         <Stack.Screen
           name="Password"
           component={PasswordScreen}
-          options={{title: 'Mật khẩu'}}
+          options={{ title: 'Mật khẩu' }}
         />
         <Stack.Screen
           name="Confirm"
           component={ConfirmScreen}
-          options={{title: 'Xác nhận tài khoản'}}
+          options={{ title: 'Xác nhận tài khoản' }}
         />
         <Stack.Screen
           name="Rules"
           component={RulesScreen}
-          options={{title: 'Điều khoản & quyền riêng tư'}}
+          options={{ title: 'Điều khoản & quyền riêng tư' }}
         />
         <Stack.Screen
           name="WebViewPolicy"
           component={WebViewPolicyScreen}
-          options={{title: 'Điều khoản & quyền riêng tư'}}
+          options={{ title: 'Điều khoản & quyền riêng tư' }}
         />
       </Stack.Group>
       <Stack.Group
@@ -154,48 +157,49 @@ function MyStack() {
         <Stack.Screen
           name="SettingAccount"
           component={SettingAccountScreen}
-          options={{title: 'Cài đặt'}}
+          options={{ title: 'Cài đặt' }}
         />
         <Stack.Screen
           name="SettingPersonalInfo"
           component={SettingPersonalInfoScreen}
-          options={{title: ''}}
+          options={{ title: '' }}
         />
         <Stack.Screen
           name="SettingName"
           component={SettingNameScreen}
-          options={{title: 'Tên'}}
+          options={{ title: 'Tên' }}
         />
         <Stack.Screen
           name="SettingSecurity"
           component={SettingSecurityScreen}
-          options={{title: ''}}
+          options={{ title: '' }}
         />
         <Stack.Screen
           name="ChangePassword"
           component={ChangePasswordScreen}
-          options={{title: 'Đổi mật khẩu'}}
+          options={{ title: 'Đổi mật khẩu' }}
         />
         <Stack.Screen
           name="SettingNotification"
           component={SettingNotificationScreen}
-          options={{title: 'Cài đặt thông báo'}}
+          options={{ title: 'Cài đặt thông báo' }}
         />
         <Stack.Screen
           name="SettingPush"
           component={SettingPushScreen}
-          options={{title: 'Đẩy'}}
+          options={{ title: 'Đẩy' }}
         />
         <Stack.Screen
           name="Blocking"
           component={BlockingScreen}
-          options={{title: 'Chặn'}}
+          options={{ title: 'Chặn' }}
         />
       </Stack.Group>
       <Stack.Screen name="ProfileTab" component={ProfileTabScreen} />
       <Stack.Screen name="FullFriend" component={FullFriendScreen} />
       <Stack.Screen name="FriendRequest" component={FriendRequestScreen} />
       <Stack.Screen name="PostDetail" component={PostDetailScreen} />
+      <Stack.Screen name="Report" component={ReportScreen} />
     </Stack.Navigator>
   );
 }
