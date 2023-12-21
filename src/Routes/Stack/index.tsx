@@ -50,6 +50,11 @@ import SetAvatarScreen from '@/Screens/Signup/SetAvatar';
 import ActivityLogScreen from '@/Screens/Setting/ActivityLogScreen';
 import SearchScreen from '@/Screens/Search';
 import SearchResultScreen from '@/Screens/Search/SearchResult';
+import ProfileNotFriendScreen from '@/Screens/ProfileTab/ProfileNotFriend';
+import ProfileFriendScreen from '@/Screens/ProfileTab/ProfileFriend';
+import ProfileUserSendRequestForMeScreen from '@/Screens/ProfileTab/ProfileUserSendRequestForMe';
+import ProfileUserSentRequestScreen from '@/Screens/ProfileTab/ProfileUserSentRequest';
+import OtherPersonalSettingScreen from '@/Screens/ProfileTab/OtherPeopleSetting';
 
 export type RootStackParamList = {
   Main: undefined;
@@ -90,6 +95,11 @@ export type RootStackParamList = {
   ChangeAvatar: {type: String};
   PreViewAvatar: {image: any | undefined; type: String};
   Profile: {userId: string};
+  ProfileNotFriend: {userId: string};
+  ProfileFriend: {userId: string};
+  ProfileUserSendRequestForMe: {userId: string};
+  ProfileUserSentRequest: {userId: string};
+  OtherPeopleSetting: {userId: string};
   ActivityLog: undefined;
   Search: undefined;
   SearchResult: {keyword: string};
@@ -109,6 +119,27 @@ export type ScreenChangeViewImageProp = RouteProp<
   RootStackParamList,
   'ChangeAvatar'
 >;
+export type ScreenProfileNotFriendProp = RouteProp<
+  RootStackParamList,
+  'ProfileNotFriend'
+>;
+export type ScreenProfileFriendProp = RouteProp<
+  RootStackParamList,
+  'ProfileFriend'
+>;
+export type ScreenProfileUserSendRequestForMeProp = RouteProp<
+  RootStackParamList,
+  'ProfileUserSendRequestForMe'
+>;
+export type ScreenProfileUserSentRequestProp = RouteProp<
+  RootStackParamList,
+  'ProfileUserSentRequest'
+>;
+export type ScreenOtherPeopleSettingProp = RouteProp<
+  RootStackParamList,
+  'OtherPeopleSetting'
+>;
+
 
 function MyStack() {
   const token = useAppSelector(state => state.auth.token);
@@ -258,6 +289,11 @@ function MyStack() {
       <Stack.Screen name="SuggestFriend" component={SuggestFriendScreen} />
       <Stack.Screen name="Search" component={SearchScreen} />
       <Stack.Screen name="SearchResult" component={SearchResultScreen} />
+      <Stack.Screen name="ProfileNotFriend" component={ProfileNotFriendScreen} />
+      <Stack.Screen name="ProfileFriend" component={ProfileFriendScreen} />
+      <Stack.Screen name="ProfileUserSendRequestForMe" component={ProfileUserSendRequestForMeScreen} />
+      <Stack.Screen name="ProfileUserSentRequest" component={ProfileUserSentRequestScreen} />
+      <Stack.Screen name="OtherPeopleSetting" component={OtherPersonalSettingScreen} />
     </Stack.Navigator>
   );
 }
