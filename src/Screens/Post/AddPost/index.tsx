@@ -72,7 +72,12 @@ const AddPostScreen = () => {
     });
 
     formData.append('described', postText);
-    formData.append('status', `${selectedEmoji?.name} ${selectedEmoji?.icon}`);
+    if (selectedEmoji) {
+      formData.append(
+        'status',
+        `${selectedEmoji?.name} ${selectedEmoji?.icon}`,
+      );
+    }
     formData.append('auto_accept', '1');
 
     addPost(formData)

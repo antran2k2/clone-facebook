@@ -78,8 +78,12 @@ const EditPostScreen = () => {
         formData.append('image', {uri, name, type});
       }
     });
-    formData.append('status', `${selectedEmoji?.name} ${selectedEmoji?.icon}`);
-
+    if (selectedEmoji) {
+      formData.append(
+        'status',
+        `${selectedEmoji?.name} ${selectedEmoji?.icon}`,
+      );
+    }
     if (delImage.length > 0) {
       formData.append('image_del', delImage);
     }

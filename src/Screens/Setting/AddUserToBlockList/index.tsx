@@ -44,7 +44,7 @@ const AddUserToBlockListScreen = () => {
   const [listSearchUser, setListSearchUser] = useState<TBlockUser[]>([]);
 
   const blockUser = (id: string) => {
-    setBlock({user_id: '128'})
+    setBlock({user_id: id})
       .unwrap()
       .then(() => {
         console.log('block thành công');
